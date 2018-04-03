@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane prefHeight="768.0" prefWidth="1024.0" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.view.menuControl">
+   <children>
+      <Button layoutX="412.0" layoutY="333.0" mnemonicParsing="false" onAction="#handleSinglePlayerButton" prefWidth="200.0" text="New Campaign" />
+      <Button layoutX="412.0" layoutY="419.0" mnemonicParsing="false" prefWidth="200.0" text="MultiPlayer" />
+      <Button layoutX="412.0" layoutY="457.0" mnemonicParsing="false" prefWidth="200.0" text="Options" />
+      <Button layoutX="412.0" layoutY="503.0" mnemonicParsing="false" onAction="#handleReturnButton" prefWidth="200.0" text="Return" />
+      <Button layoutX="412.0" layoutY="371.0" mnemonicParsing="false" prefWidth="200.0" text="Load" />
+      <MenuBar layoutX="108.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <menus>
+          <Menu mnemonicParsing="false" text="File">
+            <items>
+              <MenuItem mnemonicParsing="false" text="Close" />
+            </items>
+          </Menu>
+          <Menu mnemonicParsing="false" text="Edit">
+            <items>
+              <MenuItem mnemonicParsing="false" text="Delete" />
+            </items>
+          </Menu>
+          <Menu mnemonicParsing="false" text="Help">
+            <items>
+              <MenuItem mnemonicParsing="false" text="About" />
+            </items>
+          </Menu>
+        </menus>
+      </MenuBar>
+   </children>
+</AnchorPane>
