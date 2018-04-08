@@ -73,6 +73,10 @@ public class main extends Application {
 		
 	}
 	
+	public Stage getStage() {
+		return primaryStage;
+	}
+	
 	
 	
 

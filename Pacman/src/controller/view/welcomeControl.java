@@ -1,11 +1,13 @@
 package controller.view;
 
+
 import java.io.IOException;
-import java.net.URL;
+
 import java.util.Optional;
 import java.util.ResourceBundle;
 
 import controller.main;
+import javafx.animation.FadeTransition;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -17,21 +19,27 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuBar;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
-import javafx.stage.Modality;
+import javafx.scene.media.AudioClip;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 public class welcomeControl {
 	
 	
 	
 	@FXML
-	public void handleStartButton(ActionEvent event) {
+	public void handleStartButton(ActionEvent event) throws Exception {
 		//Switch to the menu scene
-		try {
-			
-			Parent parent = FXMLLoader.load(getClass().getResource("menu_buttons.fxml"));
+		
+		
+			//music();
+			Parent parent = FXMLLoader.load(getClass().getResource("menu_buttons.fxml"));			
 			
 			Scene scene = new Scene(parent);
 			Stage menuStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
@@ -39,10 +47,7 @@ public class welcomeControl {
 			menuStage.show();
 			
 			
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		
+						
 	}
 	
 	@FXML
@@ -56,14 +61,31 @@ public class welcomeControl {
 		ButtonType yes = new ButtonType("Yes");
 
 		warning.getButtonTypes().setAll(yes, no);
-
+		
+		
+		
 		Optional<ButtonType> result = warning.showAndWait();
+		
+		
 		if (result.get() == yes) {
 			Platform.exit();
 			System.exit(0);
 		}		
 		
 	}
+	
+
+	
+//	public void music() throws Exception {
+//		
+//		AudioClip sound = new AudioClip(getClass().getResource("/se1.wav").toString());
+//		
+//		sound.play();
+//		
+//	}
+	
+	
+	
 	
 	
 	

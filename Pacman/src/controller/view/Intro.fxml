@@ -19,7 +19,7 @@
                         <Font size="20.0" />
                      </font>
                   </Button>
-                  <Button layoutX="898.0" layoutY="46.0" mnemonicParsing="false" prefHeight="41.0" prefWidth="120.0" text="Skip">
+                  <Button layoutX="898.0" layoutY="46.0" mnemonicParsing="false" onAction="#handleSkipButton" prefHeight="41.0" prefWidth="120.0" text="Skip">
                      <font>
                         <Font size="20.0" />
                      </font>

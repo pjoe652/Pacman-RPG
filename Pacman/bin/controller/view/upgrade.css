@@ -1,0 +1,31 @@
+.HpButton {
+	
+	-fx-background-color: transparent;
+	
+}
+
+.SpButton {
+	
+	-fx-background-color: transparent;
+	
+}
+
+.EdButton {
+	
+	-fx-background-color: transparent;
+	
+}
+
+.HpButton:hover {
+	
+	-fx-scale-x: 1.5;
+	-fx-scale-y: 1.5;
+	-fx-scale-z: 1.5;	
+	-fx-text-fill: #FF5733 ;
+	
+}
+
+
+
+
+
