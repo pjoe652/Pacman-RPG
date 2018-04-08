@@ -63,6 +63,8 @@ public class mapOne extends map {
     private int levelWidth;
     
      Node entityCreated;
+     
+    private String direction = "NONE";
     
     private boolean running = true;
     
@@ -158,21 +160,33 @@ public class mapOne extends map {
 			int negativeSpeed = 0 - speed;
 
 			if (isPressed(KeyCode.UP) && user.getTranslateY() >= 5) {
-				moveuserY(negativeSpeed);
+				direction = "UP";
 			}
 
 			if (isPressed(KeyCode.LEFT) && user.getTranslateX() >= 5) {
-
-				moveuserX(negativeSpeed);
+				direction = "LEFT";
 			}
 
 			if (isPressed(KeyCode.RIGHT) && user.getTranslateX() + 40 <= levelWidth - 5) {
-				moveuserX(speed);
+				direction = "RIGHT";
 			}
 
 			if (isPressed(KeyCode.DOWN) && user.getTranslateY() + 40 >= 5) {
-				moveuserY(speed);
+				direction = "DOWN";
 			}
+			if (isPressed(KeyCode.P)) {
+				direction = "NONE";
+			}
+			
+	        if (direction.equals("UP")) {
+	        	moveuserY(negativeSpeed);
+	        } else if (direction.equals("LEFT")) {
+	        	moveuserX(negativeSpeed);
+	        } else if (direction.equals("RIGHT")) {
+	        	moveuserX(speed);
+	        } else if (direction.equals("DOWN")) {
+	        	moveuserY(speed);
+	        }
 
 			// Removes Coins when collected
 			for (Node coin : coins) {
@@ -438,7 +452,7 @@ public class mapOne extends map {
         	        	
         });
         
-        menuStage.initModality(Modality.WINDOW_MODAL);
+        menuStage.initModality(Modality.APPLICATION_MODAL);
 		menuStage.initOwner(stage);
         
         initContent();
