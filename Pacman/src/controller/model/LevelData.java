@@ -21,7 +21,7 @@ public class LevelData extends level {
 		    };
 	 
 	 
-	public static int[][] LEVEL0 = new int[][] {
+	public int[][] LEVEL0 = new int[][] {
 		
 		{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
         {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
@@ -41,6 +41,10 @@ public class LevelData extends level {
 		
 		
 	};
+	
+	public int[][] getLevel0() {
+		return LEVEL0;
+	}
 	 
 	 
 	

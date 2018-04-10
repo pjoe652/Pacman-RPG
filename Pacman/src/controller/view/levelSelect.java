@@ -26,13 +26,13 @@ public class levelSelect extends characterControl {
 		currentStage = stage;
 		
 		level lvl = new level();
-		System.out.print("current level: " + lvl.getLevel());
+		//System.out.print("current level: " + lvl.getLevel());
 		Parent parent = FXMLLoader.load(getClass().getResource("loading.fxml"));
 		Scene scene = new Scene(parent);
 		currentStage.setScene(scene);
 		currentStage.show();
 		
-		PauseTransition ps = new PauseTransition(Duration.seconds(1));
+		PauseTransition ps = new PauseTransition(Duration.seconds(0));
 		ps.setOnFinished((ActionEvent event) ->{
 			switch (lvl.getLevel()) {
 			case 1:

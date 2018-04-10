@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Optional;
 
 import controller.main;
@@ -60,7 +61,7 @@ public class mapOne extends level {
     
 
     private Node user;
-    private Node red;
+    
     
     private static int Score = 0;
     private int CoinsCollected = 0;
@@ -84,8 +85,16 @@ public class mapOne extends level {
     private int count = 0;
     Timeline time = new Timeline();
     Timeline timer = new Timeline();
-    private int maze[][] = LevelData.LEVEL0;
-        
+    LevelData map = new LevelData();
+    private int maze[][] = map.getLevel0();
+    private int checkMaze[][] = maze;
+    private int prevx = 0;
+    private int prevy = 0;
+    
+    enemies red = new enemies();
+    Node redEnemy = red.redEnemy();
+    private final List<Integer>path = new ArrayList<Integer>();
+    
     //Initializes the gameplay area
     private void initContent() {
 //        Rectangle bg = new Rectangle(1020, 768);
@@ -96,30 +105,11 @@ public class mapOne extends level {
         StackPane menuScoreLabel = createMenuText(720, 12, "Score: ", Color.WHITE);
        
         
-        levelWidth = LevelData.LEVEL0[0].length * 60;
-
-//        for (int i = 0; i < LevelData.LEVEL1.length; i++) {
-//            String line = LevelData.LEVEL1[i];
-//            for (int j = 0; j < line.length(); j++) {
-//                switch (line.charAt(j)) {
-//                    case '0':
-//                        break;
-//                    case '1':
-//                    	Node Walls = createCharacter(j*60, i*60, 60, 60, Color.BLACK);
-//                        Node platform = createEntity(j*60, i*60);
-//                        platforms.add(Walls);
-//                        break;
-//                    case '2':
-//                        Node coin = createCoin(j*60, i*60);
-//                        coins.add(coin);
-//                        break;
-//                }
-//            }
-//        }
         
-        
-        for (int i = 0; i < LevelData.LEVEL0.length; i++) {
-        	for (int j = 0; j < LevelData.LEVEL0[i].length; j++) {
+        levelWidth = maze[0].length * 60;
+   
+        for (int i = 0; i < maze.length; i++) {
+        	for (int j = 0; j < maze[i].length; j++) {
         		switch(maze[i][j]) {
         		case 0: break;
         		case 1: Node Walls = createCharacter(j*60, i*60, 60, 60, Color.BLACK);
@@ -134,8 +124,12 @@ public class mapOne extends level {
         }
         
         
-        user = createCharacter(490, 670, 40, 40, Color.BLUE);
-        red = createCharacter(490, 150, 40, 40, Color.RED);
+        user = createCharacter(482, 662, 56, 56, Color.BLUE);
+        redEnemy.setTranslateX(490);
+        redEnemy.setTranslateY(150);
+        redEnemy.getProperties().put("alive", true);
+        gameRoot.getChildren().add(redEnemy);
+        //red = createCharacter(490, 150, 40, 40, Color.RED);
         //red.translateXProperty()
         
         
@@ -183,9 +177,37 @@ public class mapOne extends level {
 //			if (user.getBoundsInParent().intersects(red.getBoundsInParent())) {
 //				gameTime = 0;
 //			}
+		
+			
+			double x = user.getTranslateX();
+        	double y = user.getTranslateY();
+        	int newx = (int) (x/60);
+        	int newy = (int) (y/60);
+        	
+        	
+			checkMaze[newy][newx] = 9;
+			
+			if (prevx != newx || prevy != newy) {
+				checkMaze[prevy][prevx] = 0;
+			}
+			
+			int redx = (int)(redEnemy.getTranslateX()/60);
+			int redy = (int)(redEnemy.getTranslateY()/60);
 			
 			
 			
+			
+			for (int p = 0; p < path.size(); p += 2) {
+	            int pathX = path.get(p);
+	            int pathY = path.get(p + 1);
+	            System.out.print("pathx: " + pathX + " pathy: " + pathY + "\n");
+	            
+			}
+			
+			path.clear();
+			
+			prevx = newx;
+        	prevy = newy;
 			
 			int speed = player.getSpeed();
 			int negativeSpeed = 0 - speed;
@@ -214,7 +236,7 @@ public class mapOne extends level {
 	        } else if (direction.equals("LEFT")) {
 	        	moveuserX(negativeSpeed);
 	        } else if (direction.equals("RIGHT")) {
-	        	moveuserX(speed);
+	        	moveuserX(speed);	        	
 	        } else if (direction.equals("DOWN")) {
 	        	moveuserY(speed);
 	        }
@@ -228,6 +250,11 @@ public class mapOne extends level {
 
 			for (Iterator<Node> it = coins.iterator(); it.hasNext();) {
 				Node coin = it.next();
+				double coinx = coin.getTranslateX();
+				double coiny = coin.getTranslateY();
+				
+				
+				
 				if (!(Boolean) coin.getProperties().get("alive")) {
 					it.remove();
 					CoinsCollected += 1;
@@ -285,7 +312,6 @@ public class mapOne extends level {
 	
     
 
-
     //Movement of user
     private void moveuserX(int value) {
         boolean movingRight = value > 0;
@@ -294,7 +320,7 @@ public class mapOne extends level {
             for (Node platform : platforms) {
                 if (user.getBoundsInParent().intersects(platform.getBoundsInParent())) {
                     if (movingRight) {
-                        if (user.getTranslateX() + 40 == platform.getTranslateX()) {
+                        if (user.getTranslateX() + 56 == platform.getTranslateX()) {
                         	user.setTranslateX(user.getTranslateX() - 2);
                             return;
                         }
@@ -308,11 +334,15 @@ public class mapOne extends level {
                 }
             }
             user.setTranslateX(user.getTranslateX() + (movingRight ? 1 : -1));
+            if (user.getTranslateX() + 56 == 1020.0) {
+            	user.setTranslateX(0);
+            } else if (user.getTranslateX() == 0) {
+            	user.setTranslateX(964.0);
+            }
             
         }
     }
-    
-    
+
 
     private void moveuserY(int value) {
         boolean movingDown = value > 0;
@@ -321,7 +351,7 @@ public class mapOne extends level {
             for (Node platform : platforms) {
                 if (user.getBoundsInParent().intersects(platform.getBoundsInParent())) {
                     if (movingDown) {
-                        if (user.getTranslateY() + 40 == platform.getTranslateY()) {
+                        if (user.getTranslateY() + 56 == platform.getTranslateY()) {
                         	user.setTranslateY(user.getTranslateY() - 2);
                             return;
                         }
@@ -471,7 +501,9 @@ public class mapOne extends level {
         resume.setOpacity(1.0);
         resume.setOnAction((ActionEvent event)->{
         	time.play();
-        	timer.play();
+        	if (currentTime != -2) {
+				timer.play();
+			}
         	menuStage.close();
         });
         
@@ -482,6 +514,7 @@ public class mapOne extends level {
         	try {
         		menuStage.close();
         		levelSelect select = new levelSelect();
+        		
         		select.selectLevel(stage);
 				
 			} catch (Exception e) {
@@ -524,7 +557,18 @@ public class mapOne extends level {
         failTest.setMinWidth(subMenu.getPrefWidth());
         failTest.setMinHeight(40);
         
-        subMenu.getChildren().addAll(insertMenu, resume, retry, skip, failTest);    
+        Button printMap = new Button("print map");
+        printMap.setOnAction((ActionEvent event)->{
+        	for (int i = 0; i < 13; i++) {
+        		for (int j = 0; j < 17; j++) {
+        			System.out.print(maze[i][j] + ",");
+        		}
+        		System.out.print("\n");
+        	}
+        	System.out.print("\n");
+        });
+        
+        subMenu.getChildren().addAll(insertMenu, resume, retry, skip, failTest, printMap);    
         Scene menuScene = new Scene(subMenu);
         menuScene.getStylesheets().add("/controller/model/menu.css");
         
@@ -533,7 +577,9 @@ public class mapOne extends level {
         menuScene.setOnKeyPressed(event -> {
         	if (event.getCode() == KeyCode.P) {
         		time.play();
-        		timer.play();
+        		if (currentTime != -2) {
+					timer.play();
+				}
         		menuStage.close();
         	}
         	        	
@@ -574,7 +620,9 @@ public class mapOne extends level {
     				stage.close();
     			} else {
     				time.play();
-    				timer.play();
+    				if (currentTime != -2) {
+    					timer.play();
+    				}
     			}
         	}
         	if (event.getCode() == KeyCode.P) {

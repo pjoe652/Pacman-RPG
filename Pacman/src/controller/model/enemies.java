@@ -1,7 +1,9 @@
 package controller.model;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 
 import javafx.scene.Node;
 import javafx.scene.paint.Color;
@@ -9,42 +11,30 @@ import javafx.scene.shape.Rectangle;
 
 public class enemies {
 	
-	private Node red;
-	
+	private Rectangle red;
+	private ArrayList<Integer> pathx = new ArrayList<Integer>();
+	private ArrayList<Integer> pathy = new ArrayList<Integer>();
 	
 	public enemies() {
-		red = redEnemy();
+		redEnemy();
 		
 	}
 	
 	public Node redEnemy() {
-		Rectangle entity = new Rectangle(40, 40);
-		entity.setTranslateX(490);
-		entity.setTranslateY(670);
-		entity.setFill(Color.RED);
-		entity.getProperties().put("alive", true);				
-		return entity;	
+		red = new Rectangle(40, 40);
+		//entity.setTranslateX(490);
+		//entity.setTranslateY(150);
+		red.setFill(Color.RED);
+		//entity.getProperties().put("alive", true);				
+		return red;	
 	}
 	
 	public Node getRedEnemy() {
 		return red;
 	}
 	
-	public boolean shortestPath(int maze[][], int redx, int redy, int playerx, int playery, List<Integer>path) {
-		
-		if (redx == playerx && redy == playery) {
-			path.add(redx);
-			path.add(redy);
-			return true;
-		}
-		
-		
-		
-		
-		
-		return false;
-	}	
 	
 	
 	
+
 }
