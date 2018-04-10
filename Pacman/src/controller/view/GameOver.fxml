@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane prefHeight="768.0" prefWidth="1024.0" style="-fx-background-color: black;" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.view.GameOverControl">
+   <children>
+      <Label layoutX="224.0" layoutY="162.0" style="-fx-background-color: red; -fx-text-fill: white;" text="GAMEOVER">
+         <font>
+            <Font size="100.0" />
+         </font>
+      </Label>
+      <Label layoutX="433.0" layoutY="369.0" style="-fx-text-fill: firebrick;" text="Score:">
+         <font>
+            <Font size="25.0" />
+         </font>
+      </Label>
+      <Label fx:id="score" layoutX="557.0" layoutY="376.0" style="-fx-background-color: yellow;" text="Label" />
+      <Button layoutX="332.0" layoutY="449.0" mnemonicParsing="false" onAction="#handleRetryButton" prefHeight="56.0" prefWidth="141.0" text="Retry" />
+      <Button layoutX="557.0" layoutY="449.0" mnemonicParsing="false" prefHeight="56.0" prefWidth="141.0" text="Back" />
+   </children>
+</AnchorPane>

@@ -11,7 +11,7 @@ import java.sql.Timestamp;
 import java.util.Scanner;
 
 import controller.model.level;
-import controller.model.map;
+
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -106,9 +106,6 @@ public class upgradeControl extends characterControl {
 	@FXML
 	public void handleContinueButton(ActionEvent event) throws Exception {
 		
-		level lvl = new level();
-		lvl.setLevel();
-		System.out.print(lvl.getLevel());
 		
 		levelSelect select = new levelSelect();
 		stage = (Stage) ((Node) event.getSource()).getScene().getWindow();

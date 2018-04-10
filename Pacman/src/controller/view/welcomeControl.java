@@ -74,6 +74,15 @@ public class welcomeControl {
 		
 	}
 	
+	@FXML
+	public void handleSkipButton(ActionEvent event) throws Exception {
+		
+		levelSelect select = new levelSelect();
+		Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+		select.selectLevel(stage);
+		
+	}
+	
 
 	
 //	public void music() throws Exception {

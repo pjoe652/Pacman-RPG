@@ -18,6 +18,7 @@ import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Parent;
@@ -25,6 +26,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.image.Image;
@@ -32,6 +34,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -42,9 +45,10 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import javafx.util.Duration;
 
-public class mapOne extends map {
+public class mapOne extends level {
 
 	private HashMap<KeyCode, Boolean> keys = new HashMap<KeyCode, Boolean>();
     private ArrayList<Node> coins = new ArrayList<Node>();
@@ -56,8 +60,9 @@ public class mapOne extends map {
     
 
     private Node user;
+    private Node red;
     
-    private int Score = 0;
+    private static int Score = 0;
     private int CoinsCollected = 0;
 
     private int levelWidth;
@@ -79,7 +84,7 @@ public class mapOne extends map {
     private int count = 0;
     Timeline time = new Timeline();
     Timeline timer = new Timeline();
-    
+    private int maze[][] = LevelData.LEVEL0;
         
     //Initializes the gameplay area
     private void initContent() {
@@ -91,29 +96,50 @@ public class mapOne extends map {
         StackPane menuScoreLabel = createMenuText(720, 12, "Score: ", Color.WHITE);
        
         
-        levelWidth = LevelData.LEVEL1[0].length() * 60;
+        levelWidth = LevelData.LEVEL0[0].length * 60;
 
-        for (int i = 0; i < LevelData.LEVEL1.length; i++) {
-            String line = LevelData.LEVEL1[i];
-            for (int j = 0; j < line.length(); j++) {
-                switch (line.charAt(j)) {
-                    case '0':
-                        break;
-                    case '1':
-                    	Node Walls = createCharacter(j*60, i*60, 60, 60, Color.BLACK);
-                        Node platform = createEntity(j*60, i*60);
-                        platforms.add(Walls);
-                        break;
-                    case '2':
-                        Node coin = createCoin(j*60, i*60);
-                        coins.add(coin);
-                        break;
-                }
-            }
+//        for (int i = 0; i < LevelData.LEVEL1.length; i++) {
+//            String line = LevelData.LEVEL1[i];
+//            for (int j = 0; j < line.length(); j++) {
+//                switch (line.charAt(j)) {
+//                    case '0':
+//                        break;
+//                    case '1':
+//                    	Node Walls = createCharacter(j*60, i*60, 60, 60, Color.BLACK);
+//                        Node platform = createEntity(j*60, i*60);
+//                        platforms.add(Walls);
+//                        break;
+//                    case '2':
+//                        Node coin = createCoin(j*60, i*60);
+//                        coins.add(coin);
+//                        break;
+//                }
+//            }
+//        }
+        
+        
+        for (int i = 0; i < LevelData.LEVEL0.length; i++) {
+        	for (int j = 0; j < LevelData.LEVEL0[i].length; j++) {
+        		switch(maze[i][j]) {
+        		case 0: break;
+        		case 1: Node Walls = createCharacter(j*60, i*60, 60, 60, Color.BLACK);
+        				Node platform = createEntity(j*60, i*60);
+        				platforms.add(Walls);
+        				break;
+        		case 2:  Node coin = createCoin(j*60, i*60);
+        				coins.add(coin);
+        				break;	
+        		}
+        	}
         }
         
+        
         user = createCharacter(490, 670, 40, 40, Color.BLUE);
-
+        red = createCharacter(490, 150, 40, 40, Color.RED);
+        //red.translateXProperty()
+        
+        
+        
         user.translateXProperty().addListener((obs, old, newValue) -> {
             int offset = newValue.intValue();
 
@@ -153,6 +179,11 @@ public class mapOne extends map {
 				setGameTime();
 				count++;
 			}
+			
+//			if (user.getBoundsInParent().intersects(red.getBoundsInParent())) {
+//				gameTime = 0;
+//			}
+			
 			
 			
 			
@@ -205,6 +236,10 @@ public class mapOne extends map {
 					StackPane scoreValue = createMenu(100, 30, 800, 10, ScoreString, Color.WHITE);
 					appRoot.getChildren().add(scoreValue);
 					gameRoot.getChildren().remove(coin);
+					
+					//System.out.println(y/60 + " " + x/60);
+					
+					//System.out.println(maze[(int)y/60+1][(int)x/60+1]);
 				}
 
 			}
@@ -226,15 +261,28 @@ public class mapOne extends map {
 				// fadeOut.play();
 			}
 			
+//			if (time.){
+//				
+//				levelSelect select = new levelSelect();
+//				select.levelFailed(stage);
+//				
+//			}
+					
+			
 			//---------------------
-			double x = user.getTranslateX();
-			double y = user.getTranslateY();
+			
+			//System.out.println("x: " + x + "\n" + "y: " + y);
+			//bottom right corner x918 y678
+			//bottom left corner x62 y678
+			//top left corner x62 y122
+			//top right corner x918 y 122
 			
 			
 		}
 
 	}
     
+	
     
 
 
@@ -408,6 +456,7 @@ public class mapOne extends map {
     	
     	Stage menuStage = new Stage();
     	menuStage.setTitle("PAUSE");
+    	menuStage.initStyle(StageStyle.TRANSPARENT);
     	
     	Button skip = new Button("skip");
     	
@@ -419,12 +468,13 @@ public class mapOne extends map {
     	});    	
     	
         Button resume = new Button("resume");
-        
+        resume.setOpacity(1.0);
         resume.setOnAction((ActionEvent event)->{
         	time.play();
         	timer.play();
         	menuStage.close();
         });
+        
         
         Button retry = new Button("retry");
         
@@ -437,11 +487,48 @@ public class mapOne extends map {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-        });        
+        });  
         
+        Button failTest = new Button("failTest");
+        
+        failTest.setOnAction((ActionEvent event)->{
+        	try {
+        		menuStage.close();
+        		levelSelect select = new levelSelect();
+        		select.levelFailed(stage);;
+				
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+        });
+        
+        Label menuName = new Label();
+        menuName.setText("Menu");
+        HBox insertMenu = new HBox();
+        insertMenu.setPadding(new Insets(10, 10, 10, 75));
+        insertMenu.getChildren().add(menuName);
+
         VBox subMenu = new VBox();
-        subMenu.getChildren().addAll(resume, retry, skip);    	
-        Scene menuScene = new Scene(subMenu, 200, 200);
+        subMenu.setPrefHeight(200);
+        subMenu.setPrefWidth(200);
+              
+        resume.setMinWidth(subMenu.getPrefWidth());
+        resume.setMinHeight(40);
+        
+        skip.setMinWidth(subMenu.getPrefWidth());
+        skip.setMinHeight(40);
+        
+        retry.setMinWidth(subMenu.getPrefWidth());
+        retry.setMinHeight(40);
+        
+        failTest.setMinWidth(subMenu.getPrefWidth());
+        failTest.setMinHeight(40);
+        
+        subMenu.getChildren().addAll(insertMenu, resume, retry, skip, failTest);    
+        Scene menuScene = new Scene(subMenu);
+        menuScene.getStylesheets().add("/controller/model/menu.css");
+        
+        menuStage.setOpacity(0.7);
         
         menuScene.setOnKeyPressed(event -> {
         	if (event.getCode() == KeyCode.P) {
@@ -454,6 +541,7 @@ public class mapOne extends map {
         
         menuStage.initModality(Modality.APPLICATION_MODAL);
 		menuStage.initOwner(stage);
+		//menuStage.setOpacity(0.2);
         
         initContent();
         this.stage = map;
@@ -469,6 +557,9 @@ public class mapOne extends map {
         	 * been detected.
         	 *         	 */
         	if (event.getCode() == KeyCode.ESCAPE) {
+        		time.pause();
+        		timer.pause();
+        		
         		Alert warning = new Alert(AlertType.CONFIRMATION);
     			warning.setTitle("Confirmation");
     			warning.setHeaderText("Are you sure to exit?");
@@ -481,6 +572,9 @@ public class mapOne extends map {
     			Optional<ButtonType> result = warning.showAndWait();
     			if (result.get() == yes) {
     				stage.close();
+    			} else {
+    				time.play();
+    				timer.play();
     			}
         	}
         	if (event.getCode() == KeyCode.P) {
@@ -533,7 +627,15 @@ public class mapOne extends map {
 				
 				display.setText(currentTime.toString());
 				currentTime--;
-				if (currentTime < -1) {
+				if (currentTime == 0) {
+					
+					//display.setText("START");
+				}
+				if (currentTime == -1) {
+					
+					display.setText("START");
+				}
+				if (currentTime == -2) {
 					timer.stop();
 					display.setText("");
 				}
@@ -577,9 +679,11 @@ public class mapOne extends map {
 				
 				displayTime.setText(gameTime.toString());
 				gameTime--;
-				if (gameTime == 0) {
+				if (gameTime == -1) {
 					time.stop();
 					displayTime.setText("TIMES UP");
+					levelSelect select = new levelSelect();
+					select.levelFailed(stage);
 				}
 				
 				
@@ -594,8 +698,17 @@ public class mapOne extends map {
     	
     	time.playFromStart();
     }
+  //--------------------------------------------------------------
     
+    public int getScore() {
+    	return Score;
+    }
     
+    public void resetScore() {
+    	Score = 0;
+    }
     
-	
 }
+    
+    
+   

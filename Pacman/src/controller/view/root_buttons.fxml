@@ -20,5 +20,10 @@
             <Font size="59.0" />
          </font>
       </Label>
+      <Button layoutX="366.0" layoutY="510.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#handleSkipButton" prefHeight="50.0" prefWidth="293.0" styleClass="exit" stylesheets="@welcomeCss.css" text="Skip to Game Play">
+         <font>
+            <Font size="25.0" />
+         </font>
+      </Button>
    </children>
 </AnchorPane>

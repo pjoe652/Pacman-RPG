@@ -1,6 +1,7 @@
 package controller.model;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import javafx.scene.Node;
 import javafx.scene.paint.Color;
@@ -29,13 +30,20 @@ public class enemies {
 		return red;
 	}
 	
-	
-	
-	public void redPathLogic(double x, double y, ArrayList<Node> platforms) {
+	public boolean shortestPath(int maze[][], int redx, int redy, int playerx, int playery, List<Integer>path) {
+		
+		if (redx == playerx && redy == playery) {
+			path.add(redx);
+			path.add(redy);
+			return true;
+		}
 		
 		
 		
-	}
+		
+		
+		return false;
+	}	
 	
 	
 	

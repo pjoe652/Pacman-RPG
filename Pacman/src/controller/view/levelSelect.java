@@ -9,9 +9,11 @@ import javafx.animation.PauseTransition;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventType;
+import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Label;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
@@ -52,6 +54,7 @@ public class levelSelect extends characterControl {
 			
 	}
 	
+	//Level Completion
 	public void levelFinish(Stage stage) {
 		currentStage = stage;
 		
@@ -66,5 +69,27 @@ public class levelSelect extends characterControl {
 		}
 		
 	}
+	
+	//Level Failed
+	public void levelFailed(Stage stage) {
+		currentStage = stage;
+		
+		try {
+			Parent parent = FXMLLoader.load(getClass().getResource("GameOver.fxml"));
+			Scene scene = new Scene(parent);
+
+			currentStage.setScene(scene);
+			currentStage.show();
+						
+		} catch(IOException e) {
+			e.printStackTrace();
+		}
+		
+	}
+	
+	
+	
+	
+	
 	
 }
