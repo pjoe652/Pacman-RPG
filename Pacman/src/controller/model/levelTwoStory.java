@@ -2,7 +2,7 @@ package controller.model;
 
 public class levelTwoStory {
 	
-	public static final String[] ScriptChoice = new String[] {
+	public static final String[] ScriptQuestion = new String[] {
 			
 			"0During your descent into the dungeon you see a suspicious chest",
 			"1Hmm? Why's there a chest here?",
@@ -10,7 +10,7 @@ public class levelTwoStory {
 
 	};
 	
-	public static final String[] ScriptOpen = new String[] {
+	public static final String[] ScriptChoice1 = new String[] {
 			
 			"0CHOMP",
 			"0It was a mimic!",
@@ -18,7 +18,7 @@ public class levelTwoStory {
 			"0You lose $100 along with one life"
 	};
 	
-	public static final String[] ScriptLeave = new String[] {
+	public static final String[] ScriptChoice2 = new String[] {
 			
 			"1Can't risk it",
 			"0You leave the chest alone"

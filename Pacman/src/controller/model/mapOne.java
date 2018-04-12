@@ -54,14 +54,20 @@ public class mapOne extends level {
 	private HashMap<KeyCode, Boolean> keys = new HashMap<KeyCode, Boolean>();
     private ArrayList<Node> coins = new ArrayList<Node>();
     private ArrayList<Node> platforms = new ArrayList<Node>();
+    private ArrayList<Node> hearts = new ArrayList<Node>();
  
     private Pane appRoot = new Pane();
     private Pane gameRoot = new Pane();
     private Pane uiRoot = new Pane();
+    private Pane userRoot = new Pane();
     
+    private double userX;
+    private double userY;
 
     private Node user;
     
+    private int lives = 3;
+    private boolean createHearts = true;
     
     private static int Score = 0;
     private int CoinsCollected = 0;
@@ -71,17 +77,21 @@ public class mapOne extends level {
      Node entityCreated;
      
     private String direction = "NONE";
+    private String prevDirection = "Stationary";
+    private int directionSet = 0;
     
     private boolean running = true;
+    private boolean playerDead = false;
+    private boolean playerHasDied = false;
     
     public Stage stage;
     private final Integer startTime = 3;
     private Integer currentTime = startTime;
-    private Label display = new Label();
+    private StackPane display = new StackPane();
     
     private final Integer playTime = 120;
     private Integer gameTime = playTime;
-    private Label displayTime = new Label();
+    private StackPane displayTime = new StackPane();
     private int count = 0;
     Timeline time = new Timeline();
     Timeline timer = new Timeline();
@@ -98,33 +108,54 @@ public class mapOne extends level {
     //Initializes the gameplay area
     private void initContent() {
 //        Rectangle bg = new Rectangle(1020, 768);
-        Image bg = new Image("img/floor.png");
-        ImageView bgView = new ImageView(bg);
-        StackPane scoreValue = createMenu(100, 30, 800, 10, "0", Color.WHITE);
-        StackPane menuScore = createMenuRectangle(250, 40, 710, 5);
-        StackPane menuScoreLabel = createMenuText(720, 12, "Score: ", Color.WHITE);
-       
+      Image bg = new Image("img/floor.png");
         
+      ImageView bgView = new ImageView(bg);
         
-        levelWidth = maze[0].length * 60;
-   
-        for (int i = 0; i < maze.length; i++) {
-        	for (int j = 0; j < maze[i].length; j++) {
-        		switch(maze[i][j]) {
-        		case 0: break;
-        		case 1: Node Walls = createCharacter(j*60, i*60, 60, 60, Color.BLACK);
-        				Node platform = createEntity(j*60, i*60);
-        				platforms.add(Walls);
-        				break;
-        		case 2:  Node coin = createCoin(j*60, i*60);
-        				coins.add(coin);
-        				break;	
-        		}
+      String scoreString = Integer.toString(getScore());
+      
+      StackPane scoreValue = createMenu(100, 30, 800, 15, scoreString, Color.WHITE);
+        
+      StackPane menuScore = createMenuRectangle(250, 40, 710, 10);
+        
+      StackPane menuScoreLabel = createMenuText(720, 17, "Score: ", Color.WHITE);
+        
+      StackPane Lives = createMenuRectangle(300, 40, 60, 10);
+      
+      StackPane LivesLabel = createMenuText(70, 17, "Lives: ", Color.WHITE);
+        
+        if (createHearts) {
+        	for (int i = 0; i < lives; i++) {
+        		Node heart = createImage(40, 40, 160 + i * 50, 12, "img/heart.png" );
+            	hearts.add(heart);
         	}
         }
+
+       
+        playerDead = false;
+        
+        levelWidth = maze[0].length * 60;
+        if (coins.isEmpty()) {
+            for (int i = 0; i < maze.length; i++) {
+            	for (int j = 0; j < maze[i].length; j++) {
+            		switch(maze[i][j]) {
+            		case 0: break;
+            		case 1: Node Walls = createCharacter(j*60, i*60, 60, 60, Color.BLACK);
+            				Node Tile = createImage(60, 60, j*60, i*60, "img/tile2.png");
+            				platforms.add(Walls);
+            				break;
+            		case 2: Node coin = createImage(60, 60, j*60, i*60, "img/Coin.png");
+            				coins.add(coin);
+            				break;	
+            		}
+            	}
+            }
+        }
+
         
         
-        user = createCharacter(482, 662, 56, 56, Color.BLUE);
+//        user = createCharacter(482, 662, 56, 56, Color.BLUE);
+        user = createKnight(482, 662, "character/KnightStart.png");
         redEnemy.setTranslateX(490);
         redEnemy.setTranslateY(150);
         redEnemy.getProperties().put("alive", true);
@@ -142,26 +173,34 @@ public class mapOne extends level {
             }
         });
         
+        if(!playerHasDied) {
+        	setTime();
+        }
         
+        appRoot.getChildren().addAll(bgView, Lives, LivesLabel, gameRoot, userRoot, uiRoot, menuScore, menuScoreLabel, scoreValue);     
+
         
-        
-        StackPane countDown = new StackPane();
-        countDown.getChildren().add(display);
-        countDown.setLayoutX(460);
-        countDown.setLayoutY(300);
-        
-        StackPane gameTime = new StackPane();
-        gameTime.getChildren().add(displayTime);
-        gameTime.setLayoutX(460);
-        gameTime.setLayoutY(10);
-        
-        appRoot.getChildren().addAll(bgView, gameRoot, countDown, uiRoot, menuScore, menuScoreLabel, scoreValue, gameTime);
-       
-        setTime();
-        
-        
-        
-        
+    }
+    
+    //Reset game when user dies
+    private void clearGame() {
+
+		if (lives == 0) {
+			levelSelect select = new levelSelect();
+			select.levelFailed(stage);
+		}
+
+		userRoot.getChildren().clear();
+		uiRoot.getChildren().clear();
+    	appRoot.getChildren().clear();
+    	gameRoot.getChildren().removeAll(user, redEnemy);
+    	gameRoot.getChildren().removeAll(hearts);
+    	
+    	gameTime = 120;
+    	currentTime = 3;
+    	count = 0;
+    	resetTime();
+    	resetGameTime();
     }
    
 
@@ -174,11 +213,9 @@ public class mapOne extends level {
 				count++;
 			}
 			
-//			if (user.getBoundsInParent().intersects(red.getBoundsInParent())) {
-//				gameTime = 0;
-//			}
-		
-			
+
+
+				
 			double x = user.getTranslateX();
         	double y = user.getTranslateY();
         	int newx = (int) (x/60);
@@ -211,7 +248,10 @@ public class mapOne extends level {
 			
 			int speed = player.getSpeed();
 			int negativeSpeed = 0 - speed;
+			
+			prevDirection = direction;
 
+			//Direction select
 			if (isPressed(KeyCode.UP) && user.getTranslateY() >= 5) {
 				direction = "UP";
 			}
@@ -227,18 +267,63 @@ public class mapOne extends level {
 			if (isPressed(KeyCode.DOWN) && user.getTranslateY() + 40 >= 5) {
 				direction = "DOWN";
 			}
+			if (isPressed(KeyCode.UP) && (isPressed(KeyCode.RIGHT))) {
+				direction = "UP_RIGHT";
+			}
+			if (isPressed(KeyCode.UP) && (isPressed(KeyCode.LEFT))) {
+				direction = "UP_LEFT";
+			}
+			if (isPressed(KeyCode.DOWN) && (isPressed(KeyCode.RIGHT))) {
+				direction = "DOWN_RIGHT";
+			}
+			if (isPressed(KeyCode.DOWN) && (isPressed(KeyCode.LEFT))) {
+				direction = "DOWN_LEFT";
+			}
 			if (isPressed(KeyCode.P)) {
 				direction = "NONE";
 			}
 			
+			if (!prevDirection.equals(direction)) {
+				directionSet = 0;
+			}
+			
+			//Direction Move
 	        if (direction.equals("UP")) {
+	        	if (directionSet == 0) {
+	        		changeDirection("character/KnightUp.gif");
+	        		directionSet = 1;
+	        	}
 	        	moveuserY(negativeSpeed);
 	        } else if (direction.equals("LEFT")) {
+	        	if (directionSet == 0) {
+	        		changeDirection("character/KnightLeft.gif");
+	        		directionSet = 1;
+	        	}
 	        	moveuserX(negativeSpeed);
 	        } else if (direction.equals("RIGHT")) {
+	        	if (directionSet == 0) {
+	        	changeDirection("character/KnightRight.gif");
+	        		directionSet = 1;
+	        	}
 	        	moveuserX(speed);	        	
 	        } else if (direction.equals("DOWN")) {
+	        	if (directionSet == 0) {
+	        		changeDirection("character/KnightDown.gif");
+	        		directionSet = 1;
+	        	}
 	        	moveuserY(speed);
+	        } else if (direction.equals("UP_RIGHT")) {
+				moveuserY(negativeSpeed);
+				moveuserX(speed);
+	        } else if (direction.equals("UP_LEFT")) {
+				moveuserY(negativeSpeed);
+				moveuserX(negativeSpeed);
+	        } else if (direction.equals("DOWN_RIGHT")) {
+				moveuserY(speed);
+				moveuserX(speed);
+	        } else if (direction.equals("DOWN_LEFT")) {
+				moveuserY(speed);
+				moveuserX(negativeSpeed);
 	        }
 
 			// Removes Coins when collected
@@ -247,6 +332,16 @@ public class mapOne extends level {
 					coin.getProperties().put("alive", false);
 				}
 			}
+			
+	        //Checks if player is killed
+	        if(!playerDead) {
+	        	if (user.getBoundsInParent().intersects(redEnemy.getBoundsInParent())) {
+	        		playerDead = true;
+	        		clearGame();
+	            	lives--;
+	        		initContent();
+	        	}	
+	        }
 
 			for (Iterator<Node> it = coins.iterator(); it.hasNext();) {
 				Node coin = it.next();
@@ -260,13 +355,10 @@ public class mapOne extends level {
 					CoinsCollected += 1;
 					Score += 50 * player.getScoreMultiplier();
 					String ScoreString = Integer.toString(Score);
-					StackPane scoreValue = createMenu(100, 30, 800, 10, ScoreString, Color.WHITE);
+					StackPane scoreValue = createMenu(100, 30, 800, 15, ScoreString, Color.WHITE);
 					appRoot.getChildren().add(scoreValue);
 					gameRoot.getChildren().remove(coin);
 					
-					//System.out.println(y/60 + " " + x/60);
-					
-					//System.out.println(maze[(int)y/60+1][(int)x/60+1]);
 				}
 
 			}
@@ -274,44 +366,24 @@ public class mapOne extends level {
 			// Fades away when all coins collected
 			if (CoinsCollected == 86) {
 				player.addPoints();
-				// FadeTransition causes addPoints error, temporarily stopped
-
-				// FadeTransition fadeOut = new FadeTransition(Duration.seconds(2), appRoot);
-				// fadeOut.setToValue(1);
-				// fadeOut.setToValue(0.0);
-
-				// fadeOut.setOnFinished((ActionEvent event)->{
 
 				levelSelect select = new levelSelect();
 				select.levelFinish(stage);
-				// });
-				// fadeOut.play();
+
 			}
-			
-//			if (time.){
-//				
-//				levelSelect select = new levelSelect();
-//				select.levelFailed(stage);
-//				
-//			}
-					
-			
-			//---------------------
-			
-			//System.out.println("x: " + x + "\n" + "y: " + y);
-			//bottom right corner x918 y678
-			//bottom left corner x62 y678
-			//top left corner x62 y122
-			//top right corner x918 y 122
-			
-			
+
 		}
 
 	}
-    
-	
-    
 
+    private void changeDirection(String direction) {
+    	userX = user.getTranslateX();
+    	userY = user.getTranslateY();
+    	userRoot.getChildren().clear();
+    	user = createKnight(userX, userY, direction);
+    	
+    }
+    
     //Movement of user
     private void moveuserX(int value) {
         boolean movingRight = value > 0;
@@ -321,12 +393,14 @@ public class mapOne extends level {
                 if (user.getBoundsInParent().intersects(platform.getBoundsInParent())) {
                     if (movingRight) {
                         if (user.getTranslateX() + 56 == platform.getTranslateX()) {
+                        	
                         	user.setTranslateX(user.getTranslateX() - 2);
                             return;
                         }
                     }
                     else {
                         if (user.getTranslateX() == platform.getTranslateX() + 60) {
+                        	
                         	user.setTranslateX(user.getTranslateX() + 2);
                             return;
                         }
@@ -352,12 +426,14 @@ public class mapOne extends level {
                 if (user.getBoundsInParent().intersects(platform.getBoundsInParent())) {
                     if (movingDown) {
                         if (user.getTranslateY() + 56 == platform.getTranslateY()) {
+                        	
                         	user.setTranslateY(user.getTranslateY() - 2);
                             return;
                         }
                     }
                     else {
                         if (user.getTranslateY() == platform.getTranslateY() + 60) {
+                        	
                         	user.setTranslateY(user.getTranslateY() + 2);
                             return;
                         }
@@ -370,12 +446,12 @@ public class mapOne extends level {
     
 
     //Creates walls
-    private Node createEntity(int x, int y) {
+    private Node createImage(int h, int w, int x, int y, String link) {
     	
-    	Image img = new Image("img/tile2.png");
+    	Image img = new Image(link);
     	ImageView imageView = new ImageView(img);
-    	imageView.setFitHeight(60);
-    	imageView.setFitWidth(60);
+    	imageView.setFitHeight(h);
+    	imageView.setFitWidth(w);
     	imageView.setX(x);
     	imageView.setY(y);
     	imageView.getProperties().put("alive", true);
@@ -396,35 +472,26 @@ public class mapOne extends level {
 
         gameRoot.getChildren().add(entity);
         
-//    	Image img = new Image("img/naruto.gif");
-//    	ImageView imageView = new ImageView(img);
-//    	imageView.setFitHeight(60);
-//    	imageView.setFitWidth(60);
-//    	imageView.setX(x);
-//    	imageView.setY(y);
-//    	imageView.getProperties().put("alive", true);
-//    	
-//    	gameRoot.getChildren().add(imageView);
-//        
-        
+
         return entity;
         
-       // return imageView;
     }
     
-    //Creates coins
-    private Node createCoin(int x, int y) {
-    	Image img = new Image("https://zippy.gfycat.com/DarlingAcceptableHapuku.gif");
-    	ImageView imageView = new ImageView(img);
-    	imageView.setFitHeight(60);
-    	imageView.setFitWidth(60);
-    	imageView.setX(x);
-    	imageView.setY(y);
-    	imageView.getProperties().put("alive", true);
+    //Create knight user
+    private Node createKnight(double x, double y, String direction) {
     	
-    	gameRoot.getChildren().add(imageView);
-    	return imageView;
+    	Image knight = new Image(direction);
+    	ImageView knightView = new ImageView(knight);
+    	knightView.setTranslateX(x);
+    	knightView.setTranslateY(y);
+    	knightView.setFitHeight(56);
+    	knightView.setFitWidth(56);
     	
+    	knightView.getProperties().put("alive", true);
+    	
+    	userRoot.getChildren().add(knightView);
+    	
+    	return knightView;
     }
     
     //Creates menu label
@@ -665,15 +732,14 @@ public class mapOne extends level {
     	if (timer != null) {
     		timer.stop();
     	}    	
-    	display.setFont(Font.font("Verdana", 150));
-    	display.setTextFill(Color.RED);
     	
     	KeyFrame frame = new KeyFrame(Duration.seconds(1), new EventHandler<ActionEvent>() {
 
 			@Override
 			public void handle(ActionEvent event) {
 				
-				display.setText(currentTime.toString());
+				display = createMenu(200, 68, 410 , 350, currentTime.toString(), Color.WHITE);
+				uiRoot.getChildren().add(display);
 				currentTime--;
 				if (currentTime == 0) {
 					
@@ -681,15 +747,20 @@ public class mapOne extends level {
 				}
 				if (currentTime == -1) {
 					
-					display.setText("START");
+					display = createMenu(200, 68, 410 , 350, "Start!", Color.WHITE);
+					uiRoot.getChildren().add(display);
 				}
 				if (currentTime == -2) {
 					timer.stop();
-					display.setText("");
+					uiRoot.getChildren().clear();
 				}
+				
 
 			}
     	});
+    	
+    	
+    	
     	
     	timer.getKeyFrames().add(frame);
     	
@@ -698,6 +769,13 @@ public class mapOne extends level {
     	timer.playFromStart();
     	
     	
+    }
+    
+    public void resetTime() {
+    	
+    	timer.getKeyFrames().clear();
+    	
+    	timer.playFromStart();
     }
     
     /*
@@ -716,20 +794,18 @@ public class mapOne extends level {
     		time.stop();
     	}
     	
-    	displayTime.setFont(Font.font("Verdana", 20));
-    	displayTime.setTextFill(Color.YELLOW);
-    	
     	KeyFrame frame = new KeyFrame(Duration.seconds(1), new EventHandler<ActionEvent>() {
 
 			@Override
 			public void handle(ActionEvent event) {
-				
-				
-				displayTime.setText(gameTime.toString());
+				uiRoot.getChildren().clear();
+				displayTime = createMenu(100, 40, 460 , 10, gameTime.toString(), Color.WHITE);
+				uiRoot.getChildren().add(displayTime);
 				gameTime--;
 				if (gameTime == -1) {
 					time.stop();
-					displayTime.setText("TIMES UP");
+					displayTime = createMenu(100, 40, 460 , 10, "Times up!", Color.RED);
+					uiRoot.getChildren().add(displayTime);
 					levelSelect select = new levelSelect();
 					select.levelFailed(stage);
 				}
@@ -743,6 +819,13 @@ public class mapOne extends level {
     	time.getKeyFrames().add(frame);
     	
     	
+    	
+    	time.playFromStart();
+    }
+    
+    public void resetGameTime() {
+    	
+    	time.getKeyFrames().clear();
     	
     	time.playFromStart();
     }
