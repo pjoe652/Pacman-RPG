@@ -61,7 +61,7 @@ private HashMap<KeyCode, Boolean> keys = new HashMap<KeyCode, Boolean>();
     private void initContent() {
 //        Rectangle bg = new Rectangle(1020, 768);
     	//Background set
-        Image bg = new Image("https://drawingcollection.com/wp-content/uploads/2017/06/village-landscape-drawings-pastel-painting-how-to-draw-a-simple-landscape-episode-5-youtube.jpg");
+        Image bg = new Image("img/Cave.jpg");
         ImageView bgView = new ImageView(bg);
         bgView.setFitWidth(1038);
         bgView.setFitHeight(778);
@@ -75,7 +75,7 @@ private HashMap<KeyCode, Boolean> keys = new HashMap<KeyCode, Boolean>();
         gameRoot.getChildren().add(text);
         
 
-        appRoot.getChildren().addAll(bgView, SpeechView, uiRoot, gameRoot);
+        appRoot.getChildren().addAll(bgView, SpeechView, gameRoot, uiRoot);
         
     }
     
@@ -263,17 +263,17 @@ private HashMap<KeyCode, Boolean> keys = new HashMap<KeyCode, Boolean>();
     	
     	uiRoot.getChildren().addAll(choice1Box, choice1Button, choice2Box, choice2Button);
     	
-//    	choice1Button.setOnAction(new EventHandler<ActionEvent>() {
-//    		@Override
-//    		public void handle(ActionEvent e) {
-//        		line = 0;
-//        		section = "ScriptChoice1";
-//        		appRoot.getChildren().remove(uiRoot);
-//        		setText(section);
-//        		shakeStage();
-//
-//    		}
-//    	});
+    	choice1Button.setOnAction(new EventHandler<ActionEvent>() {
+    		@Override
+    		public void handle(ActionEvent e) {
+        		line = 0;
+        		section = "ScriptChoice1";
+        		appRoot.getChildren().remove(uiRoot);
+        		setText(section);
+        		shakeStage();
+
+    		}
+    	});
     	
 //    	choice1Button.setOnAction((ActionEvent event)->{
 //    		line = 0;
@@ -283,34 +283,34 @@ private HashMap<KeyCode, Boolean> keys = new HashMap<KeyCode, Boolean>();
 //    		shakeStage();
 //    	});
     	
-    	choice1Button.setOnKeyPressed((KeyEvent event)->{
-    		if (event.getCode() == KeyCode.ENTER) {
-    			line = 0;
-        		section = "ScriptChoice1";
-        		appRoot.getChildren().remove(uiRoot);
-        		setText(section);
-        		shakeStage();
-    		}
-    		
-    	});
-    	
-//    	choice2Button.setOnAction(new EventHandler<ActionEvent>() {
-//    		@Override
-//    		public void handle(ActionEvent e) {
+//    	choice1Button.setOnKeyPressed((KeyEvent event)->{
+//    		if (event.getCode() == KeyCode.ENTER) {
 //    			line = 0;
-//    			section = "ScriptChoice2";
-//    			appRoot.getChildren().remove(uiRoot);
-//    			setText(section);
+//        		section = "ScriptChoice1";
+//        		appRoot.getChildren().remove(uiRoot);
+//        		setText(section);
+//        		shakeStage();
+//    		}
+//    		
+//    	});
+    	
+    	choice2Button.setOnAction(new EventHandler<ActionEvent>() {
+    		@Override
+    		public void handle(ActionEvent e) {
+    			line = 0;
+    			section = "ScriptChoice2";
+    			appRoot.getChildren().remove(uiRoot);
+    			setText(section);
+    		}
+    	});
+//    	choice2Button.setOnKeyPressed((KeyEvent event)->{
+//    		if (event.getCode() == KeyCode.ENTER) {
+//				line = 0;
+//				section = "ScriptChoice2";
+//				appRoot.getChildren().remove(uiRoot);
+//				setText(section);
 //    		}
 //    	});
-    	choice2Button.setOnKeyPressed((KeyEvent event)->{
-    		if (event.getCode() == KeyCode.ENTER) {
-				line = 0;
-				section = "ScriptChoice2";
-				appRoot.getChildren().remove(uiRoot);
-				setText(section);
-    		}
-    	});
     	
 
     }

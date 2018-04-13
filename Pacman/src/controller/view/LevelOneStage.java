@@ -1,6 +1,8 @@
 package controller.view;
 
+import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -44,6 +46,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.media.AudioClip;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
@@ -121,10 +124,12 @@ public class LevelOneStage extends level {
 	private boolean swordHeld = false;
 	private int swordGet = 0;
     Timeline swordTime = new Timeline();
-    private final Integer swordStart = 4;
+    private final Integer swordStart = 60;
     private Integer swordCount = swordStart;
     private ArrayList<Node> swords = new ArrayList<Node>();
-	
+    
+    private int coinCount = coins.size();
+    
     //Initializes the gameplay area
     private void initContent() {
 //        Rectangle bg = new Rectangle(1020, 768);
@@ -152,7 +157,9 @@ public class LevelOneStage extends level {
             	hearts.add(heart);
         	}
         }
-
+        
+//        coinSFX();
+        
        
         playerDead = false;
         
@@ -256,7 +263,7 @@ public class LevelOneStage extends level {
 			redx = (int)(redEnemy.getTranslateX()/60);
 			redy = (int)(redEnemy.getTranslateY()/60);
 
-			p = getPathBFS(redy, redx);
+			//p = getPathBFS(redy, redx);
 			if (p != null) {
 				while (p.getParent() != null) {
 					store.add(p);
@@ -313,6 +320,7 @@ public class LevelOneStage extends level {
 			int negativeSpeed = 0 - speed;
 			
 			prevDirection = direction;
+			coinCount = coins.size();
 
 			//Direction select
 			if (isPressed(KeyCode.UP) && user.getTranslateY() >= 5) {
@@ -349,6 +357,7 @@ public class LevelOneStage extends level {
 			if (!prevDirection.equals(direction)) {
 				directionSet = 0;
 			}
+			
 			
 			//Direction Move
 	        if (direction.equals("UP")) {
@@ -393,13 +402,18 @@ public class LevelOneStage extends level {
 			for (Node coin : coins) {
 				if (user.getBoundsInParent().intersects(coin.getBoundsInParent())) {
 					coin.getProperties().put("alive", false);
+					
 				}
 			}
 			
+			
+			//Removes swords when collected
 			for (Node sword : swords) {
 				if (user.getBoundsInParent().intersects(sword.getBoundsInParent())) {
 					sword.getProperties().put("alive", false);
 					swordGet = 1;
+					stopSwordTime();
+					
 				}
 			}
 	        for (Iterator<Node> it = swords.iterator(); it.hasNext(); ) {
@@ -410,13 +424,14 @@ public class LevelOneStage extends level {
 	            }
 	        }
 	        
-	        //
+	        //Start sword use time
 	        if(swordGet == 1) {
 	        	swordGet = 0;
 	        	swordHeld = true;
 	        	setSwordTime();
 	        }
 	        
+	        //Sword usage
 	        if (swordHeld == true) {
 	        	swordUse();
 	        }
@@ -431,6 +446,10 @@ public class LevelOneStage extends level {
 	        		initContent();
 	        	}	
 	        }
+	        
+	        
+	        
+	        //Removes coin if collected
 	        }
 			for (Iterator<Node> it = coins.iterator(); it.hasNext();) {
 				Node coin = it.next();
@@ -442,16 +461,21 @@ public class LevelOneStage extends level {
 					String ScoreString = Integer.toString(Score);
 					StackPane scoreValue = createMenu(100, 30, 850, 15, ScoreString, Color.WHITE);					
 					appRoot.getChildren().add(scoreValue);
-					gameRoot.getChildren().remove(coin);
+					gameRoot.getChildren().remove(coin);	
 					
 				}
 
 			}
+			
+//			if (coinCount != coins.size()) {
+//				coinSFX();
+//			}
 
 			// Fades away when all coins collected
-			if (CoinsCollected == 300) {
+			if (CoinsCollected == 150) {
+				coinBagSFX();
 				levelSelect select = new levelSelect();
-				try {
+				try {	
 					select.levelClear(stage);
 				} catch (IOException e) {
 					e.printStackTrace();
@@ -672,6 +696,27 @@ public class LevelOneStage extends level {
     	}
     }
 
+//	private void coinSFX() {
+//		URL path;
+//		AudioClip coinSFX;
+//		
+//		path = getClass().getResource("/sfx/coin.wav");
+//		coinSFX = new AudioClip(path.toString());
+//		coinSFX.play();
+//		
+//    }
+	
+	private void coinBagSFX() {
+		URL path;
+		AudioClip coinSFX;
+		
+		path = getClass().getResource("/sfx/coinBag.wav");
+		coinSFX = new AudioClip(path.toString());
+		coinSFX.setVolume(0.2);
+		coinSFX.play();
+		
+    }
+    
     public void mapGeneration(Stage map) throws Exception {
     	
     	Stage menuStage = new Stage();
@@ -877,7 +922,7 @@ public class LevelOneStage extends level {
 			@Override
 			public void handle(ActionEvent event) {
 				
-				display = createMenu(200, 68, 410 , 350, currentTime.toString(), Color.WHITE);
+				display = createMenu(200, 68, 440 , 350, currentTime.toString(), Color.WHITE);
 				uiRoot.getChildren().add(display);
 				currentTime--;
 				if (currentTime == 0) {
@@ -886,7 +931,7 @@ public class LevelOneStage extends level {
 				}
 				if (currentTime == -1) {
 					
-					display = createMenu(200, 68, 410 , 350, "Start!", Color.WHITE);
+					display = createMenu(200, 68, 440 , 350, "Start!", Color.WHITE);
 					uiRoot.getChildren().add(display);
 				}
 				if (currentTime == -2) {
@@ -938,13 +983,13 @@ public class LevelOneStage extends level {
 			@Override
 			public void handle(ActionEvent event) {
 				uiRoot.getChildren().clear();
-				displayTime = createMenu(100, 40, 460 , 10, gameTime.toString(), Color.WHITE);
+				displayTime = createMenu(100, 40, 490 , 10, gameTime.toString(), Color.WHITE);
 				uiRoot.getChildren().add(displayTime);
 				gameTime--;
 				TIME++;
 				if (gameTime == -1) {
 					time.stop();
-					displayTime = createMenu(100, 40, 460 , 10, "Times up!", Color.RED);
+					displayTime = createMenu(100, 40, 490 , 10, "Times up!", Color.RED);
 					uiRoot.getChildren().add(displayTime);
 					levelSelect select = new levelSelect();
 					select.levelFailed(stage);
@@ -978,23 +1023,34 @@ public class LevelOneStage extends level {
 			swordTime.stop();
 		}
 
-		KeyFrame swordFrame = new KeyFrame(Duration.seconds(1), new EventHandler<ActionEvent>() {
+		KeyFrame swordFrame = new KeyFrame(Duration.seconds(0.1), new EventHandler<ActionEvent>() {
 
 			@Override
 			public void handle(ActionEvent event) {
 				swordCount--;
+				if ((swordCount <= 30) && (swordCount % 2 == 1)) {		
+					user.setOpacity(0.5);		
+				} else if ((swordCount <= 30) && (swordCount % 2 == 0)){		
+					user.setOpacity(1);		
+				}
 				if (swordCount == -1) {
 					swordTime.getKeyFrames().clear();
 					swordTime.stop();
 					swordHeld = false;
 					System.out.println("Sword has broken");
-					swordCount = 3;
+					swordCount = 60;
 				}
 			}
 		});
 
 		swordTime.getKeyFrames().add(swordFrame);
 		swordTime.playFromStart();
+	}
+	
+	public void stopSwordTime() {
+		swordTime.getKeyFrames().clear();
+		swordTime.stop();
+		swordCount = 60;
 	}
   //--------------------------------------------------------------
     
