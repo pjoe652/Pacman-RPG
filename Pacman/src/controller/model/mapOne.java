@@ -55,6 +55,7 @@ public class mapOne extends level {
     private ArrayList<Node> coins = new ArrayList<Node>();
     private ArrayList<Node> platforms = new ArrayList<Node>();
     private ArrayList<Node> hearts = new ArrayList<Node>();
+    private ArrayList<Node> swords = new ArrayList<Node>();
  
     private Pane appRoot = new Pane();
     private Pane gameRoot = new Pane();
@@ -89,12 +90,16 @@ public class mapOne extends level {
     private Integer currentTime = startTime;
     private StackPane display = new StackPane();
     
+    
     private final Integer playTime = 120;
     private Integer gameTime = playTime;
+    private final Integer swordStart = 4;
+    private Integer swordCount = swordStart;
     private StackPane displayTime = new StackPane();
     private int count = 0;
     Timeline time = new Timeline();
     Timeline timer = new Timeline();
+    Timeline swordTime = new Timeline();
     LevelData map = new LevelData();
     private int maze[][] = map.getLevel0();
     private int checkMaze[][] = maze;
@@ -103,6 +108,8 @@ public class mapOne extends level {
     
     enemies red = new enemies();
     Node redEnemy = red.redEnemy();
+    private int swordGet = 0;
+    private boolean swordHeld = false;
     private final List<Integer>path = new ArrayList<Integer>();
     
     //Initializes the gameplay area
@@ -111,14 +118,16 @@ public class mapOne extends level {
       Image bg = new Image("img/floor.png");
         
       ImageView bgView = new ImageView(bg);
+      bgView.setFitWidth(1080);
+      bgView.setFitHeight(800);
         
       String scoreString = Integer.toString(getScore());
       
-      StackPane scoreValue = createMenu(100, 30, 800, 15, scoreString, Color.WHITE);
+      StackPane scoreValue = createMenu(100, 30, 850, 15, scoreString, Color.WHITE);
         
-      StackPane menuScore = createMenuRectangle(250, 40, 710, 10);
+      StackPane menuScore = createMenuRectangle(250, 40, 760, 10);
         
-      StackPane menuScoreLabel = createMenuText(720, 17, "Score: ", Color.WHITE);
+      StackPane menuScoreLabel = createMenuText(770, 17, "Score: ", Color.WHITE);
         
       StackPane Lives = createMenuRectangle(300, 40, 60, 10);
       
@@ -134,19 +143,21 @@ public class mapOne extends level {
        
         playerDead = false;
         
-        levelWidth = maze[0].length * 60;
+        levelWidth = maze[0].length * 40;
         if (coins.isEmpty()) {
             for (int i = 0; i < maze.length; i++) {
             	for (int j = 0; j < maze[i].length; j++) {
             		switch(maze[i][j]) {
             		case 0: break;
-            		case 1: Node Walls = createCharacter(j*60, i*60, 60, 60, Color.BLACK);
-            				Node Tile = createImage(60, 60, j*60, i*60, "img/tile2.png");
+            		case 1: Node Walls = createCharacter(j*40, i*40, 40, 40, Color.BLACK);
+            				Node Tile = createImage(40, 40, j*40, i*40, "img/tile2.png");
             				platforms.add(Walls);
             				break;
-            		case 2: Node coin = createImage(60, 60, j*60, i*60, "img/Coin.png");
+            		case 2: Node coin = createImage(40, 40, j*40, i*40, "img/Coin.png");
             				coins.add(coin);
             				break;	
+            		case 3: Node sword = createImage(40, 40, j*40, i*40, "img/sword.png");
+            				swords.add(sword);
             		}
             	}
             }
@@ -155,7 +166,7 @@ public class mapOne extends level {
         
         
 //        user = createCharacter(482, 662, 56, 56, Color.BLUE);
-        user = createKnight(482, 662, "character/KnightStart.png");
+        user = createKnight(522, 722, "character/KnightStart.png");
         redEnemy.setTranslateX(490);
         redEnemy.setTranslateY(150);
         redEnemy.getProperties().put("alive", true);
@@ -333,8 +344,31 @@ public class mapOne extends level {
 				}
 			}
 			
+			// Removes sword when collected
+			for (Node sword : swords) {
+				if (user.getBoundsInParent().intersects(sword.getBoundsInParent())) {
+					sword.getProperties().put("alive", false);
+					swordGet = 1;
+				}
+			}
+	        for (Iterator<Node> it = swords.iterator(); it.hasNext(); ) {
+	            Node sword = it.next();
+	            if (!(Boolean)sword.getProperties().get("alive")) {
+	                it.remove();
+	                gameRoot.getChildren().remove(sword);
+	            }
+	        }
+	        
+	        //
+	        if(swordGet == 1) {
+	        	swordHeld = true;
+	        	swordGet = 0;
+	        	swordUse();
+	        	setSwordTime();
+	        }
+			
 	        //Checks if player is killed
-	        if(!playerDead) {
+	        if(!playerDead && (!swordHeld)) {
 	        	if (user.getBoundsInParent().intersects(redEnemy.getBoundsInParent())) {
 	        		playerDead = true;
 	        		clearGame();
@@ -355,7 +389,7 @@ public class mapOne extends level {
 					CoinsCollected += 1;
 					Score += 50 * player.getScoreMultiplier();
 					String ScoreString = Integer.toString(Score);
-					StackPane scoreValue = createMenu(100, 30, 800, 15, ScoreString, Color.WHITE);
+					StackPane scoreValue = createMenu(100, 30, 850, 15, ScoreString, Color.WHITE);
 					appRoot.getChildren().add(scoreValue);
 					gameRoot.getChildren().remove(coin);
 					
@@ -364,7 +398,7 @@ public class mapOne extends level {
 			}
 
 			// Fades away when all coins collected
-			if (CoinsCollected == 86) {
+			if (CoinsCollected == 300) {
 				player.addPoints();
 
 				levelSelect select = new levelSelect();
@@ -376,6 +410,7 @@ public class mapOne extends level {
 
 	}
 
+    //Changes direction of model
     private void changeDirection(String direction) {
     	userX = user.getTranslateX();
     	userY = user.getTranslateY();
@@ -392,14 +427,14 @@ public class mapOne extends level {
             for (Node platform : platforms) {
                 if (user.getBoundsInParent().intersects(platform.getBoundsInParent())) {
                     if (movingRight) {
-                        if (user.getTranslateX() + 56 == platform.getTranslateX()) {
+                        if (user.getTranslateX() + 36 == platform.getTranslateX()) {
                         	
                         	user.setTranslateX(user.getTranslateX() - 2);
                             return;
                         }
                     }
                     else {
-                        if (user.getTranslateX() == platform.getTranslateX() + 60) {
+                        if (user.getTranslateX() == platform.getTranslateX() + 40) {
                         	
                         	user.setTranslateX(user.getTranslateX() + 2);
                             return;
@@ -408,10 +443,10 @@ public class mapOne extends level {
                 }
             }
             user.setTranslateX(user.getTranslateX() + (movingRight ? 1 : -1));
-            if (user.getTranslateX() + 56 == 1020.0) {
+            if (user.getTranslateX() + 36 == 1080.0) {
             	user.setTranslateX(0);
             } else if (user.getTranslateX() == 0) {
-            	user.setTranslateX(964.0);
+            	user.setTranslateX(1036.0);
             }
             
         }
@@ -425,14 +460,14 @@ public class mapOne extends level {
             for (Node platform : platforms) {
                 if (user.getBoundsInParent().intersects(platform.getBoundsInParent())) {
                     if (movingDown) {
-                        if (user.getTranslateY() + 56 == platform.getTranslateY()) {
+                        if (user.getTranslateY() + 36 == platform.getTranslateY()) {
                         	
                         	user.setTranslateY(user.getTranslateY() - 2);
                             return;
                         }
                     }
                     else {
-                        if (user.getTranslateY() == platform.getTranslateY() + 60) {
+                        if (user.getTranslateY() == platform.getTranslateY() + 40) {
                         	
                         	user.setTranslateY(user.getTranslateY() + 2);
                             return;
@@ -447,6 +482,8 @@ public class mapOne extends level {
 
     //Creates walls
     private Node createImage(int h, int w, int x, int y, String link) {
+    	
+    	//"img/tile.png"
     	
     	Image img = new Image(link);
     	ImageView imageView = new ImageView(img);
@@ -484,8 +521,8 @@ public class mapOne extends level {
     	ImageView knightView = new ImageView(knight);
     	knightView.setTranslateX(x);
     	knightView.setTranslateY(y);
-    	knightView.setFitHeight(56);
-    	knightView.setFitWidth(56);
+    	knightView.setFitHeight(36);
+    	knightView.setFitWidth(36);
     	
     	knightView.getProperties().put("alive", true);
     	
@@ -547,6 +584,12 @@ public class mapOne extends level {
     //Confirms key press
     private boolean isPressed(KeyCode key) {
         return keys.getOrDefault(key, false);
+    }
+    
+    private void swordUse() {
+    	if (user.getBoundsInParent().intersects(redEnemy.getBoundsInParent())) {
+    		gameRoot.getChildren().remove(redEnemy);
+    	}
     }
 
     public void mapGeneration(Stage map) throws Exception {
@@ -738,7 +781,7 @@ public class mapOne extends level {
 			@Override
 			public void handle(ActionEvent event) {
 				
-				display = createMenu(200, 68, 410 , 350, currentTime.toString(), Color.WHITE);
+				display = createMenu(200, 68, 440 , 350, currentTime.toString(), Color.WHITE);
 				uiRoot.getChildren().add(display);
 				currentTime--;
 				if (currentTime == 0) {
@@ -747,7 +790,7 @@ public class mapOne extends level {
 				}
 				if (currentTime == -1) {
 					
-					display = createMenu(200, 68, 410 , 350, "Start!", Color.WHITE);
+					display = createMenu(200, 68, 440 , 350, "Start!", Color.WHITE);
 					uiRoot.getChildren().add(display);
 				}
 				if (currentTime == -2) {
@@ -799,12 +842,12 @@ public class mapOne extends level {
 			@Override
 			public void handle(ActionEvent event) {
 				uiRoot.getChildren().clear();
-				displayTime = createMenu(100, 40, 460 , 10, gameTime.toString(), Color.WHITE);
+				displayTime = createMenu(100, 40, 490 , 10, gameTime.toString(), Color.WHITE);
 				uiRoot.getChildren().add(displayTime);
 				gameTime--;
 				if (gameTime == -1) {
 					time.stop();
-					displayTime = createMenu(100, 40, 460 , 10, "Times up!", Color.RED);
+					displayTime = createMenu(100, 40, 490 , 10, "Times up!", Color.RED);
 					uiRoot.getChildren().add(displayTime);
 					levelSelect select = new levelSelect();
 					select.levelFailed(stage);
@@ -826,9 +869,39 @@ public class mapOne extends level {
     public void resetGameTime() {
     	
     	time.getKeyFrames().clear();
-    	
     	time.playFromStart();
     }
+    
+    public void setSwordTime() {
+
+    	
+    	swordTime.setCycleCount(Timeline.INDEFINITE);
+    	
+    	
+    	
+    	if (swordTime != null) {
+    		swordTime.stop();
+    	}
+    	
+    	KeyFrame swordFrame = new KeyFrame(Duration.seconds(1), new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent event) {
+				swordCount--;
+				if (swordCount == -1) {
+					swordTime.getKeyFrames().clear();
+					swordTime.stop();
+					swordHeld = false;
+					System.out.println("Sword has broken");
+			    	swordCount = 3;
+				}
+			}
+    	});
+    	
+    	swordTime.getKeyFrames().add(swordFrame);
+    	swordTime.playFromStart();
+    }
+    
   //--------------------------------------------------------------
     
     public int getScore() {
