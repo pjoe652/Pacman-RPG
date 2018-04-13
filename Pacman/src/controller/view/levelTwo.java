@@ -391,4 +391,3 @@ private HashMap<KeyCode, Boolean> keys = new HashMap<KeyCode, Boolean>();
         timer.start();
     }
 }
-

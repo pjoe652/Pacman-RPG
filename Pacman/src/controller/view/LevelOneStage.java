@@ -127,6 +127,8 @@ public class LevelOneStage extends level {
     private final Integer swordStart = 60;
     private Integer swordCount = swordStart;
     private ArrayList<Node> swords = new ArrayList<Node>();
+    private int moveUp = 0;
+    private int moveRight = 0;
     
     private int coinCount = coins.size();
     
@@ -250,8 +252,8 @@ public class LevelOneStage extends level {
 				
 			double x = user.getTranslateX();
         	double y = user.getTranslateY();
-        	int newx = (int) (x/60);
-        	int newy = (int) (y/60);
+        	int newx = (int) (x/40);
+        	int newy = (int) (y/40);
         	
         	
 			checkMaze[newy][newx] = 9;
@@ -260,60 +262,77 @@ public class LevelOneStage extends level {
 				checkMaze[prevy][prevx] = 0;
 			}
 			
-			redx = (int)(redEnemy.getTranslateX()/60);
-			redy = (int)(redEnemy.getTranslateY()/60);
+			redx = (int)(redEnemy.getTranslateX()/40);
+			redy = (int)(redEnemy.getTranslateY()/40);
 
-			//p = getPathBFS(redy, redx);
-			if (p != null) {
-				while (p.getParent() != null) {
-					store.add(p);
-					System.out.println(p);
-					p = p.getParent();
-				}
-
-				Point point = null;
-				for (int i = 0; i < store.size(); i++) {
-					point = store.get(i);
-
-					if (point.x == redy && point.y == redx && i != 0) {
-						point = store.get(i - 1);
-						break;
-					}
-
-				}
-				if (redEnemy.getTranslateX() % 60 == 0 && redEnemy.getTranslateY() % 60 == 0) {
-					
-				}
-				p = point;
+			Point point;
+			if (redEnemy.getTranslateX()%40 == 0 && redEnemy.getTranslateY()%40 == 0) {
+				System.out.println("y: " + redy + "x: " + redx);
+				p = getPathBFS(redy, redx);
 				if (p != null) {
-					if (p.x > redy) {
-						moveredY(1);
-
-						//moveredY(3);
-					} else if (p.x < redy) {
-				
-							moveredY(-1);
-						
+					while (p.getParent() != null) {
+						store.add(p);
+						System.out.println(p);
+						p = p.getParent();
 					}
-					if (p.y > redx) {
-						
-							moveredX(1);
-						
-					} else if (p.y < redx) {
+					System.out.println();
+
 					
-							moveredX(-1);
-						
+					System.out.println("Tx: " + redEnemy.getTranslateY() + "Ty: " + redEnemy.getTranslateX());
+					point = null;
+					for (int i = 0; i < store.size(); i++) {
+						point = store.get(i);
+
+						if (point.x == redy && point.y == redx && i != 0) {
+							point = store.get(i - 1);
+
+							break;
+						}
+
+					}
+
+					p = point;
+					System.out.println("point: " + point);
+					if (p != null) {
+						if (p.x > redy) {
+							moveUp = 1;
+						} else if (p.x < redy) {
+							moveUp = 2;
+
+						} else if (p.x == redEnemy.getTranslateY() / 40.0) {
+							moveUp = 0;
+						}
+						if (p.y > redx) {
+							moveRight = 1;
+						} else if (p.y < redx) {
+							moveRight = 2;
+						} else if (p.y == redEnemy.getTranslateX() / 40.0) {
+							moveRight = 0;
+						}
 					}
 				}
 				
 			}
-			// }
+				
+			if (moveUp == 1) {
+				moveredY(20);
+				
+			} else if (moveUp == 2) {
+				
+				moveredY(-20);
 
-			redx = (int) (redEnemy.getTranslateX() / 60);
-			redy = (int) (redEnemy.getTranslateY() / 60);
+			}
+			if (moveRight == 1) {
+				
+				moveredX(20);
 
-			prevx = newx;
-			prevy = newy;
+			} else if (moveRight == 2) {
+				moveredX(-20);
+				
+			}
+			
+			redx = 0;
+			redy = 0;
 			store.clear();
 			
 			int speed = player.getSpeed();
@@ -1108,13 +1127,14 @@ public class LevelOneStage extends level {
 			Point p = q.remove();
 
 			if (ar[p.x][p.y] == 9) {
-				for (int i = 0; i < 13; i++) {
-					for (int j = 0; j < 17; j++) {
+				for (int i = 0; i < checkMaze.length; i++) {
+					for (int j = 0; j < checkMaze[0].length; j++) {
 						if (ar[i][j] == -1 || ar[i][j] == 9) {
 							ar[i][j] = 0;
 						}
 					}
 				}
+				q.clear();
 				return p;
 			}
 
@@ -1153,7 +1173,7 @@ public class LevelOneStage extends level {
 
 	public static boolean isFree(int x, int y, int lengthX, int lengthY, int[][] maze) {
 		if ((x >= 0 && x < lengthX) && (y >= 0 && y < lengthY)
-				&& (maze[x][y] == 0 || maze[x][y] == 9 || maze[x][y] == 2)) {
+				&& (maze[x][y] == 0 || maze[x][y] == 9 || maze[x][y] == 2 || maze[x][y] == 3)) {
 			return true;
 		}
 		return false;
