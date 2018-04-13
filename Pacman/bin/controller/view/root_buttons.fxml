@@ -7,11 +7,11 @@
 
 <AnchorPane prefHeight="768.0" prefWidth="1024.0" styleClass="root" stylesheets="@welcomeCss.css" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.view.welcomeControl">
    <children>
-      <Button layoutX="437.0" layoutY="359.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#handleStartButton" prefHeight="50.0" prefWidth="150.0" styleClass="start" stylesheets="@welcomeCss.css" text="Start" textFill="#0d090ade">
+      <Button layoutX="437.0" layoutY="359.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#handleStartButton" onKeyPressed="#handleStartOnKeyPressed" prefHeight="50.0" prefWidth="150.0" styleClass="start" stylesheets="@welcomeCss.css" text="Start" textFill="#0d090ade">
          <font>
             <Font size="25.0" />
          </font></Button>
-      <Button layoutX="437.0" layoutY="441.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#handleExitButton" prefHeight="50.0" prefWidth="150.0" styleClass="exit" stylesheets="@welcomeCss.css" text="Exit">
+      <Button layoutX="437.0" layoutY="441.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#handleExitButton" onKeyPressed="#handleExitOnKeyPressed" prefHeight="50.0" prefWidth="150.0" styleClass="exit" stylesheets="@welcomeCss.css" text="Exit">
          <font>
             <Font size="25.0" />
          </font></Button>

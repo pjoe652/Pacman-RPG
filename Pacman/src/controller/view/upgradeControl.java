@@ -106,10 +106,11 @@ public class upgradeControl extends characterControl {
 	@FXML
 	public void handleContinueButton(ActionEvent event) throws Exception {
 		
-		
+		level lvl = new level();
+		lvl.setLevel();
 		levelSelect select = new levelSelect();
-		stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-		select.selectLevel(stage);
+		//stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+		select.selectStory(event);
 		
 	}
 	

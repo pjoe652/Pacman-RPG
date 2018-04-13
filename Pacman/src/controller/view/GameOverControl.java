@@ -1,7 +1,6 @@
 package controller.view;
 
 import controller.model.character;
-import controller.model.mapOne;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
@@ -29,7 +28,7 @@ public class GameOverControl {
 	
 	
 	public void displayScore() {
-		mapOne score = new mapOne();
+		LevelOneStage score = new LevelOneStage();
 		int intScore = score.getScore();
 		String strScore = Integer.toString(intScore);
 		this.score.setText(strScore);
