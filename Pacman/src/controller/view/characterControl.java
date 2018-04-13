@@ -39,9 +39,6 @@ public class characterControl {
 			player.setName(name);
 			System.out.println("Entered name is: \"" + player.getName() + "\"");
 		}
-		
-		
-		
 	}
 	
 	@FXML

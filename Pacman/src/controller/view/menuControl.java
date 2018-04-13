@@ -10,6 +10,7 @@ import java.util.ResourceBundle;
 import java.util.Scanner;
 
 import controller.main;
+import controller.model.MusicPlayer;
 import controller.model.character;
 import javafx.animation.FadeTransition;
 import javafx.event.ActionEvent;
@@ -28,6 +29,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.media.MediaPlayer;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
@@ -37,12 +39,18 @@ public class menuControl {
 	
 	@FXML
 	public void handleSinglePlayerKeyPressed(KeyEvent event) throws IOException {
+		
 		switch (event.getCode()) {
 			case ENTER:
+				
 				Parent parent = FXMLLoader.load(getClass().getResource("characterCreation.fxml"));
 				Scene scene = new Scene(parent);
 				Stage characterStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
 				characterStage.setScene(scene);
+				characterStage.show();
+				MusicPlayer musicplayer = new MusicPlayer();
+				musicplayer.stopMusic();
+				musicplayer.playMusic();
 				break;
 		}
 	}
@@ -51,10 +59,14 @@ public class menuControl {
 	public void handleReturnKeyPressed(KeyEvent event) throws IOException {
 		switch (event.getCode()) {
 			case ENTER:
-				Parent parent = FXMLLoader.load(getClass().getResource("root_buttons.fxml"));
+				Parent parent = FXMLLoader.load(getClass().getResource("Welcome.fxml"));
 				Scene scene = new Scene(parent);
 				Stage characterStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
 				characterStage.setScene(scene);
+				characterStage.show();
+				MusicPlayer musicplayer = new MusicPlayer();
+				musicplayer.stopMusic();
+				musicplayer.playMusic();
 				break;
 		}
 	}
@@ -67,32 +79,25 @@ public class menuControl {
 		Scene scene = new Scene(parent);
 		Stage characterStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
 		characterStage.setScene(scene);
-		
-		
+		characterStage.show();
+		MusicPlayer musicplayer = new MusicPlayer();
+		musicplayer.stopMusic();
+		musicplayer.playMusic();
 	}
 	
-	@FXML
-	public void handleLoadButton(ActionEvent event) throws Exception {
-		
-		Parent parent = FXMLLoader.load(getClass().getResource("loadingScreen.fxml"));			
-		Scene scene = new Scene(parent);
-		Stage loadStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-		loadStage.setScene(scene);
-		loadStage.show();	
-		
-		
-	}
 	
 	@FXML
 	public void handleReturnButton(ActionEvent event) throws Exception {
 		//Return to the welcome scene
-		
-			
-			Parent parent = FXMLLoader.load(getClass().getResource("root_buttons.fxml"));			
+
+			Parent parent = FXMLLoader.load(getClass().getResource("Welcome.fxml"));			
 			Scene scene = new Scene(parent);
 			Stage menuStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
 			menuStage.setScene(scene);
-			menuStage.show();	
+			menuStage.show();
+			MusicPlayer musicplayer = new MusicPlayer();
+			musicplayer.stopMusic();
+			musicplayer.playMusic();
 	}
 	
 	

@@ -5,20 +5,20 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="768.0" prefWidth="1024.0" style="-fx-background-color: black;" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.view.GameOverControl">
+<AnchorPane prefHeight="800.0" prefWidth="1080.0" style="-fx-background-color: black;" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.view.GameOverControl">
    <children>
-      <Label layoutX="224.0" layoutY="162.0" style="-fx-background-color: red; -fx-text-fill: white;" text="GAMEOVER">
+      <Label layoutX="260.0" layoutY="195.0" style="-fx-background-color: red; -fx-text-fill: white;" text="GAMEOVER">
          <font>
             <Font size="100.0" />
          </font>
       </Label>
-      <Label layoutX="433.0" layoutY="369.0" style="-fx-text-fill: firebrick;" text="Score:">
+      <Label layoutX="469.0" layoutY="402.0" style="-fx-text-fill: firebrick;" text="Score:">
          <font>
             <Font size="25.0" />
          </font>
       </Label>
-      <Label fx:id="score" layoutX="557.0" layoutY="376.0" style="-fx-background-color: yellow;" text="Label" />
-      <Button layoutX="332.0" layoutY="449.0" mnemonicParsing="false" onAction="#handleRetryButton" prefHeight="56.0" prefWidth="141.0" text="Retry" />
-      <Button layoutX="557.0" layoutY="449.0" mnemonicParsing="false" prefHeight="56.0" prefWidth="141.0" text="Back" />
+      <Label fx:id="score" layoutX="593.0" layoutY="409.0" style="-fx-background-color: yellow;" text="Label" />
+      <Button layoutX="368.0" layoutY="482.0" mnemonicParsing="false" onAction="#handleRetryButton" prefHeight="56.0" prefWidth="141.0" text="Retry" />
+      <Button layoutX="593.0" layoutY="482.0" mnemonicParsing="false" prefHeight="56.0" prefWidth="141.0" text="Back" />
    </children>
 </AnchorPane>

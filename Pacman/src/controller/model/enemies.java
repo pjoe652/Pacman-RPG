@@ -10,31 +10,27 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
 public class enemies {
-	
+
 	private Rectangle red;
-	private ArrayList<Integer> pathx = new ArrayList<Integer>();
-	private ArrayList<Integer> pathy = new ArrayList<Integer>();
-	
-	public enemies() {
-		redEnemy();
-		
-	}
-	
+	private Rectangle blue;
+
+
 	public Node redEnemy() {
 		red = new Rectangle(40, 40);
-		//entity.setTranslateX(490);
-		//entity.setTranslateY(150);
 		red.setFill(Color.RED);
-		//entity.getProperties().put("alive", true);				
-		return red;	
+		return red;
 	}
-	
+
+	public Node blueEnemy() {
+		blue = new Rectangle(40, 40);
+		blue.setFill(Color.BLUE);
+		return blue;
+	}
+
 	public Node getRedEnemy() {
 		return red;
 	}
-	
-	
-	
-	
-
+	public Node getBlueEnemy() {
+		return blue;
+	}
 }

@@ -1,8 +1,10 @@
 package controller;
 
 
+import java.io.File;
 import java.io.IOException;
 
+import controller.model.MusicPlayer;
 import javafx.animation.FadeTransition;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
@@ -14,6 +16,9 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.*;
 import javafx.scene.effect.BlurType;
 import javafx.scene.layout.*;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
+import javafx.scene.media.MediaView;
 
 public class main extends Application {
 	@FXML Stage primaryStage;
@@ -27,14 +32,23 @@ public class main extends Application {
 		
 		
 		FXMLLoader loader = new FXMLLoader();
-		loader.setLocation(main.class.getResource("view/root_buttons.fxml"));
+		loader.setLocation(main.class.getResource("view/Welcome.fxml"));
 		Parent root = loader.load();
 		Scene scene = new Scene(root);
 		primaryStage.setScene(scene);
+		primaryStage.setResizable(false);
+		primaryStage.sizeToScene();
 		primaryStage.show();
 		
+		MusicPlayer musicplayer = new MusicPlayer();
+		musicplayer.playMusic();
 		
 	}
+	
+//	public void initialize(){
+//		
+//		mediaview.setMediaPlayer(player);
+//	}
 	
 //	public void fadeOut() {
 //		
@@ -52,34 +66,11 @@ public class main extends Application {
 //		
 //	}
 //	
-//	public void loadNextScene() {
-//		try {
-//			FXMLLoader loader = new FXMLLoader();
-//			loader.setLocation(main.class.getResource("view/root_buttons.fxml"));
-//			Parent root = loader.load();
-//			Scene scene = new Scene(root);
-//			primaryStage.setScene(scene);
-//			primaryStage.show();		
-//			
-//			
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//		}
-//	}
-	
-	
-	
-	public void initialize() {
-		
-	}
 	
 	public Stage getStage() {
 		return primaryStage;
 	}
 	
-	
-	
-
 	public static void main(String[] args) {
 		launch(args);
 	}

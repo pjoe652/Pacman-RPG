@@ -31,7 +31,7 @@ public class character {
 	//Constructor
 	public character() {
 		Hp = 3;
-		speed = 5;
+		speed = 2;
 		powerDuration = 5;
 		pointsAvailable = 0;
 		scoreMultiplier = 1.0;
