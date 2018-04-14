@@ -1,13 +1,40 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane prefHeight="768.0" prefWidth="1024.0" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.view.menuControl">
+<AnchorPane prefHeight="800.0" prefWidth="1080.0" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.view.menuControl">
    <children>
-      <Button layoutX="412.0" layoutY="333.0" mnemonicParsing="false" onAction="#handleSinglePlayerButton" onKeyPressed="#handleSinglePlayerKeyPressed" prefWidth="200.0" text="New Campaign" />
-      <Button layoutX="412.0" layoutY="390.0" mnemonicParsing="false" onAction="#handleMultiPlayerButton" prefWidth="200.0" text="MultiPlayer" />
-      <Button layoutX="412.0" layoutY="443.0" mnemonicParsing="false" prefWidth="200.0" text="Options" />
-      <Button layoutX="412.0" layoutY="490.0" mnemonicParsing="false" onAction="#handleReturnButton" onKeyPressed="#handleReturnKeyPressed" prefWidth="200.0" text="Return" />
+      <ImageView fitHeight="825.0" fitWidth="1080.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../../img/caveIntro.gif" />
+         </image>
+      </ImageView>
+      <ImageView fitHeight="61.0" fitWidth="294.0" layoutX="393.0" layoutY="256.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../../img/Menu/newCampaignBox.png" />
+         </image>
+      </ImageView>
+      <ImageView fitHeight="55.0" fitWidth="294.0" layoutX="393.0" layoutY="343.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../../img/Menu/multiplayerBox.png" />
+         </image>
+      </ImageView>
+      <ImageView fitHeight="55.0" fitWidth="294.0" layoutX="393.0" layoutY="431.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../../img/Menu/optionBox.png" />
+         </image>
+      </ImageView>
+      <ImageView fitHeight="81.0" fitWidth="294.0" layoutX="393.0" layoutY="518.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../../img/Menu/returnBox.png" />
+         </image>
+      </ImageView>
+      <Button layoutX="393.0" layoutY="256.0" mnemonicParsing="false" onAction="#handleSinglePlayerButton" onKeyPressed="#handleSinglePlayerKeyPressed" opacity="0.0" prefHeight="55.0" prefWidth="294.0" text="New Campaign" />
+      <Button layoutX="393.0" layoutY="343.0" mnemonicParsing="false" onAction="#handleMultiPlayerButton" opacity="0.0" prefHeight="55.0" prefWidth="294.0" text="MultiPlayer" />
+      <Button layoutX="393.0" layoutY="431.0" mnemonicParsing="false" opacity="0.0" prefHeight="55.0" prefWidth="294.0" text="Options" />
+      <Button layoutX="393.0" layoutY="518.0" mnemonicParsing="false" onAction="#handleReturnButton" onKeyPressed="#handleReturnKeyPressed" opacity="0.0" prefHeight="55.0" prefWidth="294.0" text="Return" />
    </children>
 </AnchorPane>

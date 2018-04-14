@@ -40,21 +40,24 @@ private HashMap<KeyCode, Boolean> keys = new HashMap<KeyCode, Boolean>();
     
     //Initializes the gameplay area
     private void initContent() {
-//        Rectangle bg = new Rectangle(1020, 768);
-    	//Background set
-        Image bg = new Image("https://drawingcollection.com/wp-content/uploads/2017/06/village-landscape-drawings-pastel-painting-how-to-draw-a-simple-landscape-episode-5-youtube.jpg");
-        ImageView bgView = new ImageView(bg);
-        bgView.setFitWidth(1028);
-        bgView.setFitHeight(768);
-        //Speech box set
-        Image Speech = new Image("lvlOneImg/SpeechBox.png");
-        ImageView SpeechView = new ImageView(Speech);
+//      Rectangle bg = new Rectangle(1020, 768);
+  	//appRoot size
+    	
+    appRoot.setMinSize(1080, 800);
+  	//Background set
+    Image bg = new Image("https://drawingcollection.com/wp-content/uploads/2017/06/village-landscape-drawings-pastel-painting-how-to-draw-a-simple-landscape-episode-5-youtube.jpg");
+    ImageView bgView = new ImageView(bg);
+    bgView.setFitWidth(1080);
+    bgView.setFitHeight(800);
+       //Speech box set
+    Image Speech = new Image("lvlOneImg/SpeechBox.png");
+    ImageView SpeechView = new ImageView(Speech);
         //Initialize text
-        Text text = new Text();
-        gameRoot.getChildren().add(text);
+    Text text = new Text();
+    gameRoot.getChildren().add(text);
         
 
-        appRoot.getChildren().addAll(bgView, uiRoot, SpeechView, gameRoot);
+    appRoot.getChildren().addAll(bgView, uiRoot, SpeechView, gameRoot);
         
     }
     
@@ -121,7 +124,7 @@ private HashMap<KeyCode, Boolean> keys = new HashMap<KeyCode, Boolean>();
     	text.setText(script);
     	text.setFont(Font.font("Verdana", 20));
     	text.setTranslateX(50);
-    	text.setTranslateY(550);
+    	text.setTranslateY(575);
     	
     	return text;
     	
@@ -146,8 +149,8 @@ private HashMap<KeyCode, Boolean> keys = new HashMap<KeyCode, Boolean>();
     	
 		name.setText(characterName);
     	name.setFont(Font.font("Verdana", FontWeight.BOLD, 20));
-    	name.setTranslateX(90);
-    	name.setTranslateY(475);
+    	name.setTranslateX(95);
+    	name.setTranslateY(493);
     	
     	return name;
     	

@@ -63,10 +63,10 @@ private HashMap<KeyCode, Boolean> keys = new HashMap<KeyCode, Boolean>();
     	//Background set
         Image bg = new Image("img/Cave.jpg");
         ImageView bgView = new ImageView(bg);
-        bgView.setFitWidth(1038);
-        bgView.setFitHeight(778);
+        bgView.setFitWidth(1120);
+        bgView.setFitHeight(840);
         //Gamebox Set
-        appRoot.setPrefSize(1028, 768);
+        appRoot.setPrefSize(1080, 800);
         //Speech box set
         Image Speech = new Image("lvlOneImg/SpeechBox.png");
         ImageView SpeechView = new ImageView(Speech);
@@ -183,7 +183,7 @@ private HashMap<KeyCode, Boolean> keys = new HashMap<KeyCode, Boolean>();
     	text.setText(script);
     	text.setFont(Font.font("Verdana", 20));
     	text.setTranslateX(50);
-    	text.setTranslateY(550);
+    	text.setTranslateY(575);
     	
     	return text;
     	
@@ -209,7 +209,7 @@ private HashMap<KeyCode, Boolean> keys = new HashMap<KeyCode, Boolean>();
 		name.setText(characterName);
     	name.setFont(Font.font("Verdana", FontWeight.BOLD, 20));
     	name.setTranslateX(90);
-    	name.setTranslateY(475);
+    	name.setTranslateY(493);
     	
     	return name;
     	
@@ -247,7 +247,7 @@ private HashMap<KeyCode, Boolean> keys = new HashMap<KeyCode, Boolean>();
     	//choice1Button.setPrefSize(883, 90);
     	choice1Button.setMinWidth(883);
     	choice1Button.setMinHeight(90);
-    	choice1Button.setOpacity(0.2);
+    	choice1Button.setOpacity(0);
 
     	//Choice 2
     	
@@ -258,7 +258,7 @@ private HashMap<KeyCode, Boolean> keys = new HashMap<KeyCode, Boolean>();
     	choice2Button.setTranslateX(72);
     	choice2Button.setTranslateY(300);
     	choice2Button.setPrefSize(883, 90);
-    	choice2Button.setOpacity(0.2);
+    	choice2Button.setOpacity(0);
 
     	
     	uiRoot.getChildren().addAll(choice1Box, choice1Button, choice2Box, choice2Button);

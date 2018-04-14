@@ -45,14 +45,14 @@ public class characterControl {
 	public void handleNextButton(ActionEvent event) throws Exception {
 		
 		
-			if (player.getGender() == ' ') {
+			if (player.getModel() == "") {
 				Alert warning = new Alert(AlertType.ERROR);
 				warning.setTitle("Error");
 				warning.setHeaderText("No character model detected");
 				warning.setContentText("Please select a character model");
 				warning.showAndWait();
 			}
-			if (player.getGender() != ' ' && player.getName() == null) {
+			if (player.getModel() != "" && player.getName() == null) {
 				Alert warning = new Alert(AlertType.CONFIRMATION);
 				warning.setTitle("Confirmation");
 				warning.setHeaderText("Are you sure to have a default name? \n Default name: Andrew Chen");
@@ -69,12 +69,12 @@ public class characterControl {
 				
 			}			
 			
-			if (player.getName() != null && player.getGender() != ' ') {
+			if (player.getName() != null && player.getModel() != "") {
 				
 				Alert warning = new Alert(AlertType.CONFIRMATION);
 				warning.setTitle("Confirmation");
 				warning.setHeaderText("Confirm your character detail");
-				warning.setContentText(" character name: " + player.getName() + "\n gender: " + player.getGender() + "\n");
+				warning.setContentText(" Character Mame: " + player.getName() + "\n Model: " + player.getModel() + "\n");
 				ButtonType Return = new ButtonType("Return");
 				ButtonType Accept = new ButtonType("Accept");
 
@@ -101,7 +101,7 @@ public class characterControl {
 	}
 	
 	@FXML
-	public void handleClickedButton() {
+	public void handleBlackKnightClickedButton() {
 		Alert warning = new Alert(AlertType.CONFIRMATION);
 		warning.setTitle("Confirmation");
 		warning.setHeaderText("Please click yes to confirm");
@@ -112,8 +112,8 @@ public class characterControl {
 		Optional<ButtonType> result = warning.showAndWait();
 		
 		if (result.get() == yes) {
-			player.setGender('M');
-			System.out.println("Selected male");
+			player.setModel("Black Knight");
+			System.out.println("Selected Black Knight");
 		}
 	}
 	
@@ -129,8 +129,25 @@ public class characterControl {
 		Optional<ButtonType> result = warning.showAndWait();
 		
 		if (result.get() == yes) {
-			player.setGender('F');
-			System.out.println("Selected female");
+			player.setModel("Female Knight");
+			System.out.println("Selected Female Knight");
+		}
+	}
+	
+	@FXML
+	public void handleBeardedKnightClickedButton() {
+		Alert warning = new Alert(AlertType.CONFIRMATION);
+		warning.setTitle("Confirmation");
+		warning.setHeaderText("Please click yes to confirm");
+		ButtonType no = new ButtonType("No");
+		ButtonType yes = new ButtonType("Yes");
+
+		warning.getButtonTypes().setAll(yes, no);				
+		Optional<ButtonType> result = warning.showAndWait();
+		
+		if (result.get() == yes) {
+			player.setModel("Bearded Knight");
+			System.out.println("Selected Bearded Knight");
 		}
 	}
 	

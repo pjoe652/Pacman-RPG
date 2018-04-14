@@ -3,26 +3,122 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Tooltip?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.paint.RadialGradient?>
+<?import javafx.scene.paint.Stop?>
+<?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="768.0" prefWidth="1024.0" stylesheets="@upgrade.css" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.view.upgradeControl">
+<AnchorPane prefHeight="800.0" prefWidth="1080.0" stylesheets="@upgrade.css" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.view.upgradeControl">
    <children>
-      <Label layoutX="512.0" layoutY="198.0" prefHeight="16.0" prefWidth="144.0" text="Hp">
+      <Rectangle arcHeight="5.0" arcWidth="5.0" height="800.0" stroke="BLACK" strokeType="INSIDE" width="1082.0">
+         <fill>
+            <RadialGradient centerX="0.5" centerY="0.3047619047619048" focusAngle="90.0" focusDistance="1.0" radius="0.4534883720930233">
+               <stops>
+                  <Stop color="#eee272" />
+                  <Stop color="#eee272" offset="0.007662835249042145" />
+                  <Stop color="BLACK" offset="1.0" />
+               </stops>
+            </RadialGradient>
+         </fill>
+      </Rectangle>
+      <ImageView fitHeight="800.0" fitWidth="1080.0" layoutX="2.0" layoutY="217.0" opacity="0.32" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../../img/gold-coins-animated-gif.gif" />
+         </image>
+      </ImageView>
+      <ImageView fitHeight="128.0" fitWidth="1036.0" layoutX="24.0" layoutY="14.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../../img/Upgrade/upgradeBox.png" />
+         </image>
+      </ImageView>
+      <ImageView fitHeight="307.0" fitWidth="284.0" layoutX="24.0" layoutY="200.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../../img/Upgrade/characterBox.png" />
+         </image>
+      </ImageView>
+      <ImageView fitHeight="58.0" fitWidth="255.0" layoutX="347.0" layoutY="203.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../../img/Upgrade/attributesBox.png" />
+         </image>
+      </ImageView>
+      <ImageView fitHeight="85.0" fitWidth="330.0" layoutX="595.0" layoutY="203.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../../img/Upgrade/avaliableBox.png" />
+         </image>
+      </ImageView>
+      <ImageView fitHeight="58.0" fitWidth="104.0" layoutX="930.0" layoutY="203.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../../img/Upgrade/pointsBox.png" />
+         </image>
+      </ImageView>
+      <ImageView fitHeight="320.0" fitWidth="373.0" layoutX="347.0" layoutY="310.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../../img/Upgrade/statsBox.png" />
+         </image>
+      </ImageView>
+      <ImageView fitHeight="320.0" fitWidth="126.0" layoutX="704.0" layoutY="310.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../../img/Upgrade/statsPointsBox.png" />
+         </image>
+      </ImageView>
+      <ImageView fitHeight="54.0" fitWidth="55.0" layoutX="883.0" layoutY="347.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../../img/Upgrade/plusMinusBox.png" />
+         </image>
+      </ImageView>
+      <ImageView fitHeight="54.0" fitWidth="55.0" layoutX="808.0" layoutY="347.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../../img/Upgrade/plusMinusBox.png" />
+         </image>
+      </ImageView>
+      <ImageView fitHeight="54.0" fitWidth="55.0" layoutX="883.0" layoutY="442.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../../img/Upgrade/plusMinusBox.png" />
+         </image>
+      </ImageView>
+      <ImageView fitHeight="54.0" fitWidth="55.0" layoutX="808.0" layoutY="442.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../../img/Upgrade/plusMinusBox.png" />
+         </image>
+      </ImageView>
+      <ImageView fitHeight="54.0" fitWidth="55.0" layoutX="883.0" layoutY="533.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../../img/Upgrade/plusMinusBox.png" />
+         </image>
+      </ImageView>
+      <ImageView fitHeight="54.0" fitWidth="55.0" layoutX="808.0" layoutY="533.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../../img/Upgrade/plusMinusBox.png" />
+         </image>
+      </ImageView>
+      <ImageView fitHeight="54.0" fitWidth="235.0" layoutX="803.0" layoutY="688.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../../img/Upgrade/continueBox.png" />
+         </image>
+      </ImageView>
+      <Label fx:id="points" alignment="CENTER" contentDisplay="CENTER" layoutX="936.0" layoutY="209.0" prefHeight="46.0" prefWidth="76.0" text="label" textFill="#167c15">
          <font>
-            <Font name="Lato Heavy Italic" size="25.0" />
+            <Font name="System Bold" size="18.0" />
          </font></Label>
-      <Label layoutX="512.0" layoutY="258.0" text="Speed">
+      <Label fx:id="Hp" alignment="CENTER" contentDisplay="CENTER" layoutX="713.0" layoutY="358.0" prefHeight="26.0" prefWidth="55.0" text="Label" textFill="WHITE">
          <font>
-            <Font name="Lato Heavy Italic" size="25.0" />
+            <Font name="System Bold" size="17.0" />
          </font></Label>
-      <Label layoutX="512.0" layoutY="321.0" prefWidth="199.0" text="Power duration">
+      <Label id="speed" fx:id="speed" alignment="CENTER" contentDisplay="CENTER" layoutX="712.0" layoutY="453.0" prefHeight="26.0" prefWidth="55.0" text="Label" textFill="WHITE">
          <font>
-            <Font name="Lato Heavy Italic" size="25.0" />
+            <Font name="System Bold" size="17.0" />
          </font></Label>
-      <Button layoutX="838.0" layoutY="190.0" mnemonicParsing="false" onAction="#handleHpButton" styleClass="HpButton" stylesheets="@upgrade.css" text="+" textFill="#ee1212">
+      <Label fx:id="powerDuration" alignment="CENTER" contentDisplay="CENTER" layoutX="712.0" layoutY="544.0" prefHeight="26.0" prefWidth="55.0" text="Label" textFill="WHITE">
+         <font>
+            <Font name="System Bold" size="17.0" />
+         </font></Label>
+      <Button layoutX="803.0" layoutY="687.0" mnemonicParsing="false" onAction="#handleContinueButton" opacity="0.0" prefHeight="56.0" prefWidth="214.0" text="Continue" />
+      <Button layoutX="811.0" layoutY="346.0" mnemonicParsing="false" onAction="#handlePlusHpButton" styleClass="HpButton" stylesheets="@upgrade.css" text="+" textFill="#ee1212">
          <tooltip>
-            <Tooltip text="This increases the amount of lives available.\nThis requires 3 points to increase one life!">
+            <Tooltip text="This increases the amount of lives available. This requires 3 points to increase one life!">
                <font>
                   <Font size="10.0" />
                </font></Tooltip>
@@ -30,9 +126,9 @@
          <font>
             <Font name="DejaVu Serif Bold" size="25.0" />
          </font></Button>
-      <Button layoutX="838.0" layoutY="250.0" mnemonicParsing="false" onAction="#handleSpButton" styleClass="HpButton" stylesheets="@upgrade.css" text="+" textFill="#f20000">
+      <Button layoutX="811.0" layoutY="441.0" mnemonicParsing="false" onAction="#handlePlusSpButton" styleClass="HpButton" stylesheets="@upgrade.css" text="+" textFill="#f20000">
          <tooltip>
-            <Tooltip text="This increases the movement speed of the character">
+            <Tooltip text="This increases the movement speed of the character per point.">
                <font>
                   <Font size="10.0" />
                </font>
@@ -41,9 +137,9 @@
          <font>
             <Font name="DejaVu Serif Bold" size="25.0" />
          </font></Button>
-      <Button layoutX="838.0" layoutY="313.0" mnemonicParsing="false" onAction="#handlePowerButton" prefHeight="32.0" prefWidth="55.0" styleClass="HpButton" stylesheets="@upgrade.css" text="+" textFill="#fc0202">
+      <Button layoutX="808.0" layoutY="532.0" mnemonicParsing="false" onAction="#handlePlusPowerButton" prefHeight="32.0" prefWidth="55.0" styleClass="HpButton" stylesheets="@upgrade.css" text="+" textFill="#fc0202">
          <tooltip>
-            <Tooltip text="This increases the duration of each power pellet">
+            <Tooltip text="This increases the duration of each power pellet per point.">
                <font>
                   <Font size="10.0" />
                </font>
@@ -52,46 +148,9 @@
          <font>
             <Font name="DejaVu Serif Bold" size="25.0" />
          </font></Button>
-      <Label layoutX="512.0" layoutY="147.0" text="points available:">
-         <font>
-            <Font size="20.0" />
-         </font></Label>
-      <Label fx:id="Hp" layoutX="756.0" layoutY="206.0" prefHeight="16.0" prefWidth="36.0" text="label" />
-      <Label id="speed" fx:id="speed" layoutX="756.0" layoutY="266.0" prefHeight="16.0" prefWidth="36.0" text="label" />
-      <Label fx:id="powerDuration" layoutX="756.0" layoutY="329.0" text="Label" />
-      <Label fx:id="points" layoutX="756.0" layoutY="152.0" prefHeight="16.0" prefWidth="36.0" text="label" />
-      <Button layoutX="811.0" layoutY="685.0" mnemonicParsing="false" onAction="#handleContinueButton" prefHeight="56.0" prefWidth="175.0" text="Continue" />
-      <Label layoutX="512.0" layoutY="87.0" text="Attributes">
-         <font>
-            <Font size="40.0" />
-         </font>
-      </Label>
-      <Label layoutX="512.0" layoutY="390.0" text="Perks">
-         <font>
-            <Font size="40.0" />
-         </font>
-      </Label>
-      <Label layoutX="512.0" layoutY="454.0" text="Number of achievements unlocked:">
-         <font>
-            <Font size="20.0" />
-         </font>
-      </Label>
-      <Label id="achievement" fx:id="achievement" layoutX="885.0" layoutY="459.0" text="Label" />
-      <Label layoutX="512.0" layoutY="499.0" prefWidth="199.0" text="Score Multiplier">
-         <font>
-            <Font name="Lato Heavy Italic" size="25.0" />
-         </font>
-      </Label>
-      <Label layoutX="512.0" layoutY="552.0" prefWidth="199.0" text="Extra Power Pellet">
-         <font>
-            <Font name="Lato Heavy Italic" size="25.0" />
-         </font>
-      </Label>
-      <Label fx:id="scoreMultiplier" layoutX="756.0" layoutY="507.0" text="Label" />
-      <Label fx:id="extraPowerPellet" layoutX="756.0" layoutY="568.0" text="Label" />
-      <Button layoutX="838.0" layoutY="491.0" mnemonicParsing="false" prefHeight="32.0" prefWidth="55.0" styleClass="HpButton" stylesheets="@upgrade.css" text="+" textFill="#fc0202">
+      <Button layoutX="884.0" layoutY="346.0" mnemonicParsing="false" onAction="#handleMinusHpButton" prefHeight="54.0" prefWidth="52.0" styleClass="HpButton" stylesheets="@upgrade.css" text="-" textAlignment="CENTER" textFill="#ee1212">
          <tooltip>
-            <Tooltip text="Not sure why the fuck it is here">
+            <Tooltip text="This refunds a point spent on HP during this upgrade session.">
                <font>
                   <Font size="10.0" />
                </font>
@@ -101,9 +160,9 @@
             <Font name="DejaVu Serif Bold" size="25.0" />
          </font>
       </Button>
-      <Button layoutX="838.0" layoutY="552.0" mnemonicParsing="false" prefHeight="32.0" prefWidth="55.0" styleClass="HpButton" stylesheets="@upgrade.css" text="+" textFill="#fc0202">
+      <Button layoutX="888.0" layoutY="441.0" mnemonicParsing="false" onAction="#handleMinusSpButton" styleClass="HpButton" stylesheets="@upgrade.css" text="-" textFill="#f20000">
          <tooltip>
-            <Tooltip text="Not sure why the fuck it is here">
+            <Tooltip text="This refunds a point spent on Speed in this upgrade session.">
                <font>
                   <Font size="10.0" />
                </font>
@@ -113,10 +172,23 @@
             <Font name="DejaVu Serif Bold" size="25.0" />
          </font>
       </Button>
-      <Label layoutX="24.0" layoutY="71.0" text="Upgrade">
+      <Button layoutX="883.0" layoutY="532.0" mnemonicParsing="false" onAction="#handleMinusPowerButton" prefHeight="32.0" prefWidth="55.0" styleClass="HpButton" stylesheets="@upgrade.css" text="-" textFill="#fc0202">
+         <tooltip>
+            <Tooltip text="This refunds the points spent on sword duration during this upgrade session.">
+               <font>
+                  <Font size="10.0" />
+               </font>
+            </Tooltip>
+         </tooltip>
          <font>
-            <Font size="80.0" />
+            <Font name="DejaVu Serif Bold" size="25.0" />
          </font>
-      </Label>
+      </Button>
+      <ImageView fx:id="characterView" fitHeight="200.0" fitWidth="200.0" layoutX="65.0" layoutY="246.0" nodeOrientation="INHERIT" pickOnBounds="true" preserveRatio="true" />
+      <ImageView fitHeight="183.0" fitWidth="284.0" layoutX="24.0" layoutY="512.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../../img/Upgrade/explainedBox.png" />
+         </image>
+      </ImageView>
    </children>
 </AnchorPane>

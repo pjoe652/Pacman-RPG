@@ -6,7 +6,8 @@ public class character {
 	
 	
 	protected String characterName;
-	protected char gender;
+	protected String model;
+	private String modelLocation;
 	
 	protected ArrayList<String> unlockedAchievement = new ArrayList<String>();
 	
@@ -36,7 +37,7 @@ public class character {
 		pointsAvailable = 0;
 		scoreMultiplier = 1.0;
 		extraPowerPellets = 0;
-		gender = ' ';
+		model = "Black Knight";
 	}
 	
 	//------------Name--------------------
@@ -50,18 +51,22 @@ public class character {
 	//------------------------------------
 	
 	//-------------Gender-------------------
-	public void setGender(char gender) {
-		this.gender = gender;
+	public void setModel(String model) {
+		this.model = model;
 	}
 	
-	public char getGender() {
-		return gender;
+	public String getModel() {
+		return model;
 	}
 	//-------------------------------------	
 	
 	//----------------Hp-----------------
 	public void addHp() {
 		Hp++;
+	}
+	
+	public void minusHp() {
+		Hp--;
 	}
 	
 	public int getHp() {
@@ -74,6 +79,10 @@ public class character {
 		speed = speed + 1;
 	}
 	
+	public void minusSpeed() {
+		speed -= 1;
+	}
+	
 	public int getSpeed() {
 		return speed;
 	}
@@ -84,6 +93,10 @@ public class character {
 		powerDuration = powerDuration + 0.5;
 	}
 	
+	public void minusPowerDuration() {
+		powerDuration -= 0.5;
+	}
+	
 	public double getPowerDuration() {
 		return powerDuration;
 	}
@@ -92,6 +105,10 @@ public class character {
 	//---------------Points----------------
 	public void addPoints() {
 		pointsAvailable = pointsAvailable + 2;
+	}
+	
+	public void returnPoints(int points) {
+		pointsAvailable += points;
 	}
 	
 	public void deductPoints() {
@@ -140,7 +157,48 @@ public class character {
 	//---------------------Skin---------------------
 	public void setSkin() {
 		
-		
-		
 	}
+	
+	//---------------------GetModel---------------------
+	public String getModelDirection(String direction) {
+		if (this.model.equals("Black Knight")) {
+			if (direction.equals("NONE")) {
+				modelLocation = "character/BlackKnight/KnightStart.png";
+			} else if (direction.equals("RIGHT")) {
+				modelLocation =  "character/BlackKnight/KnightRight.gif";
+			} else if (direction.equals("LEFT")) {
+				modelLocation =  "character/BlackKnight/KnightLeft.gif";
+			} else if (direction.equals("UP")) {
+				modelLocation =  "character/BlackKnight/KnightUp.gif";
+			} else if (direction.equals("DOWN")) {
+				modelLocation =  "character/BlackKnight/KnightDown.gif";
+			}
+		} else if (this.model.equals("Female Knight")) {
+			if (direction.equals("NONE")) {
+				modelLocation = "character/FemaleKnight/FemaleKnightStart.png";
+			} else if (direction.equals("RIGHT")) {
+				modelLocation =  "character/FemaleKnight/FemaleKnightRight.gif";
+			} else if (direction.equals("LEFT")) {
+				modelLocation =  "character/FemaleKnight/FemaleKnightLeft.gif";
+			} else if (direction.equals("UP")) {
+				modelLocation =  "character/FemaleKnight/FemaleKnightUp.gif";
+			} else if (direction.equals("DOWN")) {
+				modelLocation =  "character/FemaleKnight/FemaleKnightDown.gif";
+			}
+		} else if (this.model.equals("Bearded Knight")) {
+			if (direction.equals("NONE")) {
+				modelLocation = "character/BeardedKnight/BeardedKnightStart.png";
+			} else if (direction.equals("RIGHT")) {
+				modelLocation =  "character/BeardedKnight/BeardedKnightRight.gif";
+			} else if (direction.equals("LEFT")) {
+				modelLocation =  "character/BeardedKnight/BeardedKnightLeft.gif";
+			} else if (direction.equals("UP")) {
+				modelLocation =  "character/BeardedKnight/BeardedKnightUp.gif";
+			} else if (direction.equals("DOWN")) {
+				modelLocation =  "character/BeardedKnight/BeardedKnightDown.gif";
+			}
+		}
+		return modelLocation;
+	}
+	//---------------------------------------------
 }

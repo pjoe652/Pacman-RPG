@@ -198,7 +198,7 @@ public class LevelOneStage extends level {
 		}
 
 		// Create characters in the game
-		user = createKnight(522, 722, "character/KnightStart.png");
+		user = createKnight(522, 722, player.getModelDirection(direction));
 		redEnemy.setTranslateX(520);
 		redEnemy.setTranslateY(360);
 		redEnemy.getProperties().put("alive", true);
@@ -343,6 +343,7 @@ public class LevelOneStage extends level {
 			// Fades away when all coins collected
 			if (CoinsCollected == 150) {
 				coinBagSFX();
+				stopGameTime();
 				levelSelect select = new levelSelect();
 				try {
 					select.levelClear(stage);
@@ -360,7 +361,7 @@ public class LevelOneStage extends level {
 		userX = user.getTranslateX();
 		userY = user.getTranslateY();
 		userRoot.getChildren().clear();
-		user = createKnight(userX, userY, direction);
+		user = createKnight(userX, userY, player.getModelDirection(direction));
 
 	}
 
@@ -690,6 +691,14 @@ public class LevelOneStage extends level {
 
 		time.play();
 	}
+	
+    public void stopGameTime() {
+    	
+    	time.getKeyFrames().clear();
+    	
+    	time.stop();
+    	
+    }
 	
 	//------------------------------------SWORD----------------------------------
 	// Check sword use
@@ -1070,25 +1079,25 @@ public class LevelOneStage extends level {
 		// Direction Move
 		if (direction.equals("UP")) {
 			if (directionSet == 0) {
-				changeDirection("character/KnightUp.gif");
+				changeDirection(player.getModelDirection(direction));
 				directionSet = 1;
 			}
 			moveuserY(negativeSpeed);
 		} else if (direction.equals("LEFT")) {
 			if (directionSet == 0) {
-				changeDirection("character/KnightLeft.gif");
+				changeDirection(player.getModelDirection(direction));
 				directionSet = 1;
 			}
 			moveuserX(negativeSpeed);
 		} else if (direction.equals("RIGHT")) {
 			if (directionSet == 0) {
-				changeDirection("character/KnightRight.gif");
+				changeDirection(player.getModelDirection(direction));
 				directionSet = 1;
 			}
 			moveuserX(speed);
 		} else if (direction.equals("DOWN")) {
 			if (directionSet == 0) {
-				changeDirection("character/KnightDown.gif");
+				changeDirection(player.getModelDirection(direction));
 				directionSet = 1;
 			}
 			moveuserY(speed);
