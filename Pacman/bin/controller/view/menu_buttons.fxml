@@ -6,7 +6,7 @@
 <AnchorPane prefHeight="768.0" prefWidth="1024.0" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.view.menuControl">
    <children>
       <Button layoutX="412.0" layoutY="333.0" mnemonicParsing="false" onAction="#handleSinglePlayerButton" onKeyPressed="#handleSinglePlayerKeyPressed" prefWidth="200.0" text="New Campaign" />
-      <Button layoutX="412.0" layoutY="390.0" mnemonicParsing="false" prefWidth="200.0" text="MultiPlayer" />
+      <Button layoutX="412.0" layoutY="390.0" mnemonicParsing="false" onAction="#handleMultiPlayerButton" prefWidth="200.0" text="MultiPlayer" />
       <Button layoutX="412.0" layoutY="443.0" mnemonicParsing="false" prefWidth="200.0" text="Options" />
       <Button layoutX="412.0" layoutY="490.0" mnemonicParsing="false" onAction="#handleReturnButton" onKeyPressed="#handleReturnKeyPressed" prefWidth="200.0" text="Return" />
    </children>

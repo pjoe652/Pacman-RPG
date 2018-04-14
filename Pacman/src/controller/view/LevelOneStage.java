@@ -254,98 +254,21 @@ public class LevelOneStage extends level {
 				count++;
 			}
 
-			//Capture the position of the player
-			//Update to checkMaze for BFS to find the player
+			// Capture the position of the player
+			// Update to checkMaze for BFS to find the player
 			double x = user.getTranslateX();
 			double y = user.getTranslateY();
 			int newx = (int) (x / 40);
 			int newy = (int) (y / 40);
 
 			checkMaze[newy][newx] = 9;
-			
-			//Move red enemy
+
+			// Move red enemy
 			redMovement();
-			
-			int speed = player.getSpeed();
-			int negativeSpeed = 0 - speed;
 
-			prevDirection = direction;
-			coinCount = coins.size();
+			// coinCount = coins.size();
 
-			// Direction select
-			if (isPressed(KeyCode.UP) && user.getTranslateY() >= 5) {
-				direction = "UP";
-			}
-
-			if (isPressed(KeyCode.LEFT) && user.getTranslateX() >= 5) {
-				direction = "LEFT";
-			}
-
-			if (isPressed(KeyCode.RIGHT) && user.getTranslateX() + 40 <= levelWidth - 5) {
-				direction = "RIGHT";
-			}
-
-			if (isPressed(KeyCode.DOWN) && user.getTranslateY() + 40 >= 5) {
-				direction = "DOWN";
-			}
-			if (isPressed(KeyCode.UP) && (isPressed(KeyCode.RIGHT))) {
-				direction = "UP_RIGHT";
-			}
-			if (isPressed(KeyCode.UP) && (isPressed(KeyCode.LEFT))) {
-				direction = "UP_LEFT";
-			}
-			if (isPressed(KeyCode.DOWN) && (isPressed(KeyCode.RIGHT))) {
-				direction = "DOWN_RIGHT";
-			}
-			if (isPressed(KeyCode.DOWN) && (isPressed(KeyCode.LEFT))) {
-				direction = "DOWN_LEFT";
-			}
-			if (isPressed(KeyCode.P)) {
-				direction = "NONE";
-			}
-
-			if (!prevDirection.equals(direction)) {
-				directionSet = 0;
-			}
-
-			// Direction Move
-			if (direction.equals("UP")) {
-				if (directionSet == 0) {
-					changeDirection("character/KnightUp.gif");
-					directionSet = 1;
-				}
-				moveuserY(negativeSpeed);
-			} else if (direction.equals("LEFT")) {
-				if (directionSet == 0) {
-					changeDirection("character/KnightLeft.gif");
-					directionSet = 1;
-				}
-				moveuserX(negativeSpeed);
-			} else if (direction.equals("RIGHT")) {
-				if (directionSet == 0) {
-					changeDirection("character/KnightRight.gif");
-					directionSet = 1;
-				}
-				moveuserX(speed);
-			} else if (direction.equals("DOWN")) {
-				if (directionSet == 0) {
-					changeDirection("character/KnightDown.gif");
-					directionSet = 1;
-				}
-				moveuserY(speed);
-			} else if (direction.equals("UP_RIGHT")) {
-				moveuserY(negativeSpeed);
-				moveuserX(speed);
-			} else if (direction.equals("UP_LEFT")) {
-				moveuserY(negativeSpeed);
-				moveuserX(negativeSpeed);
-			} else if (direction.equals("DOWN_RIGHT")) {
-				moveuserY(speed);
-				moveuserX(speed);
-			} else if (direction.equals("DOWN_LEFT")) {
-				moveuserY(speed);
-				moveuserX(negativeSpeed);
-			}
+			directionSelect();
 
 			// Removes Coins when collected
 			for (Node coin : coins) {
@@ -441,62 +364,7 @@ public class LevelOneStage extends level {
 
 	}
 
-	// Movement of user
-	private void moveuserX(int value) {
-		boolean movingRight = value > 0;
-
-		for (int i = 0; i < Math.abs(value); i++) {
-			for (Node platform : platforms) {
-				if (user.getBoundsInParent().intersects(platform.getBoundsInParent())) {
-					if (movingRight) {
-						if (user.getTranslateX() + 36 == platform.getTranslateX()) {
-
-							user.setTranslateX(user.getTranslateX() - 2);
-							return;
-						}
-					} else {
-						if (user.getTranslateX() == platform.getTranslateX() + 40) {
-
-							user.setTranslateX(user.getTranslateX() + 2);
-							return;
-						}
-					}
-				}
-			}
-			user.setTranslateX(user.getTranslateX() + (movingRight ? 1 : -1));
-			if (user.getTranslateX() + 36 == 1080.0) {
-				user.setTranslateX(0);
-			} else if (user.getTranslateX() == 0) {
-				user.setTranslateX(1036.0);
-			}
-
-		}
-	}
-
-	private void moveuserY(int value) {
-		boolean movingDown = value > 0;
-
-		for (int i = 0; i < Math.abs(value); i++) {
-			for (Node platform : platforms) {
-				if (user.getBoundsInParent().intersects(platform.getBoundsInParent())) {
-					if (movingDown) {
-						if (user.getTranslateY() + 36 == platform.getTranslateY()) {
-
-							user.setTranslateY(user.getTranslateY() - 2);
-							return;
-						}
-					} else {
-						if (user.getTranslateY() == platform.getTranslateY() + 40) {
-
-							user.setTranslateY(user.getTranslateY() + 2);
-							return;
-						}
-					}
-				}
-			}
-			user.setTranslateY(user.getTranslateY() + (movingDown ? 1 : -1));
-		}
-	}
+	
 
 	// Creates walls
 	private Node createImage(int h, int w, int x, int y, String link) {
@@ -601,25 +469,8 @@ public class LevelOneStage extends level {
 		return keys.getOrDefault(key, false);
 	}
 
-	// Check sword use
-	private void swordUse() {
-		if (user.getBoundsInParent().intersects(redEnemy.getBoundsInParent())) {
-			gameRoot.getChildren().remove(redEnemy);
-			redEnemy.setTranslateX(520);
-			redEnemy.setTranslateY(360);
-			gameRoot.getChildren().add(redEnemy);
-		}
-	}
 
-	// private void coinSFX() {
-	// URL path;
-	// AudioClip coinSFX;
-	//
-	// path = getClass().getResource("/sfx/coin.wav");
-	// coinSFX = new AudioClip(path.toString());
-	// coinSFX.play();
-	//
-	// }
+
 
 	private void coinBagSFX() {
 		URL path;
@@ -659,24 +510,24 @@ public class LevelOneStage extends level {
 		initContent();
 		this.stage = map;
 		Scene scene = new Scene(appRoot);
-
+		
+		/*
+		 * Detect keyboard input of P, ESCAPE and PgDn
+		 * 
+		 * The game will be paused if P is pressed until further instruction, The user
+		 * will not have the control of the character nor the ghost will move.
+		 * 
+		 * A confirmation dialog will be displayed if Esc is pressed and if the result
+		 * is yes, then return back to the main welcome stage
+		 * 
+		 * Time will be skipped to 0 if PgDn is pressed, in our game, if game time is 0,
+		 * a Game Over page will be displayed. Therefore, pressing this button means
+		 * ending the game with a loss.
+		 */
+		
 		scene.setOnKeyPressed(event -> {
 
 			keys.put(event.getCode(), true);
-
-			/*
-			 * Detect keyboard input of P, ESCAPE and PgDn
-			 * 
-			 * The game will be paused if P is pressed until further instruction, The user
-			 * will not have the control of the character nor the ghost will move.
-			 * 
-			 * A confirmation dialog will be displayed if Esc is pressed and if the result
-			 * is yes, then return back to the main welcome stage
-			 * 
-			 * Time will be skipped to 0 if PgDn is pressed, in our game, if game time is 0,
-			 * a Game Over page will be displayed. Therefore, pressing this button means
-			 * ending the game with a loss.
-			 */
 			if (event.getCode() == KeyCode.ESCAPE) {
 				time.pause();
 				timer.pause();
@@ -839,6 +690,17 @@ public class LevelOneStage extends level {
 
 		time.play();
 	}
+	
+	//------------------------------------SWORD----------------------------------
+	// Check sword use
+	private void swordUse() {
+		if (user.getBoundsInParent().intersects(redEnemy.getBoundsInParent())) {
+			gameRoot.getChildren().remove(redEnemy);
+			redEnemy.setTranslateX(520);
+			redEnemy.setTranslateY(360);
+			gameRoot.getChildren().add(redEnemy);
+		}
+	}
 
 	public void setSwordTime() {
 
@@ -940,7 +802,7 @@ public class LevelOneStage extends level {
 
 	public Point getPathBFS(int x, int y) {
 
-		int[][] ar = new int[13][17];
+		int[][] ar = new int[20][26];
 
 		ar = getCheckMaze();
 
@@ -1042,14 +904,14 @@ public class LevelOneStage extends level {
 			}
 		}
 		if (moveUp == 1) {
-			moveredY(5);
+			moveredY(1);
 		} else if (moveUp == 2) {
-			moveredY(-5);
+			moveredY(-1);
 		}
 		if (moveRight == 1) {
-			moveredX(5);
+			moveredX(1);
 		} else if (moveRight == 2) {
-			moveredX(-5);
+			moveredX(-1);
 		}
 
 		redx = 0;
@@ -1101,7 +963,7 @@ public class LevelOneStage extends level {
 		});
 
 		Button resume = new Button("resume");
-		resume.setOpacity(1.0);
+		//resume.setOpacity(1.0);
 		resume.setOnAction((ActionEvent event) -> {
 			time.play();
 			timePaused = false;
@@ -1162,5 +1024,144 @@ public class LevelOneStage extends level {
 		subMenu.getChildren().addAll(insertMenu, resume, retry, skip, failTest);
 		return subMenu;
 	}
+
+	public void directionSelect() {
+		int speed = player.getSpeed();
+		int negativeSpeed = 0 - speed;
+
+		prevDirection = direction;
+		// Direction select
+
+		if (isPressed(KeyCode.UP) && user.getTranslateY() >= 5) {
+			direction = "UP";
+		}
+
+		if (isPressed(KeyCode.LEFT) && user.getTranslateX() >= 5) {
+			direction = "LEFT";
+		}
+
+		if (isPressed(KeyCode.RIGHT) && user.getTranslateX() + 40 <= levelWidth - 5) {
+			direction = "RIGHT";
+		}
+
+		if (isPressed(KeyCode.DOWN) && user.getTranslateY() + 40 >= 5) {
+			direction = "DOWN";
+		}
+		if (isPressed(KeyCode.UP) && (isPressed(KeyCode.RIGHT))) {
+			direction = "UP_RIGHT";
+		}
+		if (isPressed(KeyCode.UP) && (isPressed(KeyCode.LEFT))) {
+			direction = "UP_LEFT";
+		}
+		if (isPressed(KeyCode.DOWN) && (isPressed(KeyCode.RIGHT))) {
+			direction = "DOWN_RIGHT";
+		}
+		if (isPressed(KeyCode.DOWN) && (isPressed(KeyCode.LEFT))) {
+			direction = "DOWN_LEFT";
+		}
+		if (isPressed(KeyCode.P)) {
+			direction = "NONE";
+		}
+
+		if (!prevDirection.equals(direction)) {
+			directionSet = 0;
+		}
+
+		// Direction Move
+		if (direction.equals("UP")) {
+			if (directionSet == 0) {
+				changeDirection("character/KnightUp.gif");
+				directionSet = 1;
+			}
+			moveuserY(negativeSpeed);
+		} else if (direction.equals("LEFT")) {
+			if (directionSet == 0) {
+				changeDirection("character/KnightLeft.gif");
+				directionSet = 1;
+			}
+			moveuserX(negativeSpeed);
+		} else if (direction.equals("RIGHT")) {
+			if (directionSet == 0) {
+				changeDirection("character/KnightRight.gif");
+				directionSet = 1;
+			}
+			moveuserX(speed);
+		} else if (direction.equals("DOWN")) {
+			if (directionSet == 0) {
+				changeDirection("character/KnightDown.gif");
+				directionSet = 1;
+			}
+			moveuserY(speed);
+		} else if (direction.equals("UP_RIGHT")) {
+			moveuserY(negativeSpeed);
+			moveuserX(speed);
+		} else if (direction.equals("UP_LEFT")) {
+			moveuserY(negativeSpeed);
+			moveuserX(negativeSpeed);
+		} else if (direction.equals("DOWN_RIGHT")) {
+			moveuserY(speed);
+			moveuserX(speed);
+		} else if (direction.equals("DOWN_LEFT")) {
+			moveuserY(speed);
+			moveuserX(negativeSpeed);
+		}
+	}
+	
+	// Movement of user
+		private void moveuserX(int value) {
+			boolean movingRight = value > 0;
+
+			for (int i = 0; i < Math.abs(value); i++) {
+				for (Node platform : platforms) {
+					if (user.getBoundsInParent().intersects(platform.getBoundsInParent())) {
+						if (movingRight) {
+							if (user.getTranslateX() + 36 == platform.getTranslateX()) {
+
+								user.setTranslateX(user.getTranslateX() - 1);
+								return;
+							}
+						} else {
+							if (user.getTranslateX() == platform.getTranslateX() + 40) {
+
+								user.setTranslateX(user.getTranslateX() + 1);
+								return;
+							}
+						}
+					}
+				}
+				user.setTranslateX(user.getTranslateX() + (movingRight ? 1 : -1));
+				if (user.getTranslateX() + 36 == 1080.0) {
+					user.setTranslateX(0);
+				} else if (user.getTranslateX() == 0) {
+					user.setTranslateX(1036.0);
+				}
+
+			}
+		}
+
+		private void moveuserY(int value) {
+			boolean movingDown = value > 0;
+
+			for (int i = 0; i < Math.abs(value); i++) {
+				for (Node platform : platforms) {
+					if (user.getBoundsInParent().intersects(platform.getBoundsInParent())) {
+						if (movingDown) {
+							if (user.getTranslateY() + 36 == platform.getTranslateY()) {
+
+								user.setTranslateY(user.getTranslateY() - 1);
+								return;
+							}
+						} else {
+							if (user.getTranslateY() == platform.getTranslateY() + 40) {
+
+								user.setTranslateY(user.getTranslateY() + 1);
+								return;
+							}
+						}
+					}
+				}
+				user.setTranslateY(user.getTranslateY() + (movingDown ? 1 : -1));
+			}
+		}
 
 }

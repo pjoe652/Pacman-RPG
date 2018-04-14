@@ -29,7 +29,8 @@ public class MusicPlayer {
 	}
 	
 	
-	public void playMusic() {	
+	public void playMusic() {
+		playlist.get(count).setVolume(0.0); //0.05
 		playlist.get(count).play();
 		
 	}

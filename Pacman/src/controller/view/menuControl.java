@@ -35,39 +35,35 @@ import javafx.util.Duration;
 
 
 public class menuControl {
-	
-	
+
 	@FXML
 	public void handleSinglePlayerKeyPressed(KeyEvent event) throws IOException {
-		
-		switch (event.getCode()) {
-			case ENTER:
-				
-				Parent parent = FXMLLoader.load(getClass().getResource("characterCreation.fxml"));
-				Scene scene = new Scene(parent);
-				Stage characterStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-				characterStage.setScene(scene);
-				characterStage.show();
-				MusicPlayer musicplayer = new MusicPlayer();
-				musicplayer.stopMusic();
-				musicplayer.playMusic();
-				break;
+
+		if (event.getCode() == KeyCode.ENTER) {
+			Parent parent = FXMLLoader.load(getClass().getResource("characterCreation.fxml"));
+			Scene scene = new Scene(parent);
+			Stage characterStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+			characterStage.setScene(scene);
+			characterStage.show();
+			MusicPlayer musicplayer = new MusicPlayer();
+			musicplayer.stopMusic();
+			musicplayer.playMusic();
+
 		}
 	}
-	
+
 	@FXML
 	public void handleReturnKeyPressed(KeyEvent event) throws IOException {
-		switch (event.getCode()) {
-			case ENTER:
-				Parent parent = FXMLLoader.load(getClass().getResource("Welcome.fxml"));
-				Scene scene = new Scene(parent);
-				Stage characterStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-				characterStage.setScene(scene);
-				characterStage.show();
-				MusicPlayer musicplayer = new MusicPlayer();
-				musicplayer.stopMusic();
-				musicplayer.playMusic();
-				break;
+		if (event.getCode() == KeyCode.ENTER) {
+			Parent parent = FXMLLoader.load(getClass().getResource("Welcome.fxml"));
+			Scene scene = new Scene(parent);
+			Stage characterStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+			characterStage.setScene(scene);
+			characterStage.show();
+			MusicPlayer musicplayer = new MusicPlayer();
+			musicplayer.stopMusic();
+			musicplayer.playMusic();
+
 		}
 	}
 	
@@ -100,9 +96,14 @@ public class menuControl {
 			musicplayer.playMusic();
 	}
 	
-	
-
-
+	@FXML
+	public void handleMultiPlayerButton(ActionEvent event) {
+		
+		MultiPlayer mp = new MultiPlayer();
+		Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+		mp.run(stage);
+		
+	}
 
 	
 }
