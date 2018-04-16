@@ -97,11 +97,20 @@ public class menuControl {
 	}
 	
 	@FXML
-	public void handleMultiPlayerButton(ActionEvent event) {
+	public void handleMultiPlayerButton(ActionEvent event) throws IOException {
 		
-		MultiPlayer mp = new MultiPlayer();
-		Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-		mp.run(stage);
+//		MultiPlayer mp = new MultiPlayer();
+//		Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+//		mp.run(stage);
+		
+		Parent parent = FXMLLoader.load(getClass().getResource("multiplayer.fxml"));			
+		Scene scene = new Scene(parent);
+		Stage menuStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+		menuStage.setScene(scene);
+		menuStage.show();
+		MusicPlayer musicplayer = new MusicPlayer();
+		musicplayer.stopMusic();
+		musicplayer.playMusic();
 		
 	}
 

@@ -17,6 +17,23 @@ public class enemies {
 	private Rectangle blue;
 	private Rectangle green;
 	private Rectangle purple;
+	
+	protected String model; 
+	private String modelLocation;
+	
+	public enemies() {
+		model = "Blue";
+	}
+	
+	public void setModel(String model) {
+		
+		this.model = model;
+	}
+	
+	public String getModel() {
+		
+		return this.model;
+	}
 
 	public Node redEnemy() {
 //		red = new Rectangle(40, 40);
@@ -58,6 +75,14 @@ public class enemies {
 		return purple;
 	}
 	
+	public Node enemyDeath() {
+		Image image = new Image("character/SlimeEnemy/enemyDeath.png");
+		ImageView imageDeath = new ImageView(image);
+		imageDeath.setFitHeight(40);
+		imageDeath.setFitWidth(40);
+		return imageDeath;
+	}
+	
 //	public Node greenEnemy() {
 //		Image monster = new Image("character/KnightUp.gif");
 //		ImageView monsterView = new ImageView(monster);
@@ -76,12 +101,42 @@ public class enemies {
 //		return green;
 //	}
 	
-	public Node swordGet(Node enemy) {
+	public Node swordGet() {
 		Image killableImage = new Image("character/SlimeEnemy/RedSlime.gif");
 		ImageView killable = new ImageView(killableImage);
 		killable.setFitHeight(40);
 		killable.setFitWidth(40);
-		enemy = killable;
-		return enemy;
+		return killable;
+	}
+	
+	public String getEnemyDirection() {
+		if (this.model.equals("Blue")) {
+			modelLocation = "character/SlimeEnemy/BlueSlime.gif";
+		} else if (this.model.equals("Light Blue")) {
+			modelLocation = "character/SlimeEnemy/LightBlueSlime.gif";
+		} else if (this.model.equals("Pink")) {
+			modelLocation = "character/SlimeEnemy/PinkSlime.gif";
+		} else if (this.model.equals("Purple")) {
+			modelLocation = "character/SlimeEnemy/PurpleSlime.gif";
+		} else if (this.model.equals("Yellow")) {
+			modelLocation = "character/SlimeEnemy/YellowSlime.gif";
+		}
+		
+		return modelLocation;
+	}
+	
+	public String getEnemyDeath() {
+		modelLocation = "character/SlimeEnemy/enemyDeath.png";
+		return modelLocation;
+	}
+	
+	public Node multiplayerEnemy() {
+//		purple = new Rectangle(40, 40);
+//		purple.setFill(Color.PURPLE);
+		Image multiplayerImage = new Image(modelLocation);
+		ImageView multiplayerImageView = new ImageView(multiplayerImage);
+		multiplayerImageView.setFitHeight(40);
+		multiplayerImageView.setFitWidth(40);
+		return multiplayerImageView;
 	}
 }

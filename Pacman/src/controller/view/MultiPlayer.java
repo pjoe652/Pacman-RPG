@@ -25,10 +25,13 @@ public class MultiPlayer {
 		//root.setLayoutX(1080);
 		//root.setLayoutY(800);
 		
+		Image bg = new Image("img/caveIntro.gif");
+		ImageView bgView = new ImageView(bg);
+		
 		displayCharacterModel();
 		setButton();
 		
-		root.getChildren().addAll(characterModel, btn);
+		root.getChildren().addAll(bgView ,characterModel, btn);
 	}
 	
 	public void setButton() {

@@ -9,7 +9,9 @@ import java.util.LinkedList;
 import java.util.Optional;
 import java.util.Queue;
 
+import controller.view.multiplayerControl;
 import controller.model.LevelData;
+import controller.model.character;
 import controller.model.enemies;
 import controller.view.LevelOneStage.Point;
 import javafx.animation.AnimationTimer;
@@ -57,6 +59,9 @@ public class MultiPlayerStage {
 	private Pane userRoot = new Pane();
 	private Pane user2Root = new Pane();
 	private Pane user3Root = new Pane();
+	private Pane enemyRoot = new Pane();
+	private Pane popupRoot = new Pane();
+
 
 	private int lives = 2;
 	private boolean createHearts = true;
@@ -112,6 +117,10 @@ public class MultiPlayerStage {
 	private int checkMaze[][] = maze;
 
 	// Characters of the game
+	private character userOne = multiplayerControl.characterOne;
+	private enemies userTwo = multiplayerControl.characterTwo;
+	private enemies userThree = multiplayerControl.characterThree;
+	
 	private Node user;
 	private Node user2;
 	private Node user3;
@@ -123,6 +132,8 @@ public class MultiPlayerStage {
 	Node greenEnemy = green.greenEnemy();
 	enemies purple = new enemies();
 	Node purpleEnemy = purple.purpleEnemy();
+	
+	private boolean initEnemies = false;
 
 	// AI movement
 	private Point p;
@@ -151,6 +162,18 @@ public class MultiPlayerStage {
 	private final Integer swordStart = 60;
 	private Integer swordCount = swordStart;
 	private ArrayList<Node> swords = new ArrayList<Node>();
+	
+	// Death animation
+	Timeline deathTime = new Timeline();
+	Timeline enemyTime = new Timeline();
+	private final Integer deathStart = 20;
+	private Integer deathCount = deathStart;
+	private final Integer enemyStart = 20;
+	private Integer enemyCount = enemyStart;
+	private double playerOpacity = 1;
+	private boolean deathComplete = false;
+	private boolean enemyDeathOn = false;
+		
 
 	private int coinCount = coins.size();
 
@@ -212,18 +235,35 @@ public class MultiPlayerStage {
 				}
 			}
 		}
+		
+		String user1Character = userOne.getModelDirection("NONE");
+		String user2Enemy = userTwo.getEnemyDirection();
+		String user3Enemy = userThree.getEnemyDirection();
 
 		// Create characters in the game
-		user = createKnight(522, 722, "character/KnightStart.png");
-		user2 = createKnight2(520, 360, "character/KnightStart.png");
-		user3 = createKnight3(440, 360, "character/KnightStart.png");
+		user = createKnight(522, 722, user1Character);
+//		user2 = createKnight2(520, 360, user2Enemy);
+		user2 = createEnemy(520, 360, userTwo.getEnemyDirection());
+		user2.setTranslateX(520);
+		user2.setTranslateY(360);
+//		user3 = createKnight3(440, 360, user3Enemy);
+		user3 = createEnemy(520, 360, userThree.getEnemyDirection());
+		user3.setTranslateX(440);
+		user3.setTranslateY(360);
 		greenEnemy.setTranslateX(600);
 		greenEnemy.setTranslateY(360);
 		greenEnemy.getProperties().put("alive", true);
 		purpleEnemy.setTranslateX(360);
 		purpleEnemy.setTranslateY(360);
 		purpleEnemy.getProperties().put("alive", true);
-		gameRoot.getChildren().addAll(greenEnemy, purpleEnemy);
+//		enemyRoot.getChildren().addAll(user2, user3, greenEnemy, purpleEnemy);
+		
+		if (!initEnemies) {
+			enemyRoot.getChildren().addAll(greenEnemy, purpleEnemy);
+			initEnemies = true;
+		}
+		
+		user.setOpacity(1);
 
 		user.translateXProperty().addListener((obs, old, newValue) -> {
 			int offset = newValue.intValue();
@@ -237,7 +277,10 @@ public class MultiPlayerStage {
 			setTime();
 		}
 
-		appRoot.getChildren().addAll(bgView, Lives, LivesLabel, gameRoot, userRoot, user2Root, user3Root, uiRoot,
+//		appRoot.getChildren().addAll(bgView, Lives, LivesLabel, gameRoot, userRoot, user2Root, user3Root, uiRoot,
+//				menuScore, menuScoreLabel, scoreValue);
+		
+		appRoot.getChildren().addAll(bgView, Lives, LivesLabel, gameRoot, userRoot, enemyRoot, uiRoot, popupRoot, 
 				menuScore, menuScoreLabel, scoreValue);
 
 	}
@@ -250,17 +293,23 @@ public class MultiPlayerStage {
 			Score = 0;
 			select.levelFailed(stage);
 		}
+		
+		running = true;
 
 		userRoot.getChildren().clear();
-		user2Root.getChildren().clear();
-		user3Root.getChildren().clear();
+//		user2Root.getChildren().clear();
+//		user3Root.getChildren().clear();
+//		enemyRoot.getChildren().clear();
 		uiRoot.getChildren().clear();
 		appRoot.getChildren().clear();
-		gameRoot.getChildren().removeAll(user, user2, user3, greenEnemy, purpleEnemy);
+//		gameRoot.getChildren().removeAll(user, user2, user3, greenEnemy, purpleEnemy);
 		gameRoot.getChildren().removeAll(hearts);
 
+		direction = "NONE";
+		deathComplete = false;
 		currentTime = 3;
 		count = 0;
+		stopPlayerDeathTime();
 		resetTime();
 		resetGameTime();
 	}
@@ -306,7 +355,7 @@ public class MultiPlayerStage {
 				if (user.getBoundsInParent().intersects(sword.getBoundsInParent())) {
 					sword.getProperties().put("alive", false);
 					swordGet = 1;
-					stopSwordTime();
+					resetSwordTime();
 				}
 			}
 			for (Iterator<Node> it = swords.iterator(); it.hasNext();) {
@@ -336,15 +385,20 @@ public class MultiPlayerStage {
 							|| user.getBoundsInParent().intersects(user3.getBoundsInParent())
 							|| user.getBoundsInParent().intersects(greenEnemy.getBoundsInParent())
 							|| user.getBoundsInParent().intersects(purpleEnemy.getBoundsInParent())) {
-						playerDead = true;
-						clearGame();
-						lives--;
-						initContent();
+						running = false;
+//						playerDies();
+						setPlayerDeath();
+						if (deathComplete) {
+							playerDead = true;
+							clearGame();
+							lives--;
+							initContent();
+						}
 					}
 				}
-
-				// Removes coin if collected
 			}
+				// Removes coin if collected
+			
 			for (Iterator<Node> it = coins.iterator(); it.hasNext();) {
 				Node coin = it.next();
 
@@ -366,6 +420,7 @@ public class MultiPlayerStage {
 			// Fades away when all coins collected
 			if (CoinsCollected == 150) {
 				coinBagSFX();
+				stopGameTime();
 				levelSelect select = new levelSelect();
 				try {
 					select.levelClear(stage);
@@ -406,6 +461,22 @@ public class MultiPlayerStage {
 		return entity;
 
 	}
+	
+	private Node createEnemy(double x, double y, String model) {
+
+		Image enemy = new Image(model);
+		ImageView enemyView = new ImageView(enemy);
+		enemyView.setTranslateX(x);
+		enemyView.setTranslateY(y);
+		enemyView.setFitHeight(36);
+		enemyView.setFitWidth(36);
+
+		enemyView.getProperties().put("alive", true);
+
+		enemyRoot.getChildren().add(enemyView);
+
+		return enemyView;
+	}
 
 	// Create knight user
 	private Node createKnight(double x, double y, String direction) {
@@ -423,38 +494,52 @@ public class MultiPlayerStage {
 
 		return knightView;
 	}
+	
+	private void createDeathPopup(int h, int w, double x, double y, String link) {
 
-	private Node createKnight2(double x, double y, String direction) {
+		Image img = new Image(link);
+		ImageView imageView = new ImageView(img);
+		imageView.setFitHeight(h);
+		imageView.setFitWidth(w);
+		imageView.setX(x);
+		imageView.setY(y);
+		imageView.getProperties().put("alive", true);
 
-		Image knight = new Image(direction);
-		ImageView knightView = new ImageView(knight);
-		knightView.setTranslateX(x);
-		knightView.setTranslateY(y);
-		knightView.setFitHeight(36);
-		knightView.setFitWidth(36);
+		popupRoot.getChildren().add(imageView);
 
-		knightView.getProperties().put("alive", true);
-
-		user2Root.getChildren().add(knightView);
-
-		return knightView;
 	}
 
-	private Node createKnight3(double x, double y, String direction) {
-
-		Image knight = new Image(direction);
-		ImageView knightView = new ImageView(knight);
-		knightView.setTranslateX(x);
-		knightView.setTranslateY(y);
-		knightView.setFitHeight(36);
-		knightView.setFitWidth(36);
-
-		knightView.getProperties().put("alive", true);
-
-		user3Root.getChildren().add(knightView);
-
-		return knightView;
-	}
+//	private Node createKnight2(double x, double y, String direction) {
+//
+//		Image knight = new Image(direction);
+//		ImageView knightView = new ImageView(knight);
+//		knightView.setTranslateX(x);
+//		knightView.setTranslateY(y);
+//		knightView.setFitHeight(36);
+//		knightView.setFitWidth(36);
+//
+//		knightView.getProperties().put("alive", true);
+//
+//		user2Root.getChildren().add(knightView);
+//
+//		return knightView;
+//	}
+//
+//	private Node createKnight3(double x, double y, String direction) {
+//
+//		Image knight = new Image(direction);
+//		ImageView knightView = new ImageView(knight);
+//		knightView.setTranslateX(x);
+//		knightView.setTranslateY(y);
+//		knightView.setFitHeight(36);
+//		knightView.setFitWidth(36);
+//
+//		knightView.getProperties().put("alive", true);
+//
+//		user3Root.getChildren().add(knightView);
+//
+//		return knightView;
+//	}
 
 	// Creates menu label
 	private StackPane createMenu(int w, int h, int x, int y, String string, Color color) {
@@ -514,28 +599,55 @@ public class MultiPlayerStage {
 	// Check sword use
 	private void swordUse() {
 		if (user.getBoundsInParent().intersects(user2.getBoundsInParent())) {
-			user2Root.getChildren().remove(user2);
-			user2.setTranslateX(520);
-			user2.setTranslateY(360);
-			user2Root.getChildren().add(user2);
+			
+//			user2Root.getChildren().remove(user2);
+//			user2.setTranslateX(520);
+//			user2.setTranslateY(360);
+//			user2Root.getChildren().add(user2);
+			
+			enemyKilledScore();
+			running = false;
+			setEnemyDeath(user2);
+			user2 = createEnemy(520, 360, userTwo.getEnemyDirection());
+//			redEnemy = red.swordGet();
+//			redEnemy.setTranslateX(520);
+//			redEnemy.setTranslateY(360);
+//			enemyRoot.getChildren().add(redEnemy);
+			count = 0;
 		}
 		if (user.getBoundsInParent().intersects((user3.getBoundsInParent()))){
-			user3Root.getChildren().remove(user3);
-			user3.setTranslateX(440);
-			user3.setTranslateY(360);
-			user3Root.getChildren().add(user3);
+			
+			enemyKilledScore();
+			running = false;
+			setEnemyDeath(user3);
+			user3 = createEnemy(520, 360, userThree.getEnemyDirection());
+//			user3Root.getChildren().remove(user3);
+//			user3.setTranslateX(440);
+//			user3.setTranslateY(360);
+//			user3Root.getChildren().add(user3);
+			count = 0;
 		}
 		if (user.getBoundsInParent().intersects(greenEnemy.getBoundsInParent())) {
-			gameRoot.getChildren().remove(greenEnemy);
+			
+			enemyKilledScore();
+			running = false;
+			setEnemyDeath(greenEnemy);
+			enemyRoot.getChildren().remove(greenEnemy);
 			greenEnemy.setTranslateX(600);
 			greenEnemy.setTranslateY(360);
-			user2Root.getChildren().add(greenEnemy);
+			enemyRoot.getChildren().add(greenEnemy);
+			count = 0;
 		}
 		if (user.getBoundsInParent().intersects(purpleEnemy.getBoundsInParent())) {
-			gameRoot.getChildren().remove(purpleEnemy);
+
+			enemyKilledScore();
+			running = false;
+			setEnemyDeath(purpleEnemy);
+			enemyRoot.getChildren().remove(purpleEnemy);
 			purpleEnemy.setTranslateX(600);
 			purpleEnemy.setTranslateY(360);
-			user2Root.getChildren().add(purpleEnemy);
+			enemyRoot.getChildren().add(purpleEnemy);
+			count = 0;
 		}
 			
 	}
@@ -575,6 +687,7 @@ public class MultiPlayerStage {
 		menuScene.setOnKeyPressed(event -> {
 			if (event.getCode() == KeyCode.P) {
 				time.play();
+				swordTime.play();
 				timePaused = false;
 				if (currentTime != -2) {
 					timer.play();
@@ -641,6 +754,7 @@ public class MultiPlayerStage {
 			if (event.getCode() == KeyCode.P) {
 				time.pause();
 				timer.pause();
+				swordTime.pause();
 				timePaused = true;
 				menuStage.setScene(menuScene);
 				menuStage.show();
@@ -767,9 +881,20 @@ public class MultiPlayerStage {
 
 		time.play();
 	}
-
+	
+    public void stopGameTime() {
+    	
+    	time.getKeyFrames().clear();
+    	
+    	time.stop();
+    }
+	
+	//------------------------------------SWORD----------------------------------
+	// Check sword use
 	public void setSwordTime() {
 
+		setKillable();
+		
 		swordTime.setCycleCount(Timeline.INDEFINITE);
 
 		if (swordTime != null) {
@@ -781,6 +906,9 @@ public class MultiPlayerStage {
 			@Override
 			public void handle(ActionEvent event) {
 				swordCount--;
+				if (swordCount == 30) {
+					
+				}
 				if ((swordCount <= 30) && (swordCount % 2 == 1)) {
 					user.setOpacity(0.5);
 				} else if ((swordCount <= 30) && (swordCount % 2 == 0)) {
@@ -789,6 +917,7 @@ public class MultiPlayerStage {
 				if (swordCount == -1) {
 					swordTime.getKeyFrames().clear();
 					swordTime.stop();
+					setUnkillable();
 					swordHeld = false;
 					System.out.println("Sword has broken");
 					swordCount = 60;
@@ -800,12 +929,256 @@ public class MultiPlayerStage {
 		swordTime.playFromStart();
 	}
 
-	public void stopSwordTime() {
+	public void resetSwordTime() {
+		
 		swordTime.getKeyFrames().clear();
+		
 		swordTime.stop();
+		
 		swordCount = 60;
 	}
 
+	public void stopSwordTime() {
+		
+		swordTime.getKeyFrames().clear();
+
+		swordTime.stop();
+	}
+	
+	public void playSwordTime() {
+		
+		swordTime.getKeyFrames().clear();
+		
+		swordTime.play();
+	}
+	
+	public void setKillable() {
+		
+		double enemyUser2X;
+		double enemyUser2Y;
+		double enemyUser3X;
+		double enemyUser3Y;
+		double enemyGreenX;
+		double enemyGreenY;
+		double enemyPurpleX;
+		double enemyPurpleY;
+		
+		//Track
+		enemyUser2X = user2.getTranslateX();
+		enemyUser2Y = user2.getTranslateY();
+		enemyUser3X = user3.getTranslateX();
+		enemyUser3Y = user3.getTranslateY();
+		enemyGreenX = greenEnemy.getTranslateX();
+		enemyGreenY = greenEnemy.getTranslateY();
+		enemyPurpleX = purpleEnemy.getTranslateX();
+		enemyPurpleY = purpleEnemy.getTranslateY();
+		
+		enemyRoot.getChildren().clear();
+		
+		//User 2  
+		user2 = red.swordGet();
+		user2.setTranslateX(enemyUser2X);
+		user2.setTranslateY(enemyUser2Y);
+		enemyRoot.getChildren().add(user2);
+		
+		//User 3
+		user3 = red.swordGet();
+		user3.setTranslateX(enemyUser3X);
+		user3.setTranslateY(enemyUser3Y);
+		enemyRoot.getChildren().add(user3);
+		
+		//Green Enemy
+		greenEnemy = green.swordGet();
+		greenEnemy.setTranslateX(enemyGreenX);
+		greenEnemy.setTranslateY(enemyGreenY);
+		enemyRoot.getChildren().add(greenEnemy);
+		
+		//Purple Enemy
+		purpleEnemy = purple.swordGet();
+		purpleEnemy.setTranslateX(enemyPurpleX);
+		purpleEnemy.setTranslateY(enemyPurpleY);
+		enemyRoot.getChildren().add(purpleEnemy);
+	}
+	
+	public void setUnkillable() {
+		
+		double enemyUser2X;
+		double enemyUser2Y;
+		double enemyUser3X;
+		double enemyUser3Y;
+		double enemyGreenX;
+		double enemyGreenY;
+		double enemyPurpleX;
+		double enemyPurpleY;
+		
+		//Track
+		enemyUser2X = user2.getTranslateX();
+		enemyUser2Y = user2.getTranslateY();
+		enemyUser3X = user3.getTranslateX();
+		enemyUser3Y = user3.getTranslateY();
+		enemyGreenX = greenEnemy.getTranslateX();
+		enemyGreenY = greenEnemy.getTranslateY();
+		enemyPurpleX = purpleEnemy.getTranslateX();
+		enemyPurpleY = purpleEnemy.getTranslateY();
+		enemyRoot.getChildren().clear();
+		
+		//User 2  
+		user2 = createEnemy(enemyUser2X, enemyUser2Y, userTwo.getEnemyDirection());
+		
+		//User 3
+		user3 = createEnemy(enemyUser3X, enemyUser3Y, userThree.getEnemyDirection());
+		
+		//Green Enemy
+		greenEnemy = red.redEnemy();
+		greenEnemy.setTranslateX(enemyGreenX);
+		greenEnemy.setTranslateY(enemyGreenY);
+		enemyRoot.getChildren().add(greenEnemy);
+		
+		//Purple Enemy
+		purpleEnemy = blue.blueEnemy();
+		purpleEnemy.setTranslateX(enemyPurpleX);
+		purpleEnemy.setTranslateY(enemyPurpleY);
+		enemyRoot.getChildren().add(purpleEnemy);
+	}
+	
+	//------------------------------------PLAYERDEATH----------------------------------
+	private void playerDies() {
+		userX = user.getTranslateX();
+		userY = user.getTranslateY();
+		userRoot.getChildren().clear();
+		user = createKnight(userX, userY, userOne.getModelDeath());
+	}
+	
+	public void setPlayerDeath() {
+		
+
+		playerDies();
+		
+		stopGameTime();
+		
+		deathTime.setCycleCount(Timeline.INDEFINITE);
+
+		if (deathTime != null) {
+			deathTime.stop();
+		}
+
+		KeyFrame playerFrame = new KeyFrame(Duration.seconds(0.1), new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent event) {
+//				running = false;
+				deathCount--;
+				if ((deathCount <= 20) && (deathCount % 2 == 0)) {
+					playerOpacity -= 0.1;
+					user.setOpacity(playerOpacity);
+				}
+				if (deathCount == -1) {
+					deathTime.getKeyFrames().clear();
+					deathTime.stop();
+					running = true;
+					deathComplete = true;
+					System.out.println("You have died!");
+					deathCount = 20;
+					playerOpacity = 1;
+//					user.setOpacity(playerOpacity);
+					
+					
+				}
+			}
+		});
+
+		deathTime.getKeyFrames().add(playerFrame);
+		deathTime.playFromStart();
+		
+	}
+	
+	public void stopPlayerDeathTime() {
+		deathTime.getKeyFrames().clear();
+		deathTime.stop();
+		deathCount = 20;
+	}
+	
+	//------------------------------------ENEMYDEATH----------------------------------
+	private void enemyDies(Node enemy) {
+		double enemyX;
+		double enemyY;
+		if (enemy == user2) {
+			enemyX = user2.getTranslateX();
+			enemyY = user2.getTranslateY();
+			popupRoot.getChildren().remove(user2);
+			createDeathPopup(40, 40, enemyX, enemyY, red.getEnemyDeath());
+//			enemyDies = createImage(40, 40, enemyX, enemyY, red.getEnemyDeath());
+		} else if (enemy == user3) {
+			enemyX = user3.getTranslateX();
+			enemyY = user3.getTranslateY();
+			popupRoot.getChildren().remove(user3);
+			createDeathPopup(40, 40, enemyX, enemyY, blue.getEnemyDeath());
+		} else if (enemy == greenEnemy) {
+			enemyX = greenEnemy.getTranslateX();
+			enemyY = greenEnemy.getTranslateY();
+			popupRoot.getChildren().remove(greenEnemy);
+			createDeathPopup(40, 40, enemyX, enemyY, blue.getEnemyDeath());
+		} else if (enemy == purpleEnemy) {
+			enemyX = purpleEnemy.getTranslateX();
+			enemyY = purpleEnemy.getTranslateY();
+			popupRoot.getChildren().remove(purpleEnemy);
+			createDeathPopup(40, 40, enemyX, enemyY, blue.getEnemyDeath());
+		}
+	}
+	
+	public void setEnemyDeath(Node enemy) {
+		
+		enemyDeathOn = false;
+		
+		enemyDies(enemy);
+		
+		stopGameTime();
+		stopSwordTime();
+		
+		enemyTime.setCycleCount(Timeline.INDEFINITE);
+
+		if (enemyTime != null) {
+			enemyTime.stop();
+		}
+
+		KeyFrame enemyFrame = new KeyFrame(Duration.seconds(0.1), new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent event) {
+//				running = false;
+				enemyCount--;
+				
+				if (enemyCount == -1) {
+					enemyTime.getKeyFrames().clear();
+					enemyTime.stop();
+					running = true;
+					System.out.println("You have slain an enemy!");
+					enemyCount = 20;
+					popupRoot.getChildren().clear();
+					setSwordTime();
+					
+				}
+			}
+		});
+
+		enemyTime.getKeyFrames().add(enemyFrame);
+		enemyTime.playFromStart();
+		
+	}
+	
+	public void stopEnemyDeathTime() {
+		enemyTime.getKeyFrames().clear();
+		enemyTime.stop();
+		deathCount = 20;
+	}
+	
+	public void enemyKilledScore() {
+		Score += 500;
+		String ScoreString = Integer.toString(Score);
+		StackPane scoreValue = createMenu(100, 30, 850, 15, ScoreString, Color.WHITE);
+		appRoot.getChildren().add(scoreValue);
+	}
+	
 	// --------------------------------------------------------------
 	/*
 	 * Getter methods that are useful for the game
@@ -1513,25 +1886,25 @@ public class MultiPlayerStage {
 		// Direction Move
 		if (direction.equals("UP")) {
 			if (directionSet == 0) {
-				changeDirection("character/KnightUp.gif");
+				changeDirection(userOne.getModelDirection(direction));
 				directionSet = 1;
 			}
 			moveuserY(negativeSpeed);
 		} else if (direction.equals("LEFT")) {
 			if (directionSet == 0) {
-				changeDirection("character/KnightLeft.gif");
+				changeDirection(userOne.getModelDirection(direction));
 				directionSet = 1;
 			}
 			moveuserX(negativeSpeed);
 		} else if (direction.equals("RIGHT")) {
 			if (directionSet == 0) {
-				changeDirection("character/KnightRight.gif");
+				changeDirection(userOne.getModelDirection(direction));
 				directionSet = 1;
 			}
 			moveuserX(speed);
 		} else if (direction.equals("DOWN")) {
 			if (directionSet == 0) {
-				changeDirection("character/KnightDown.gif");
+				changeDirection(userOne.getModelDirection(direction));
 				directionSet = 1;
 			}
 			moveuserY(speed);
@@ -1661,28 +2034,28 @@ public class MultiPlayerStage {
 
 		// Direction Move
 		if (direction2.equals("UP")) {
-			if (directionSet2 == 0) {
-				changeDirection2("character/KnightUp.gif");
-				directionSet2 = 1;
-			}
+//			if (directionSet2 == 0) {
+//				changeDirection2("character/KnightUp.gif");
+//				directionSet2 = 1;
+//			}
 			moveuser2Y(negativeSpeed);
 		} else if (direction2.equals("LEFT")) {
-			if (directionSet2 == 0) {
-				changeDirection2("character/KnightLeft.gif");
-				directionSet2 = 1;
-			}
+//			if (directionSet2 == 0) {
+//				changeDirection2("character/KnightLeft.gif");
+//				directionSet2 = 1;
+//			}
 			moveuser2X(negativeSpeed);
 		} else if (direction2.equals("RIGHT")) {
-			if (directionSet2 == 0) {
-				changeDirection2("character/KnightRight.gif");
-				directionSet2 = 1;
-			}
+//			if (directionSet2 == 0) {
+//				changeDirection2("character/KnightRight.gif");
+//				directionSet2 = 1;
+//			}
 			moveuser2X(speed);
 		} else if (direction2.equals("DOWN")) {
-			if (directionSet2 == 0) {
-				changeDirection2("character/KnightDown.gif");
-				directionSet2 = 1;
-			}
+//			if (directionSet2 == 0) {
+//				changeDirection2("character/KnightDown.gif");
+//				directionSet2 = 1;
+//			}
 			moveuser2Y(speed);
 		} else if (direction2.equals("UP_RIGHT")) {
 			moveuser2Y(negativeSpeed);
@@ -1756,13 +2129,13 @@ public class MultiPlayerStage {
 		}
 	}
 
-	private void changeDirection2(String direction) {
-		user2X = user2.getTranslateX();
-		user2Y = user2.getTranslateY();
-		user2Root.getChildren().clear();
-		user2 = createKnight2(user2X, user2Y, direction);
-
-	}
+//	private void changeDirection2(String direction) {
+//		user2X = user2.getTranslateX();
+//		user2Y = user2.getTranslateY();
+//		user2Root.getChildren().clear();
+//		user2 = createKnight2(user2X, user2Y, direction);
+//
+//	}
 
 	public void directionSelectPlayer3() {
 		int speed = 2;
@@ -1802,34 +2175,34 @@ public class MultiPlayerStage {
 			direction3 = "NONE";
 		}
 
-		if (!prevDirection3.equals(direction3)) {
-			directionSet3 = 0;
-		}
+//		if (!prevDirection3.equals(direction3)) {
+//			directionSet3 = 0;
+//		}
 
 		// Direction Move
 		if (direction3.equals("UP")) {
-			if (directionSet3 == 0) {
-				changeDirection3("character/KnightUp.gif");
-				directionSet3 = 1;
-			}
+//			if (directionSet3 == 0) {
+//				changeDirection3("character/KnightUp.gif");
+//				directionSet3 = 1;
+//			}
 			moveuser3Y(negativeSpeed);
 		} else if (direction3.equals("LEFT")) {
-			if (directionSet3 == 0) {
-				changeDirection3("character/KnightLeft.gif");
-				directionSet3 = 1;
-			}
+//			if (directionSet3 == 0) {
+//				changeDirection3("character/KnightLeft.gif");
+//				directionSet3 = 1;
+//			}
 			moveuser3X(negativeSpeed);
 		} else if (direction3.equals("RIGHT")) {
-			if (directionSet3 == 0) {
-				changeDirection3("character/KnightRight.gif");
-				directionSet3 = 1;
-			}
+//			if (directionSet3 == 0) {
+//				changeDirection3("character/KnightRight.gif");
+//				directionSet3 = 1;
+//			}
 			moveuser3X(speed);
 		} else if (direction3.equals("DOWN")) {
-			if (directionSet3 == 0) {
-				changeDirection3("character/KnightDown.gif");
-				directionSet3 = 1;
-			}
+//			if (directionSet3 == 0) {
+//				changeDirection3("character/KnightDown.gif");
+//				directionSet3 = 1;
+//			}
 			moveuser3Y(speed);
 		} else if (direction3.equals("UP_RIGHT")) {
 			moveuser3Y(negativeSpeed);
@@ -1903,11 +2276,11 @@ public class MultiPlayerStage {
 		}
 	}
 
-	private void changeDirection3(String direction) {
-		user3X = user3.getTranslateX();
-		user3Y = user3.getTranslateY();
-		user3Root.getChildren().clear();
-		user3 = createKnight3(user3X, user3Y, direction);
-
-	}
+//	private void changeDirection3(String direction) {
+//		user3X = user3.getTranslateX();
+//		user3Y = user3.getTranslateY();
+//		user3Root.getChildren().clear();
+//		user3 = createKnight3(user3X, user3Y, direction);
+//
+//	}
 }

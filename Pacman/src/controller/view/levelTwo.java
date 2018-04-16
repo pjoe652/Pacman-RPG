@@ -5,9 +5,8 @@ package controller.view;
 import java.io.IOException;
 import java.util.HashMap;
 
+import controller.model.Story;
 import controller.model.level;
-import controller.model.levelOneStory;
-import controller.model.levelTwoStory;
 import controller.view.levelSelect;
 import javafx.animation.AnimationTimer;
 import javafx.animation.FadeTransition;
@@ -56,12 +55,13 @@ private HashMap<KeyCode, Boolean> keys = new HashMap<KeyCode, Boolean>();
     private boolean keyPressed = false;
     private boolean running = true;
     private boolean choicesCreated = false;
+    private boolean choiceMade = false;
     
     //Initializes the gameplay area
     private void initContent() {
 //        Rectangle bg = new Rectangle(1020, 768);
     	//Background set
-        Image bg = new Image("img/Cave.jpg");
+        Image bg = new Image("img/Cave.png");
         ImageView bgView = new ImageView(bg);
         bgView.setFitWidth(1120);
         bgView.setFitHeight(840);
@@ -82,7 +82,9 @@ private HashMap<KeyCode, Boolean> keys = new HashMap<KeyCode, Boolean>();
    
     //Skip to next message on key press
     private void update() {
-    	if (line == levelOneStory.ScriptData.length-1) {
+    	
+    	//Next Level
+    	if ((line == maxLength(section)-1) && (choiceMade)) {
         	FadeTransition fadeOut = new FadeTransition(Duration.seconds(1), appRoot);
         	fadeOut.setToValue(0.0);
         	
@@ -104,10 +106,12 @@ private HashMap<KeyCode, Boolean> keys = new HashMap<KeyCode, Boolean>();
         	fadeOut.play();
     	}
     	
+    	//Events
     	if ((line == 2) && (section.equals("ScriptChoice1"))) {
     	    stopShake();
     	}
     	
+    	//Show dialogue
         if (isPressed(KeyCode.ENTER) && (keyPressed == false) && (line <= maxLength(section)-1)) {
         	
         	setText(section);
@@ -122,12 +126,14 @@ private HashMap<KeyCode, Boolean> keys = new HashMap<KeyCode, Boolean>();
         if (!isPressed(KeyCode.ENTER) && (keyPressed == true)) {
         	keyPressed = false;
         }
-        if (isPressed(KeyCode.ENTER) && (line == (levelTwoStory.ScriptQuestion).length)) {
+        if (isPressed(KeyCode.ENTER) && (line == (Story.ScriptQuestion).length)) {
         	if (choicesCreated == false) {
         		createChoices("Open Chest", "Leave Chest");
         		choicesCreated = true;
         	}
         }
+        
+        
         
         
       
@@ -139,11 +145,11 @@ private HashMap<KeyCode, Boolean> keys = new HashMap<KeyCode, Boolean>();
     	int maxScript = 0;
     	
     	if (section.equals("ScriptQuestion")) {
-    		maxScript = levelTwoStory.ScriptQuestion.length;
+    		maxScript = Story.ScriptQuestion.length;
     	} else if (section.equals("ScriptChoice1")) {
-    		maxScript = levelTwoStory.ScriptChoice1.length;
+    		maxScript = Story.ScriptChoice1.length;
     	} else if (section.equals("ScriptChoice2")) {
-    		maxScript = levelTwoStory.ScriptChoice2.length;
+    		maxScript = Story.ScriptChoice2.length;
     	}
     	
     	return maxScript;
@@ -158,14 +164,14 @@ private HashMap<KeyCode, Boolean> keys = new HashMap<KeyCode, Boolean>();
     	gameRoot.getChildren().clear();
     	
     	if (section.equals("ScriptQuestion")) {
-        	scriptWords = setDialogue(levelTwoStory.ScriptQuestion[line]);
-        	characterWords = setCharacter(levelTwoStory.ScriptQuestion[line]);
+        	scriptWords = setDialogue(Story.ScriptQuestion[line]);
+        	characterWords = setCharacter(Story.ScriptQuestion[line]);
     	} else if (section.equals("ScriptChoice1")) {
-        	scriptWords = setDialogue(levelTwoStory.ScriptChoice1[line]);
-        	characterWords = setCharacter(levelTwoStory.ScriptChoice1[line]);
+        	scriptWords = setDialogue(Story.ScriptChoice1[line]);
+        	characterWords = setCharacter(Story.ScriptChoice1[line]);
     	} else if (section.equals("ScriptChoice2")) {
-        	scriptWords = setDialogue(levelTwoStory.ScriptChoice2[line]);
-        	characterWords = setCharacter(levelTwoStory.ScriptChoice2[line]);
+        	scriptWords = setDialogue(Story.ScriptChoice2[line]);
+        	characterWords = setCharacter(Story.ScriptChoice2[line]);
     	}
     	
     	gameRoot.getChildren().add(scriptWords);
@@ -267,6 +273,7 @@ private HashMap<KeyCode, Boolean> keys = new HashMap<KeyCode, Boolean>();
     		@Override
     		public void handle(ActionEvent e) {
         		line = 0;
+        		choiceMade = true;
         		section = "ScriptChoice1";
         		appRoot.getChildren().remove(uiRoot);
         		setText(section);
@@ -274,45 +281,17 @@ private HashMap<KeyCode, Boolean> keys = new HashMap<KeyCode, Boolean>();
 
     		}
     	});
-    	
-//    	choice1Button.setOnAction((ActionEvent event)->{
-//    		line = 0;
-//    		section = "ScriptChoice1";
-//    		appRoot.getChildren().remove(uiRoot);
-//    		setText(section);
-//    		shakeStage();
-//    	});
-    	
-//    	choice1Button.setOnKeyPressed((KeyEvent event)->{
-//    		if (event.getCode() == KeyCode.ENTER) {
-//    			line = 0;
-//        		section = "ScriptChoice1";
-//        		appRoot.getChildren().remove(uiRoot);
-//        		setText(section);
-//        		shakeStage();
-//    		}
-//    		
-//    	});
-    	
+
     	choice2Button.setOnAction(new EventHandler<ActionEvent>() {
     		@Override
     		public void handle(ActionEvent e) {
     			line = 0;
+    			choiceMade = true;
     			section = "ScriptChoice2";
     			appRoot.getChildren().remove(uiRoot);
     			setText(section);
     		}
     	});
-//    	choice2Button.setOnKeyPressed((KeyEvent event)->{
-//    		if (event.getCode() == KeyCode.ENTER) {
-//				line = 0;
-//				section = "ScriptChoice2";
-//				appRoot.getChildren().remove(uiRoot);
-//				setText(section);
-//    		}
-//    	});
-    	
-
     }
     
     //Confirms key press

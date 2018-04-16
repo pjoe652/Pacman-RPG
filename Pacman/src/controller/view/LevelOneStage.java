@@ -65,14 +65,16 @@ public class LevelOneStage extends level {
 	private Pane gameRoot = new Pane();
 	private Pane uiRoot = new Pane();
 	private Pane userRoot = new Pane();
+	private Pane enemyRoot = new Pane();
+	private Pane popupRoot = new Pane();
 
 	private double userX;
 	private double userY;
-
+	
 	private int lives = player.getHp();
 	private boolean createHearts = true;
 
-	private static int Score = 0;
+//	private static int Score = 0;
 	private int CoinsCollected = 0;
 
 	private int levelWidth;
@@ -113,14 +115,37 @@ public class LevelOneStage extends level {
 	Node redEnemy = red.redEnemy();
 	enemies blue = new enemies();
 	Node blueEnemy = blue.blueEnemy();
+	enemies purple = new enemies();
+	Node purpleEnemy = purple.purpleEnemy();
+	enemies green = new enemies();
+	Node greenEnemy = green.greenEnemy();
+	private boolean initEnemies = false;
 
 	// AI movement
-	private Point p;
-	private ArrayList<Point> store = new ArrayList<Point>();
-	private int redx, redy;
-	private int moveUp = 0;
-	private int moveRight = 0;
+	private Point p; // RED
+	private ArrayList<Point> store = new ArrayList<Point>(); // RED
+	private int moveUp = 0; // RED
+	private int moveRight = 0; // RED
+	private Point p2; // PURPLE
+	private ArrayList<Point> store2 = new ArrayList<Point>(); // PURPLE
+	private int pmoveUp = 0; // PURPLE
+	private int pmoveRight = 0; // PURPLE
+	private int pcheck = 0; // PURPLE
+	private Point p3; // BLUE // BLUE
+	private int bmoveUp = 0; // PURPLE
+	private int bmoveRight = 0; // PURPLE
+	private int bcheck = 0; // PURPLE
+	private Point p4;
+	private ArrayList<Point> store4 = new ArrayList<Point>();
+	private int gmoveUp = 0;
+	private int gmoveRight = 0;
+	private int lockGate = 0;
+	private boolean scatterMode = true;
+	private boolean attackMode = false;
+
 	private int checkMaze[][] = maze;
+	private int redx, redy, purplex, purpley, bluex, bluey, greenx, greeny, playerx, playery;
+	private int vertical, horizontal;
 
 	// Time pauses upon user's input
 	private boolean timePaused = false;
@@ -135,10 +160,23 @@ public class LevelOneStage extends level {
 	private final Integer swordStart = 60;
 	private Integer swordCount = swordStart;
 	private ArrayList<Node> swords = new ArrayList<Node>();
+	private boolean swordPause = false;
 
 	private int coinCount = coins.size();
-
 	private Stage menuStage = new Stage();
+	
+	// Death animation
+	
+	Timeline deathTime = new Timeline();
+	Timeline enemyTime = new Timeline();
+	private final Integer deathStart = 20;
+	private Integer deathCount = deathStart;
+	private final Integer enemyStart = 20;
+	private Integer enemyCount = enemyStart;
+	private double playerOpacity = 1;
+	private boolean deathComplete = false;
+	private boolean enemyDeathOn = false;
+	
 
 	// Initializes the gameplay area
 	private void initContent() {
@@ -169,7 +207,7 @@ public class LevelOneStage extends level {
 		}
 
 		// coinSFX();
-
+		
 		playerDead = false;
 
 		// Transfer matrices into 40*40 blocks
@@ -192,6 +230,10 @@ public class LevelOneStage extends level {
 					case 3:
 						Node sword = createImage(40, 40, j * 40, i * 40, "img/sword.png");
 						swords.add(sword);
+						break;
+					case 10:
+						Node fence = createImage(40, 40, j * 40, i * 40, "img/electricFence.png");
+						break;
 					}
 				}
 			}
@@ -202,10 +244,21 @@ public class LevelOneStage extends level {
 		redEnemy.setTranslateX(520);
 		redEnemy.setTranslateY(360);
 		redEnemy.getProperties().put("alive", true);
-		blueEnemy.setTranslateX(440);
+		blueEnemy.setTranslateX(680);
 		blueEnemy.setTranslateY(360);
 		blueEnemy.getProperties().put("alive", true);
-		gameRoot.getChildren().addAll(redEnemy, blueEnemy);
+		purpleEnemy.setTranslateX(600);
+		purpleEnemy.setTranslateY(360);
+		purpleEnemy.getProperties().put("alive", true);
+		greenEnemy.setTranslateX(400);
+		greenEnemy.setTranslateY(360);
+		greenEnemy.getProperties().put("alive", true);
+		if (!initEnemies) {
+			enemyRoot.getChildren().addAll(redEnemy, blueEnemy, purpleEnemy, greenEnemy);
+			initEnemies = true;
+		}
+		
+		user.setOpacity(1);
 
 		user.translateXProperty().addListener((obs, old, newValue) -> {
 			int offset = newValue.intValue();
@@ -219,7 +272,7 @@ public class LevelOneStage extends level {
 			setTime();
 		}
 
-		appRoot.getChildren().addAll(bgView, Lives, LivesLabel, gameRoot, userRoot, uiRoot, menuScore, menuScoreLabel,
+		appRoot.getChildren().addAll(bgView, Lives, LivesLabel, gameRoot, enemyRoot, userRoot, uiRoot, popupRoot, menuScore, menuScoreLabel,
 				scoreValue);
 
 	}
@@ -229,18 +282,26 @@ public class LevelOneStage extends level {
 
 		if (lives == 0) {
 			levelSelect select = new levelSelect();
-			Score = 0;
+			player.Score = 0;
 			select.levelFailed(stage);
 		}
+		
+		running = true;
 
+		user.setOpacity(1);
 		userRoot.getChildren().clear();
 		uiRoot.getChildren().clear();
 		appRoot.getChildren().clear();
-		gameRoot.getChildren().removeAll(user, redEnemy, blueEnemy);
+		gameRoot.getChildren().removeAll(user, redEnemy, blueEnemy, purpleEnemy, greenEnemy);
 		gameRoot.getChildren().removeAll(hearts);
+		
 
+		
+		direction = "NONE";
+		deathComplete = false;
 		currentTime = 3;
 		count = 0;
+		stopPlayerDeathTime();
 		resetTime();
 		resetGameTime();
 	}
@@ -249,6 +310,8 @@ public class LevelOneStage extends level {
 	private void update() {
 		if (currentTime < -1 && timePaused == false) {
 
+			
+			
 			if (count == 0) {
 				setGameTime();
 				count++;
@@ -260,13 +323,27 @@ public class LevelOneStage extends level {
 			double y = user.getTranslateY();
 			int newx = (int) (x / 40);
 			int newy = (int) (y / 40);
+			playerx = newx;
+			playery = newy;
 
+			redx = (int) (redEnemy.getTranslateX() / 40);
+			redy = (int) (redEnemy.getTranslateY() / 40);
+
+			// System.out.println();
 			checkMaze[newy][newx] = 9;
 
 			// Move red enemy
 			redMovement();
 
-			// coinCount = coins.size();
+			checkMaze[newy][newx] = 9;
+			// Move purple enemy
+			purpleMovement();
+
+			checkMaze[newy][newx] = 9;
+			blueMovement();
+
+			checkMaze[newy][newx] = 9;
+			greenMovement();
 
 			directionSelect();
 
@@ -283,7 +360,7 @@ public class LevelOneStage extends level {
 				if (user.getBoundsInParent().intersects(sword.getBoundsInParent())) {
 					sword.getProperties().put("alive", false);
 					swordGet = 1;
-					stopSwordTime();
+					resetSwordTime();
 
 				}
 			}
@@ -310,11 +387,19 @@ public class LevelOneStage extends level {
 			// Checks if player is killed
 			if (!playerDead && (!swordHeld)) {
 				if (!playerDead) {
-					if (user.getBoundsInParent().intersects(redEnemy.getBoundsInParent())) {
-						playerDead = true;
-						clearGame();
-						lives--;
-						initContent();
+					if (user.getBoundsInParent().intersects(redEnemy.getBoundsInParent())
+							|| user.getBoundsInParent().intersects(blueEnemy.getBoundsInParent())
+							|| user.getBoundsInParent().intersects(purpleEnemy.getBoundsInParent())
+							|| user.getBoundsInParent().intersects(greenEnemy.getBoundsInParent())) {
+							running = false;
+//							playerDies();
+							setPlayerDeath();
+							if (deathComplete) {
+								playerDead = true;
+								clearGame();
+								lives--;
+								initContent();
+						}
 					}
 				}
 
@@ -326,8 +411,8 @@ public class LevelOneStage extends level {
 				if (!(Boolean) coin.getProperties().get("alive")) {
 					it.remove();
 					CoinsCollected += 1;
-					Score += 50 * player.getScoreMultiplier();
-					String ScoreString = Integer.toString(Score);
+					player.Score += 50 * player.getScoreMultiplier();
+					String ScoreString = Integer.toString(player.Score);
 					StackPane scoreValue = createMenu(100, 30, 850, 15, ScoreString, Color.WHITE);
 					appRoot.getChildren().add(scoreValue);
 					gameRoot.getChildren().remove(coin);
@@ -368,7 +453,7 @@ public class LevelOneStage extends level {
 	
 
 	// Creates walls
-	private Node createImage(int h, int w, int x, int y, String link) {
+	private Node createImage(int h, int w, double x, double y, String link) {
 
 		Image img = new Image(link);
 		ImageView imageView = new ImageView(img);
@@ -380,6 +465,20 @@ public class LevelOneStage extends level {
 
 		gameRoot.getChildren().add(imageView);
 		return imageView;
+
+	}
+	
+	private void createDeathPopup(int h, int w, double x, double y, String link) {
+
+		Image img = new Image(link);
+		ImageView imageView = new ImageView(img);
+		imageView.setFitHeight(h);
+		imageView.setFitWidth(w);
+		imageView.setX(x);
+		imageView.setY(y);
+		imageView.getProperties().put("alive", true);
+
+		popupRoot.getChildren().add(imageView);
 
 	}
 
@@ -498,6 +597,7 @@ public class LevelOneStage extends level {
 
 		menuScene.setOnKeyPressed(event -> {
 			if (event.getCode() == KeyCode.P) {
+				swordTime.play();
 				time.play();
 				timePaused = false;
 				if (currentTime != -2) {
@@ -565,6 +665,7 @@ public class LevelOneStage extends level {
 			if (event.getCode() == KeyCode.P) {
 				time.pause();
 				timer.pause();
+				swordTime.pause();
 				timePaused = true;
 				menuStage.setScene(menuScene);
 				menuStage.show();
@@ -697,22 +798,60 @@ public class LevelOneStage extends level {
     	time.getKeyFrames().clear();
     	
     	time.stop();
-    	
     }
+    
 	
 	//------------------------------------SWORD----------------------------------
 	// Check sword use
 	private void swordUse() {
 		if (user.getBoundsInParent().intersects(redEnemy.getBoundsInParent())) {
-			gameRoot.getChildren().remove(redEnemy);
+			enemyKilledScore();
+			running = false;
+			setEnemyDeath(redEnemy);
+			redEnemy = red.swordGet();
 			redEnemy.setTranslateX(520);
 			redEnemy.setTranslateY(360);
-			gameRoot.getChildren().add(redEnemy);
+			enemyRoot.getChildren().add(redEnemy);
+			count = 0;
+//			playSwordTime();
+//			setSwordTime();
+		} else if (user.getBoundsInParent().intersects(blueEnemy.getBoundsInParent())) {
+			enemyKilledScore();
+			running = false;
+			setEnemyDeath(blueEnemy);
+			blueEnemy = blue.swordGet();
+			blueEnemy.setTranslateX(440);
+			blueEnemy.setTranslateY(360);
+			enemyRoot.getChildren().add(blueEnemy);
+			count = 0;
+//			setSwordTime();
+		} else if (user.getBoundsInParent().intersects(purpleEnemy.getBoundsInParent())) {
+
+			enemyKilledScore();
+			running = false;
+			setEnemyDeath(purpleEnemy);
+			enemyRoot.getChildren().remove(purpleEnemy);
+			purpleEnemy.setTranslateX(600);
+			purpleEnemy.setTranslateY(360);
+			enemyRoot.getChildren().add(purpleEnemy);
+			count = 0;
+		} else if (user.getBoundsInParent().intersects(greenEnemy.getBoundsInParent())) {
+			
+			enemyKilledScore();
+			running = false;
+			setEnemyDeath(greenEnemy);
+			enemyRoot.getChildren().remove(greenEnemy);
+			greenEnemy.setTranslateX(600);
+			greenEnemy.setTranslateY(360);
+			enemyRoot.getChildren().add(greenEnemy);
+			count = 0;
 		}
 	}
 
 	public void setSwordTime() {
 
+		setKillable();
+		
 		swordTime.setCycleCount(Timeline.INDEFINITE);
 
 		if (swordTime != null) {
@@ -724,6 +863,9 @@ public class LevelOneStage extends level {
 			@Override
 			public void handle(ActionEvent event) {
 				swordCount--;
+				if (swordCount == 30) {
+					
+				}
 				if ((swordCount <= 30) && (swordCount % 2 == 1)) {
 					user.setOpacity(0.5);
 				} else if ((swordCount <= 30) && (swordCount % 2 == 0)) {
@@ -732,6 +874,7 @@ public class LevelOneStage extends level {
 				if (swordCount == -1) {
 					swordTime.getKeyFrames().clear();
 					swordTime.stop();
+					setUnkillable();
 					swordHeld = false;
 					System.out.println("Sword has broken");
 					swordCount = 60;
@@ -743,22 +886,270 @@ public class LevelOneStage extends level {
 		swordTime.playFromStart();
 	}
 
-	public void stopSwordTime() {
+	public void resetSwordTime() {
+		
 		swordTime.getKeyFrames().clear();
+		
 		swordTime.stop();
+		
 		swordCount = 60;
 	}
 
+	public void stopSwordTime() {
+		
+		swordTime.getKeyFrames().clear();
+
+		swordTime.stop();
+	}
+	
+	public void playSwordTime() {
+		
+		swordTime.getKeyFrames().clear();
+		
+		swordTime.play();
+	}
+	
+	public void setKillable() {
+		double enemyRedX;
+		double enemyRedY;
+		double enemyBlueX;
+		double enemyBlueY;
+		double enemyGreenX;
+		double enemyGreenY;
+		double enemyPurpleX;
+		double enemyPurpleY;
+		
+		//Track
+		enemyRedX = redEnemy.getTranslateX();
+		enemyRedY = redEnemy.getTranslateY();
+		enemyBlueX = blueEnemy.getTranslateX();
+		enemyBlueY = blueEnemy.getTranslateY();
+		enemyGreenX = greenEnemy.getTranslateX();
+		enemyGreenY = greenEnemy.getTranslateY();
+		enemyPurpleX = purpleEnemy.getTranslateX();
+		enemyPurpleY = purpleEnemy.getTranslateY();
+		enemyRoot.getChildren().clear();
+		
+		//Red Enemy
+		redEnemy = red.swordGet();
+		redEnemy.setTranslateX(enemyRedX);
+		redEnemy.setTranslateY(enemyRedY);
+		enemyRoot.getChildren().add(redEnemy);
+		
+		//Blue Enemy
+		blueEnemy = blue.swordGet();
+		blueEnemy.setTranslateX(enemyBlueX);
+		blueEnemy.setTranslateY(enemyBlueY);
+		enemyRoot.getChildren().add(blueEnemy);
+		
+		//Green Enemy
+		greenEnemy = green.swordGet();
+		greenEnemy.setTranslateX(enemyGreenX);
+		greenEnemy.setTranslateY(enemyGreenY);
+		enemyRoot.getChildren().add(greenEnemy);
+		
+		//Purple Enemy
+		purpleEnemy = purple.swordGet();
+		purpleEnemy.setTranslateX(enemyPurpleX);
+		purpleEnemy.setTranslateY(enemyPurpleY);
+		enemyRoot.getChildren().add(purpleEnemy);
+	}
+	
+	public void setUnkillable() {
+		double enemyRedX;
+		double enemyRedY;
+		double enemyBlueX;
+		double enemyBlueY;
+		double enemyGreenX;
+		double enemyGreenY;
+		double enemyPurpleX;
+		double enemyPurpleY;
+		
+		//Track
+		enemyRedX = redEnemy.getTranslateX();
+		enemyRedY = redEnemy.getTranslateY();
+		enemyBlueX = blueEnemy.getTranslateX();
+		enemyBlueY = blueEnemy.getTranslateY();
+		enemyGreenX = greenEnemy.getTranslateX();
+		enemyGreenY = greenEnemy.getTranslateY();
+		enemyPurpleX = purpleEnemy.getTranslateX();
+		enemyPurpleY = purpleEnemy.getTranslateY();
+		enemyRoot.getChildren().clear();
+		
+		//Red Enemy
+		redEnemy = red.redEnemy();
+		redEnemy.setTranslateX(enemyRedX);
+		redEnemy.setTranslateY(enemyRedY);
+		enemyRoot.getChildren().add(redEnemy);
+		
+		//Blue Enemy
+		blueEnemy = blue.blueEnemy();
+		blueEnemy.setTranslateX(enemyBlueX);
+		blueEnemy.setTranslateY(enemyBlueY);
+		enemyRoot.getChildren().add(blueEnemy);
+		
+		//Green Enemy
+		greenEnemy = red.redEnemy();
+		greenEnemy.setTranslateX(enemyGreenX);
+		greenEnemy.setTranslateY(enemyGreenY);
+		enemyRoot.getChildren().add(greenEnemy);
+		
+		//Purple Enemy
+		purpleEnemy = blue.blueEnemy();
+		purpleEnemy.setTranslateX(enemyPurpleX);
+		purpleEnemy.setTranslateY(enemyPurpleY);
+		enemyRoot.getChildren().add(purpleEnemy);
+	}
+	
+	//------------------------------------PLAYERDEATH----------------------------------
+	private void playerDies() {
+		userX = user.getTranslateX();
+		userY = user.getTranslateY();
+		userRoot.getChildren().clear();
+		user = createKnight(userX, userY, player.getModelDeath());
+	}
+	
+	public void setPlayerDeath() {
+		
+
+		playerDies();
+		
+		stopGameTime();
+		
+		deathTime.setCycleCount(Timeline.INDEFINITE);
+
+		if (deathTime != null) {
+			deathTime.stop();
+		}
+
+		KeyFrame playerFrame = new KeyFrame(Duration.seconds(0.1), new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent event) {
+//				running = false;
+				deathCount--;
+				if ((deathCount <= 20) && (deathCount % 2 == 0)) {
+					playerOpacity -= 0.1;
+					user.setOpacity(playerOpacity);
+				}
+				if (deathCount == -1) {
+					deathTime.getKeyFrames().clear();
+					deathTime.stop();
+					running = true;
+					deathComplete = true;
+					System.out.println("You have died!");
+					deathCount = 20;
+					playerOpacity = 1;
+//					user.setOpacity(playerOpacity);
+					
+					
+				}
+			}
+		});
+
+		deathTime.getKeyFrames().add(playerFrame);
+		deathTime.playFromStart();
+		
+	}
+	
+	public void stopPlayerDeathTime() {
+		deathTime.getKeyFrames().clear();
+		deathTime.stop();
+		deathCount = 20;
+	}
+	
+	//------------------------------------ENEMYDEATH----------------------------------
+	private void enemyDies(Node enemy) {
+		double enemyX;
+		double enemyY;
+		if (enemy == redEnemy) {
+			enemyX = redEnemy.getTranslateX();
+			enemyY = redEnemy.getTranslateY();
+			enemyRoot.getChildren().remove(redEnemy);
+			createDeathPopup(40, 40, enemyX, enemyY, red.getEnemyDeath());
+//			enemyDies = createImage(40, 40, enemyX, enemyY, red.getEnemyDeath());
+		} else if (enemy == blueEnemy) {
+			enemyX = blueEnemy.getTranslateX();
+			enemyY = blueEnemy.getTranslateY();
+			enemyRoot.getChildren().remove(blueEnemy);
+			createDeathPopup(40, 40, enemyX, enemyY, blue.getEnemyDeath());
+		} else if (enemy == greenEnemy) {
+			enemyX = greenEnemy.getTranslateX();
+			enemyY = greenEnemy.getTranslateY();
+			popupRoot.getChildren().remove(greenEnemy);
+			createDeathPopup(40, 40, enemyX, enemyY, green.getEnemyDeath());
+		} else if (enemy == purpleEnemy) {
+			enemyX = purpleEnemy.getTranslateX();
+			enemyY = purpleEnemy.getTranslateY();
+			popupRoot.getChildren().remove(purpleEnemy);
+			createDeathPopup(40, 40, enemyX, enemyY, purple.getEnemyDeath());
+		}
+	}
+	
+	public void setEnemyDeath(Node enemy) {
+		
+		enemyDeathOn = false;
+		
+		enemyDies(enemy);
+		
+		stopGameTime();
+		stopSwordTime();
+		
+		enemyTime.setCycleCount(Timeline.INDEFINITE);
+
+		if (enemyTime != null) {
+			enemyTime.stop();
+		}
+
+		KeyFrame enemyFrame = new KeyFrame(Duration.seconds(0.1), new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent event) {
+//				running = false;
+				enemyCount--;
+				
+				if (enemyCount == -1) {
+					enemyTime.getKeyFrames().clear();
+					enemyTime.stop();
+					running = true;
+					System.out.println("You have slain an enemy!");
+					enemyCount = 20;
+					popupRoot.getChildren().clear();
+					setSwordTime();
+					
+				}
+			}
+		});
+
+		enemyTime.getKeyFrames().add(enemyFrame);
+		enemyTime.playFromStart();
+		
+	}
+	
+	public void stopEnemyDeathTime() {
+		
+		enemyTime.getKeyFrames().clear();
+		enemyTime.stop();
+		deathCount = 20;
+	}
+	
+	public void enemyKilledScore() {
+		player.Score += 500;
+		String ScoreString = Integer.toString(player.Score);
+		StackPane scoreValue = createMenu(100, 30, 850, 15, ScoreString, Color.WHITE);
+		appRoot.getChildren().add(scoreValue);
+	}
+	
 	// --------------------------------------------------------------
 	/*
 	 * Getter methods that are useful for the game
 	 */
 	public int getScore() {
-		return Score;
+		return player.Score;
 	}
 
 	public void resetScore() {
-		Score = 0;
+		player.Score = 0;
 	}
 
 	public int getTime() {
@@ -774,6 +1165,7 @@ public class LevelOneStage extends level {
 		return checkMaze;
 	}
 
+	// -----------
 	// -----------------------------------ShortestPath--------------------------------
 	/*
 	 * We have used BFS as our path-finding algorithm to find the shortest path to
@@ -810,8 +1202,8 @@ public class LevelOneStage extends level {
 	public static Queue<Point> q = new LinkedList<Point>();
 
 	public Point getPathBFS(int x, int y) {
-
-		int[][] ar = new int[20][26];
+		q.clear();
+		int[][] ar = new int[20][27];
 
 		ar = getCheckMaze();
 
@@ -821,6 +1213,181 @@ public class LevelOneStage extends level {
 			Point p = q.remove();
 
 			if (ar[p.x][p.y] == 9) {
+				for (int i = 0; i < checkMaze.length; i++) {
+					for (int j = 0; j < checkMaze[0].length; j++) {
+						// System.out.print(checkMaze[i][j] + " ");
+						if (ar[i][j] == -1 || ar[i][j] == 9) {
+							ar[i][j] = 0;
+							// System.out.print(checkMaze[i][j] + " ");
+						}
+
+					}
+					// System.out.println();
+				}
+
+				// System.out.println();
+				q.clear();
+				return p;
+			}
+
+			if (isFree(p.x + 1, p.y, ar.length, ar[0].length, ar)) {
+				ar[p.x][p.y] = -1;
+				Point nextP = new Point(p.x + 1, p.y, p);
+				q.add(nextP);
+			}
+
+			if (isFree(p.x - 1, p.y, ar.length, ar[0].length, ar)) {
+				ar[p.x][p.y] = -1;
+				Point nextP = new Point(p.x - 1, p.y, p);
+				q.add(nextP);
+			}
+
+			if (isFree(p.x, p.y + 1, ar.length, ar[0].length, ar)) {
+				ar[p.x][p.y] = -1;
+				Point nextP = new Point(p.x, p.y + 1, p);
+				q.add(nextP);
+			}
+
+			if (isFree(p.x, p.y - 1, ar.length, ar[0].length, ar)) {
+				ar[p.x][p.y] = -1;
+				Point nextP = new Point(p.x, p.y - 1, p);
+				q.add(nextP);
+			}
+
+		}
+
+		for (int i = 0; i < checkMaze.length; i++) {
+			for (int j = 0; j < checkMaze[0].length; j++) {
+				if (ar[i][j] == -1 || ar[i][j] == 9) {
+					ar[i][j] = 0;
+				}
+			}
+		}
+		q.clear();
+		return null;
+	}
+
+	public static boolean isFree(int x, int y, int lengthX, int lengthY, int[][] maze) {
+		if ((x >= 0 && x < lengthX) && (y >= 0 && y < lengthY) && (maze[x][y] == 0 || maze[x][y] == 9 || maze[x][y] == 2
+				|| maze[x][y] == 3 || maze[x][y] == 8 || maze[x][y] == 7 || maze[x][y] == 5 || maze[x][y] == 6 || maze[x][10] == 10)) {
+			return true;
+		}
+		return false;
+	}
+
+	/*
+	 * Movement for red enemy
+	 */
+	public void redMovement() {
+
+		Point point;
+		if (redEnemy.getTranslateX() % 40 == 0 && redEnemy.getTranslateY() % 40 == 0) {
+			if (redy == 7 && redx == 13) {
+				lockGate++;
+			}
+//			if (scatterMode) {
+//				
+//			} else {
+				p = getPathBFS(redy, redx);
+				if (p != null) {
+					while (p.getParent() != null) {
+						store.add(p);
+						p = p.getParent();
+					}
+
+					point = null;
+					for (int i = 0; i < store.size(); i++) {
+						point = store.get(i);
+						if (point.x == redy && point.y == redx && i != 0) {
+							point = store.get(i - 1);
+							break;
+						}
+
+					}
+
+					p = point;
+					if (p != null) {
+						if (p.x > redy) {
+							moveUp = 1;
+						} else if (p.x < redy) {
+							moveUp = 2;
+						} else if (p.x == redEnemy.getTranslateY() / 40.0) {
+							moveUp = 0;
+						}
+						if (p.y > redx) {
+							moveRight = 1;
+						} else if (p.y < redx) {
+							moveRight = 2;
+						} else if (p.y == redEnemy.getTranslateX() / 40.0) {
+							moveRight = 0;
+						}
+					}
+				}
+			}
+			
+		//}
+		if (moveUp == 1) {
+			moveredY(1);
+		} else if (moveUp == 2) {
+			moveredY(-1);
+		}
+		if (moveRight == 1) {
+			moveredX(1);
+		} else if (moveRight == 2) {
+			moveredX(-1);
+		}
+
+		// redx = 0;
+		// redy = 0;
+		store.clear();
+	}
+
+	private void moveredY(int value) {
+		boolean movingDown = value > 0;
+		int abs = Math.abs(value);
+		for (int i = 0; i < abs; i++) {
+			if (movingDown) {
+				redEnemy.setTranslateY(redEnemy.getTranslateY() + 1);
+
+			} else {
+				redEnemy.setTranslateY(redEnemy.getTranslateY() - 1);
+			}
+		}
+	}
+
+	private void moveredX(int value) {
+		boolean movingRight = value > 0;
+
+		for (int i = 0; i < Math.abs(value); i++) {
+			if (movingRight) {
+				redEnemy.setTranslateX(redEnemy.getTranslateX() + 1);
+
+			} else {
+				redEnemy.setTranslateX(redEnemy.getTranslateX() - 1);
+
+			}
+		}
+	}
+
+	public Point findOtherCorner(int x, int y) {
+
+		int[][] ar = new int[20][27];
+
+		ar = checkMaze;
+		// for (int i = 0; i < checkMaze.length; i++) {
+		// for (int j = 0; j < checkMaze[0].length; j++) {
+		// System.out.print(checkMaze[i][j] + " ");
+		// }
+		// System.out.println();
+		// }
+
+		// System.out.println();
+		q.add(new Point(x, y, null));
+
+		while (!q.isEmpty()) {
+			Point p = q.remove();
+
+			if (ar[p.x][p.y] == 7) {
 				for (int i = 0; i < checkMaze.length; i++) {
 					for (int j = 0; j < checkMaze[0].length; j++) {
 						if (ar[i][j] == -1 || ar[i][j] == 9) {
@@ -857,103 +1424,837 @@ public class LevelOneStage extends level {
 			}
 
 		}
+
+		for (int i = 0; i < checkMaze.length; i++) {
+			for (int j = 0; j < checkMaze[0].length; j++) {
+				if (ar[i][j] == -1 || ar[i][j] == 9) {
+					ar[i][j] = 0;
+				}
+			}
+		}
 		return null;
 	}
 
-	public static boolean isFree(int x, int y, int lengthX, int lengthY, int[][] maze) {
-		if ((x >= 0 && x < lengthX) && (y >= 0 && y < lengthY)
-				&& (maze[x][y] == 0 || maze[x][y] == 9 || maze[x][y] == 2 || maze[x][y] == 3)) {
-			return true;
+	public void purpleMovement() {
+		purplex = (int) (purpleEnemy.getTranslateX() / 40);
+		purpley = (int) (purpleEnemy.getTranslateY() / 40);
+
+
+		if (purpleEnemy.getTranslateX() == 600 && purpleEnemy.getTranslateY() == 360) {
+			checkMaze[3][1] = 7;
+			pcheck = 0;
 		}
-		return false;
+		if (purpleEnemy.getTranslateX() == 40 && purpleEnemy.getTranslateY() == 120) {
+			checkMaze[6][1] = 7;
+			checkMaze[6][5] = 0;
+			checkMaze[3][1] = 0;
+			pcheck = 1;
+		} else if (purpleEnemy.getTranslateX() == 40 && purpleEnemy.getTranslateY() == 240) {
+			checkMaze[6][1] = 0;
+			checkMaze[6][5] = 7;
+			checkMaze[3][1] = 0;
+			pcheck = 2;
+		} else if (purpleEnemy.getTranslateX() == 200 && purpleEnemy.getTranslateY() == 240) {
+			checkMaze[6][1] = 0;
+			checkMaze[6][5] = 0;
+			checkMaze[3][1] = 7;
+			pcheck = 0;
+		}
+		// System.out.println(check);
+
+		Point point;
+		if (purpleEnemy.getTranslateX() % 40 == 0 && purpleEnemy.getTranslateY() % 40 == 0) {
+			if (purpley == 7 && purplex == 13) {
+				lockGate++;
+			}
+			p2 = getPathBFS(purpley, purplex);
+			if (pcheck == 0) {
+				checkMaze[3][1] = 7;
+				checkMaze[6][1] = 0;
+				checkMaze[6][6] = 0;
+			} else if (pcheck == 1) {
+				checkMaze[6][1] = 7;
+				checkMaze[3][1] = 0;
+				checkMaze[6][5] = 0;
+			} else if (pcheck == 2) {
+				checkMaze[6][5] = 7;
+				checkMaze[3][1] = 0;
+				checkMaze[6][1] = 0;
+			}
+
+			if (p2 != null) {
+				while (p2.getParent() != null) {
+					store2.add(p2);
+					p2 = p2.getParent();
+				}
+
+				point = null;
+				if (store2.size() < 8) {
+					store2.clear();
+					// System.out.println("SOMETHING");
+					// p = null;
+					p2 = findOtherCorner(purpley, purplex);
+					if (p2 != null) {
+						while (p2.getParent() != null) {
+							store2.add(p2);
+							p2 = p2.getParent();
+						}
+						for (int i = 0; i < store2.size(); i++) {
+							point = store2.get(i);
+							// System.out.println("7: " + point);
+							if (point.x == purpley && point.y == purplex && i != 0) {
+								point = store2.get(i - 1);
+								break;
+							}
+						}
+						// System.out.println();
+					}
+
+				} else {
+					// do something
+					// store2.clear();
+					// // System.out.println("SOMETHING");
+					// // p = null;
+					// p2 = findOtherCorner(purpley, purplex);
+					// if (p2 != null) {
+					// while (p2.getParent() != null) {
+					// store2.add(p2);
+					// p2 = p2.getParent();
+					// }
+					// for (int i = 0; i < store2.size(); i++) {
+					// point = store2.get(i);
+					// // System.out.println("7: " + point);
+					// if (point.x == purpley && point.y == purplex && i != 0) {
+					// point = store2.get(i - 1);
+					// break;
+					// }
+					// }
+					// // System.out.println();
+					// }
+					for (int i = 0; i < store2.size(); i++) {
+						point = store2.get(i);
+						// System.out.println(point);
+						if (point.x == purpley && point.y == purplex && i != 0) {
+							point = store2.get(i - 1);
+							break;
+						}
+
+					}
+				}
+
+				p2 = point;
+
+				if (p2 != null) {
+					if (p2.x > purpley) {
+						pmoveUp = 1;
+					} else if (p2.x < purpley) {
+						pmoveUp = 2;
+					} else if (p2.x == purpleEnemy.getTranslateY() / 40.0) {
+						pmoveUp = 0;
+					}
+					if (p2.y > purplex) {
+						pmoveRight = 1;
+					} else if (p2.y < purplex) {
+						pmoveRight = 2;
+					} else if (p2.y == purpleEnemy.getTranslateX() / 40.0) {
+						pmoveRight = 0;
+					}
+				}
+			}
+		}
+		if (pmoveUp == 1) {
+			movepurpleY(1);
+		} else if (pmoveUp == 2) {
+			movepurpleY(-1);
+		}
+		if (pmoveRight == 1) {
+			movepurpleX(1);
+		} else if (pmoveRight == 2) {
+			movepurpleX(-1);
+		}
+
+		purplex = 0;
+		purpley = 0;
+		store2.clear();
 	}
 
-	/*
-	 * Movement for red enemy
-	 */
-	public void redMovement() {
-		redx = (int) (redEnemy.getTranslateX() / 40);
-		redy = (int) (redEnemy.getTranslateY() / 40);
+	private void movepurpleY(int value) {
+		boolean movingDown = value > 0;
+		int abs = Math.abs(value);
+		for (int i = 0; i < abs; i++) {
+			if (movingDown) {
+				purpleEnemy.setTranslateY(purpleEnemy.getTranslateY() + 1);
+
+			} else {
+				purpleEnemy.setTranslateY(purpleEnemy.getTranslateY() - 1);
+			}
+		}
+	}
+
+	private void movepurpleX(int value) {
+		boolean movingRight = value > 0;
+
+		for (int i = 0; i < Math.abs(value); i++) {
+			if (movingRight) {
+				purpleEnemy.setTranslateX(purpleEnemy.getTranslateX() + 1);
+
+			} else {
+				purpleEnemy.setTranslateX(purpleEnemy.getTranslateX() - 1);
+
+			}
+		}
+	}
+
+	public void blueMovement() {
+
+		bluex = (int) blueEnemy.getTranslateX() / 40;
+		bluey = (int) blueEnemy.getTranslateY() / 40;
+		int freey = 0;
+		int freex = 0;
+		int posy = 0;
+		int posx = 0;
+		boolean chasePlayer = false;
+
+		if (direction.equals("UP") || direction.equals("UP_RIGHT") || direction.equals("UP_LEFT")
+				|| direction.equals("NONE")) {
+			if (isFree(playery - 4, playerx, checkMaze.length, checkMaze[0].length, checkMaze)) {
+				freey = -4;
+				if (isFree(playery - 3, playerx, checkMaze.length, checkMaze[0].length, checkMaze) && freey == 0) {
+					freey = -3;
+					if (isFree(playery - 2, playerx, checkMaze.length, checkMaze[0].length, checkMaze) && freey == 0) {
+						freey = -2;
+						if (isFree(playery - 1, playerx, checkMaze.length, checkMaze[0].length, checkMaze) && freey == 0) {
+							freey = -1;
+						}
+					}
+				}
+			}
+		}
+		if (direction.equals("DOWN") || direction.equals("DOWN_RIGHT") || direction.equals("DOWN_LEFT")) {
+			if (isFree(playery + 4, playerx, checkMaze.length, checkMaze[0].length, checkMaze)) {
+				freey = 4;
+				if (isFree(playery + 3, playerx, checkMaze.length, checkMaze[0].length, checkMaze) && freey == 0) {
+					freey = 3;
+					if (isFree(playery + 2, playerx, checkMaze.length, checkMaze[0].length, checkMaze) && freey == 0) {
+						freey = 2;
+						if (isFree(playery + 1, playerx, checkMaze.length, checkMaze[0].length, checkMaze) && freey == 0) {
+							freey = 1;
+						}
+					}
+				}
+			}
+		}
+		if (direction.equals("RIGHT")) {
+			if (isFree(playery , playerx + 4, checkMaze.length, checkMaze[0].length, checkMaze)) {
+				freex = 4;
+				if (isFree(playery, playerx + 3, checkMaze.length, checkMaze[0].length, checkMaze) && freex == 0) {
+					freex = 3;
+					if (isFree(playery, playerx + 2, checkMaze.length, checkMaze[0].length, checkMaze) && freex == 0) {
+						freex = 2;
+						if (isFree(playery, playerx + 1, checkMaze.length, checkMaze[0].length, checkMaze) && freex == 0) {
+							freex = 1;
+						}
+					}
+				}
+			}
+		}
+		if (direction.equals("LEFT")) {
+			if (isFree(playery , playerx - 4, checkMaze.length, checkMaze[0].length, checkMaze)) {
+				freex = -4;
+				if (isFree(playery, playerx - 3, checkMaze.length, checkMaze[0].length, checkMaze)) {
+					freex = -3;
+					if (isFree(playery, playerx - 2, checkMaze.length, checkMaze[0].length, checkMaze)) {
+						freex = -2;
+						if (isFree(playery, playerx - 1, checkMaze.length, checkMaze[0].length, checkMaze)) {
+							freex = -1;
+						}
+					}
+				}
+			}
+		}
+		
+		posy = playery + freey;
+		posx = playerx + freex;
+		for (int i = 8; i < 11; i++) {
+			for (int j = 9; j < 18; j++) {
+				if (lockGate != 4) {
+					chasePlayer = true;
+				}
+			}
+		}
+		if (posy == playery && posx == playerx) {
+			chasePlayer = true;
+		}
+		System.out.println(posy + " " + posx);
 		Point point;
-		if (redEnemy.getTranslateX() % 40 == 0 && redEnemy.getTranslateY() % 40 == 0) {
-			p = getPathBFS(redy, redx);
+		if (blueEnemy.getTranslateX() % 40 == 0 && blueEnemy.getTranslateY() % 40 == 0) {
+			if (bluey == 7 && bluex == 13) {
+				lockGate++;
+			}
+			p = shortestPath(bluey, bluex);
 			if (p != null) {
 				while (p.getParent() != null) {
 					store.add(p);
 					p = p.getParent();
 				}
-
 				point = null;
-				for (int i = 0; i < store.size(); i++) {
-					point = store.get(i);
-					if (point.x == redy && point.y == redx && i != 0) {
-						point = store.get(i - 1);
-						break;
+				point = store.get(store.size() - 1);
+				
+				if (store.size() <= 4 || chasePlayer) {
+					//chase player
+				} else {
+					store.clear();
+					checkMaze[posy][posx] = 5;
+					p = trapMode(bluey, bluex);
+					if (p != null) {
+						while (p.getParent() != null) {
+							store.add(p);
+							p = p.getParent();
+						}
+						point = store.get(store.size()-1);
 					}
-
 				}
-
 				p = point;
+				System.out.println(p);
 				if (p != null) {
-					if (p.x > redy) {
-						moveUp = 1;
-					} else if (p.x < redy) {
-						moveUp = 2;
-					} else if (p.x == redEnemy.getTranslateY() / 40.0) {
-						moveUp = 0;
+					if (p.x > bluey) {
+						bmoveUp = 1;
+					} else if (p.x < bluey) {
+						bmoveUp = 2;
+					} else if (p.x == blueEnemy.getTranslateY() / 40.0) {
+						bmoveUp = 0;
 					}
-					if (p.y > redx) {
-						moveRight = 1;
-					} else if (p.y < redx) {
-						moveRight = 2;
-					} else if (p.y == redEnemy.getTranslateX() / 40.0) {
-						moveRight = 0;
+					if (p.y > bluex) {
+						bmoveRight = 1;
+					} else if (p.y < bluex) {
+						bmoveRight = 2;
+					} else if (p.y == blueEnemy.getTranslateX() / 40.0) {
+						bmoveRight = 0;
 					}
 				}
 			}
 		}
-		if (moveUp == 1) {
-			moveredY(1);
-		} else if (moveUp == 2) {
-			moveredY(-1);
+		if (bmoveUp == 1) {
+			moveblueY(1);
+		} else if (bmoveUp == 2) {
+			moveblueY(-1);
 		}
-		if (moveRight == 1) {
-			moveredX(1);
-		} else if (moveRight == 2) {
-			moveredX(-1);
+		if (bmoveRight == 1) {
+			moveblueX(1);
+		} else if (bmoveRight == 2) {
+			moveblueX(-1);
 		}
 
-		redx = 0;
-		redy = 0;
 		store.clear();
+
 	}
 
-	private void moveredY(int value) {
+	public Point trapMode(int x, int y) {
+		int[][] ar = new int[20][27];
+
+		ar = getCheckMaze();
+
+		q.add(new Point(x, y, null));
+
+		while (!q.isEmpty()) {
+			Point p = q.remove();
+
+			if (ar[p.x][p.y] == 5) {
+				for (int i = 0; i < checkMaze.length; i++) {
+					for (int j = 0; j < checkMaze[0].length; j++) {
+						if (ar[i][j] == -1 || ar[i][j] == 5) {
+							ar[i][j] = 0;
+						}
+					}
+				}
+				q.clear();
+				return p;
+			}
+
+			if (isFree(p.x + 1, p.y, ar.length, ar[0].length, ar)) {
+				ar[p.x][p.y] = -1;
+				Point nextP = new Point(p.x + 1, p.y, p);
+				q.add(nextP);
+			}
+
+			if (isFree(p.x - 1, p.y, ar.length, ar[0].length, ar)) {
+				ar[p.x][p.y] = -1;
+				Point nextP = new Point(p.x - 1, p.y, p);
+				q.add(nextP);
+			}
+
+			if (isFree(p.x, p.y + 1, ar.length, ar[0].length, ar)) {
+				ar[p.x][p.y] = -1;
+				Point nextP = new Point(p.x, p.y + 1, p);
+				q.add(nextP);
+			}
+
+			if (isFree(p.x, p.y - 1, ar.length, ar[0].length, ar)) {
+				ar[p.x][p.y] = -1;
+				Point nextP = new Point(p.x, p.y - 1, p);
+				q.add(nextP);
+			}
+		}
+
+		for (int i = 0; i < checkMaze.length; i++) {
+			for (int j = 0; j < checkMaze[0].length; j++) {
+				if (ar[i][j] == -1 || ar[i][j] == 5) {
+					ar[i][j] = 0;
+				}
+			}
+		}
+
+		return null;
+	}
+
+	private void moveblueY(int value) {
 		boolean movingDown = value > 0;
-		int abs = Math.abs(value);
-		for (int i = 0; i < abs; i++) {
+		for (int i = 0; i < Math.abs(value); i++) {
 			if (movingDown) {
-				redEnemy.setTranslateY(redEnemy.getTranslateY() + 1);
+				blueEnemy.setTranslateY(blueEnemy.getTranslateY() + 1);
 
 			} else {
-				redEnemy.setTranslateY(redEnemy.getTranslateY() - 1);
+				blueEnemy.setTranslateY(blueEnemy.getTranslateY() - 1);
 			}
 		}
 	}
 
-	private void moveredX(int value) {
+	private void moveblueX(int value) {
 		boolean movingRight = value > 0;
 
 		for (int i = 0; i < Math.abs(value); i++) {
 			if (movingRight) {
-				redEnemy.setTranslateX(redEnemy.getTranslateX() + 1);
+				blueEnemy.setTranslateX(blueEnemy.getTranslateX() + 1);
 
 			} else {
-				redEnemy.setTranslateX(redEnemy.getTranslateX() - 1);
+				blueEnemy.setTranslateX(blueEnemy.getTranslateX() - 1);
 
 			}
 		}
 	}
+
+	public Point findVector(int x, int y) {
+
+		int[][] ar = new int[20][27];
+
+		ar = getCheckMaze();
+
+		q.add(new Point(x, y, null));
+
+		while (!q.isEmpty()) {
+			Point p = q.remove();
+
+			if (ar[p.x][p.y] == 6) {
+				for (int i = 0; i < checkMaze.length; i++) {
+					for (int j = 0; j < checkMaze[0].length; j++) {
+						if (ar[i][j] == -1 || ar[i][j] == 6) { // may delete 6
+							ar[i][j] = 0;
+						}
+					}
+				}
+				q.clear();
+				return p;
+			}
+
+			if (isFree(p.x + 1, p.y, ar.length, ar[0].length, ar)) {
+				ar[p.x][p.y] = -1;
+				Point nextP = new Point(p.x + 1, p.y, p);
+				q.add(nextP);
+			}
+
+			if (isFree(p.x - 1, p.y, ar.length, ar[0].length, ar)) {
+				ar[p.x][p.y] = -1;
+				Point nextP = new Point(p.x - 1, p.y, p);
+				q.add(nextP);
+			}
+
+			if (isFree(p.x, p.y + 1, ar.length, ar[0].length, ar)) {
+				ar[p.x][p.y] = -1;
+				Point nextP = new Point(p.x, p.y + 1, p);
+				q.add(nextP);
+			}
+
+			if (isFree(p.x, p.y - 1, ar.length, ar[0].length, ar)) {
+				ar[p.x][p.y] = -1;
+				Point nextP = new Point(p.x, p.y - 1, p);
+				q.add(nextP);
+			}
+
+		}
+
+		for (int i = 0; i < checkMaze.length; i++) {
+			for (int j = 0; j < checkMaze[0].length; j++) {
+				if (ar[i][j] == -1 || ar[i][j] == 6) { // may delete 6
+					ar[i][j] = 0;
+				}
+			}
+		}
+		q.clear();
+		return null;
+	}
+
+	public void greenMovement() {
+		greenx = (int) (greenEnemy.getTranslateX() / 40);
+		greeny = (int) (greenEnemy.getTranslateY() / 40);
+		int offsetx = 0;
+		int offsety = 0;
+		int toy = 0;
+		int tox = 0;
+		int dy = 0;
+		int dx = 0;
+		boolean chasePlayer = false;
+		if (greenEnemy.getTranslateX() % 40 == 0 && greenEnemy.getTranslateY() % 40 == 0) {
+			if (greeny == 7 && greenx == 13) {
+				lockGate++;
+			}
+			if (direction.equals("UP") || direction.equals("UP_RIGHT") || direction.equals("UP_LEFT")
+					|| direction.equals("NONE")) {
+				if (isFree(playery - 1, playerx, checkMaze.length, checkMaze[0].length, checkMaze)) {
+					offsety = 1;
+					if (isFree(playery - 2, playerx, checkMaze.length, checkMaze[0].length, checkMaze)) {
+						offsety = 2;
+					}
+				}
+				dy = Math.abs(playery + offsety - redy);
+				dx = Math.abs(playerx - redx);
+			}
+			if (direction.equals("DOWN") || direction.equals("DOWN_RIGHT") || direction.equals("DOWN_LEFT")) {
+				if (isFree(playery + 1, playerx, checkMaze.length, checkMaze[0].length, checkMaze)) {
+					offsety = +1;
+					if (isFree(playery + 2, playerx, checkMaze.length, checkMaze[0].length, checkMaze)) {
+						offsety = +2;
+					}
+				}
+				dy = Math.abs(playery + offsety - redy);
+				dx = Math.abs(playerx - redx);
+			}
+			if (direction.equals("RIGHT")) {
+				if (isFree(playery, playerx + 1, checkMaze.length, checkMaze[0].length, checkMaze)) {
+					offsetx = 1;
+					if (isFree(playery, playerx + 2, checkMaze.length, checkMaze[0].length, checkMaze)) {
+						offsetx = 2;
+					}
+				}
+				dy = Math.abs(playery - redy);
+				dx = Math.abs(playerx + offsetx - redx);
+			}
+			if (direction.equals("LEFT")) {
+				if (isFree(playery, playerx - 1, checkMaze.length, checkMaze[0].length, checkMaze)) {
+					offsetx = 1;
+					if (isFree(playery, playerx - 2, checkMaze.length, checkMaze[0].length, checkMaze)) {
+						offsetx = 2;
+					}
+				}
+				dy = Math.abs(playery - redy);
+				dx = Math.abs(playerx + offsetx - redx);
+			}
+
+			// System.out.println("position: " + playery + " " + playerx + " " + redy + " "
+			// + redx);
+			// System.out.println("difference: " + dy + " " + dx);
+
+			if (redy < playery) {
+				vertical = 1; // TOP
+			} else if (redy > playery) {
+				vertical = 2; // BOTTOM
+			} else if (redy == playery) {
+				vertical = 0; // SAME
+			}
+			if (redx < playerx) {
+				horizontal = 1; // LEFT
+			} else if (redx > playerx) {
+				horizontal = 2; // RIGHT
+			} else if (redx == playerx) {
+				horizontal = 0; // SAME
+			}
+
+			if (vertical == 1 && horizontal == 1) {
+				toy = playery + dy;
+				tox = playerx + dx;
+			} else if (vertical == 1 && horizontal == 2) {
+				toy = playery + dy;
+				tox = playerx - dx;
+			} else if (vertical == 1 && horizontal == 0) {
+				toy = playery + dy;
+				tox = playerx;
+			} else if (vertical == 2 && horizontal == 1) {
+				toy = playery - dy;
+				tox = playerx + dx;
+			} else if (vertical == 2 && horizontal == 2) {
+				toy = playery - dy;
+				tox = playerx - dx;
+			} else if (vertical == 2 && horizontal == 0) {
+				toy = playery - dy;
+				tox = playerx;
+			} else if (vertical == 0 && horizontal == 1) {
+				toy = playery;
+				tox = playerx + dx;
+			} else if (vertical == 0 && horizontal == 2) {
+				toy = playery;
+				tox = playerx - dx;
+			}
+			// System.out.println("Before checking boundaries and validity: " + toy + " " +
+			// tox);
+			if (toy > 0 && toy < checkMaze.length && tox > 0 && tox < checkMaze[0].length) {
+				if (checkMaze[toy][tox] != 1) {
+					checkMaze[toy][tox] = 6;
+				} else if (checkMaze[toy][tox] == 1) {
+					if (isFree(toy - 1, tox, checkMaze.length, checkMaze[0].length, checkMaze)) {
+						checkMaze[toy - 1][tox] = 6;
+						toy--;
+					} else if (isFree(toy + 1, tox, checkMaze.length, checkMaze[0].length, checkMaze)) {
+						checkMaze[toy + 1][tox] = 6;
+						toy++;
+					} else if (isFree(toy, tox - 1, checkMaze.length, checkMaze[0].length, checkMaze)) {
+						checkMaze[toy][tox - 1] = 6;
+						tox--;
+					} else if (isFree(toy, tox + 1, checkMaze.length, checkMaze[0].length, checkMaze)) {
+						checkMaze[toy][tox + 1] = 6;
+						tox++;
+					}
+				}
+			} else {
+				// Out of bounds prevention
+				if (toy >= checkMaze.length) {
+					while (toy >= checkMaze.length - 1) {
+						toy--;
+					}
+
+				}
+				if (toy <= 2) {
+					while (toy <= 2) {
+						toy++;
+					}
+
+				}
+				if (tox >= checkMaze[0].length) {
+					while (tox >= checkMaze[0].length - 1) {
+						tox--;
+					}
+
+				}
+				if (tox < 0) {
+					while (tox <= 0) {
+						tox++;
+					}
+
+				}
+				if (checkMaze[toy][tox] == 1) {
+					if (isFree(toy - 1, tox, checkMaze.length, checkMaze[0].length, checkMaze)) {
+						toy--;
+					} else if (isFree(toy + 1, tox, checkMaze.length, checkMaze[0].length, checkMaze)) {
+						toy++;
+					} else if (isFree(toy, tox - 1, checkMaze.length, checkMaze[0].length, checkMaze)) {
+						tox--;
+					} else if (isFree(toy, tox + 1, checkMaze.length, checkMaze[0].length, checkMaze)) {
+						tox++;
+					}
+				}
+				if (checkMaze[toy][tox] == 9) {
+					// do something
+					// System.out.println("YES");
+					chasePlayer = true;
+				} else {
+					checkMaze[toy][tox] = 6;
+					// System.out.println("IN");
+				}
+			}
+
+			// System.out.println(toy + " " + tox);
+			// for (int i = 0; i < checkMaze.length; i++) {
+			// for (int j = 0; j < checkMaze[0].length; j++) {
+			// System.out.print(checkMaze[i][j] + " ");
+			// }
+			// System.out.println();
+			// }
+			// System.out.println();
+
+			Point point;
+			// if (greenEnemy.getTranslateX() % 40 == 0 && greenEnemy.getTranslateY() % 40
+			// == 0) {
+			p4 = getPathBFS(greeny, greenx);
+			if (p4 != null) {
+				while (p4.getParent() != null) {
+					store4.add(p4);
+					p4 = p4.getParent();
+				}
+				point = store4.get(store4.size() - 1);
+				if (chasePlayer || store4.size() <= 2) {
+					if (point != null) {
+						// movePlayer
+						if (point.x > greeny) {
+							gmoveUp = 1;
+						} else if (point.x < greeny) {
+							gmoveUp = 2;
+						} else if (point.x == greeny) {
+							gmoveUp = 0;
+						}
+						if (point.y > greenx) {
+							gmoveRight = 1;
+						} else if (point.y < greenx) {
+							gmoveRight = 2;
+						} else if (point.y == greenx) {
+							gmoveRight = 0;
+						}
+					}
+				} else if (store4.size() > 2 || !chasePlayer) {
+					store4.clear();
+
+					// System.out.println();
+					// System.out.println(toy + " " + tox);
+					checkMaze[toy][tox] = 6;
+
+					p4 = findVector(greeny, greenx);
+					if (p4 != null) {
+						while (p4.getParent() != null) {
+							store4.add(p4);
+							// System.out.println(p);
+							p4 = p4.getParent();
+						}
+						point = store4.get(store4.size() - 1);
+					}
+
+					if (point != null) {
+						// movePlayer
+						if (point.x > greeny) {
+							gmoveUp = 1;
+						} else if (point.x < greeny) {
+							gmoveUp = 2;
+						} else if (point.x == greeny) {
+							gmoveUp = 0;
+						}
+						if (point.y > greenx) {
+							gmoveRight = 1;
+						} else if (point.y < greenx) {
+							gmoveRight = 2;
+						} else if (point.y == greenx) {
+							gmoveRight = 0;
+						}
+					}
+				}
+			}
+		}
+
+		if (gmoveUp == 1) {
+			movegreenY(1);
+		} else if (gmoveUp == 2) {
+			movegreenY(-1);
+		}
+		if (gmoveRight == 1) {
+			movegreenX(1);
+		} else if (gmoveRight == 2) {
+			movegreenX(-1);
+		}
+
+		greenx = 0;
+		greeny = 0;
+		store4.clear();
+	}
+
+	private void movegreenY(int value) {
+		boolean movingDown = value > 0;
+		int abs = Math.abs(value);
+		for (int i = 0; i < abs; i++) {
+			if (movingDown) {
+				greenEnemy.setTranslateY(greenEnemy.getTranslateY() + 1);
+
+			} else {
+				greenEnemy.setTranslateY(greenEnemy.getTranslateY() - 1);
+			}
+		}
+	}
+
+	private void movegreenX(int value) {
+		boolean movingRight = value > 0;
+
+		for (int i = 0; i < Math.abs(value); i++) {
+			if (movingRight) {
+				greenEnemy.setTranslateX(greenEnemy.getTranslateX() + 1);
+
+			} else {
+				greenEnemy.setTranslateX(greenEnemy.getTranslateX() - 1);
+
+			}
+		}
+	}
+
+	public static Queue<Point> Q = new LinkedList<Point>();
+
+	public Point shortestPath(int x, int y) {
+		Q.clear();
+		int[][] ar = new int[20][27];
+
+		ar = getCheckMaze();
+
+		Q.add(new Point(x, y, null));
+
+		while (!Q.isEmpty()) {
+			Point p = Q.remove();
+
+			if (ar[p.x][p.y] == 9) {
+				for (int i = 0; i < checkMaze.length; i++) {
+					for (int j = 0; j < checkMaze[0].length; j++) {
+						// System.out.print(checkMaze[i][j] + " ");
+						if (ar[i][j] == -1 || ar[i][j] == 9) {
+							ar[i][j] = 0;
+							// System.out.print(checkMaze[i][j] + " ");
+						}
+
+					}
+					// System.out.println();
+				}
+
+				// System.out.println();
+				Q.clear();
+				return p;
+			}
+
+			if (isFree(p.x + 1, p.y, ar.length, ar[0].length, ar)) {
+				ar[p.x][p.y] = -1;
+				Point nextP = new Point(p.x + 1, p.y, p);
+				Q.add(nextP);
+			}
+
+			if (isFree(p.x - 1, p.y, ar.length, ar[0].length, ar)) {
+				ar[p.x][p.y] = -1;
+				Point nextP = new Point(p.x - 1, p.y, p);
+				Q.add(nextP);
+			}
+
+			if (isFree(p.x, p.y + 1, ar.length, ar[0].length, ar)) {
+				ar[p.x][p.y] = -1;
+				Point nextP = new Point(p.x, p.y + 1, p);
+				Q.add(nextP);
+			}
+
+			if (isFree(p.x, p.y - 1, ar.length, ar[0].length, ar)) {
+				ar[p.x][p.y] = -1;
+				Point nextP = new Point(p.x, p.y - 1, p);
+				Q.add(nextP);
+			}
+
+		}
+
+		for (int i = 0; i < checkMaze.length; i++) {
+			for (int j = 0; j < checkMaze[0].length; j++) {
+				if (ar[i][j] == -1 || ar[i][j] == 9) {
+					ar[i][j] = 0;
+				}
+			}
+		}
+		Q.clear();
+		return null;
+	}
+
+	// public static boolean canReach(int x, int y, int lengthX, int lengthY,
+	// int[][] maze) {
+	// if ((x >= 0 && x < lengthX) && (y >= 0 && y < lengthY) && (maze[x][y] == 0 ||
+	// maze[x][y] == 9 || maze[x][y] == 2
+	// || maze[x][y] == 3 || maze[x][y] == 8 || maze[x][y] == 7)) {
+	// return true;
+	// }
+	// return false;
+	// }
 
 	// -------------------------------------Menu-------------------------------------------
 
@@ -975,6 +2276,7 @@ public class LevelOneStage extends level {
 		//resume.setOpacity(1.0);
 		resume.setOnAction((ActionEvent event) -> {
 			time.play();
+			playSwordTime();
 			timePaused = false;
 			if (currentTime != -2) {
 				timer.play();
@@ -1069,7 +2371,6 @@ public class LevelOneStage extends level {
 			direction = "DOWN_LEFT";
 		}
 		if (isPressed(KeyCode.P)) {
-			direction = "NONE";
 		}
 
 		if (!prevDirection.equals(direction)) {

@@ -31,6 +31,7 @@ public class levelSelect extends characterControl {
 		
 		currentStage = stage;
 		LevelOneStage lvlStage = new LevelOneStage();
+		LevelTwoStage lvlStage2 = new LevelTwoStage();
 		level lvl = new level();
 		//System.out.print("current level: " + lvl.getLevel());
 //		Parent parent = FXMLLoader.load(getClass().getResource("loading.fxml"));
@@ -45,20 +46,20 @@ public class levelSelect extends characterControl {
 				
 				try {
 					lvlStage.mapGeneration(currentStage);
-					SCORE = lvlStage.getScore();
+//					SCORE = lvlStage.getScore();
 					lvlStage.resetScore();
-					TIME = lvlStage.getTime();
+//					TIME = lvlStage.getTime();
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 				break;
 			case 2:
-//				try {
-//					lvlStage.mapGeneration(currentStage);
-//				} catch (Exception e) {
-//					e.printStackTrace();
-//				}
+				try {
+					lvlStage2.mapGeneration(currentStage);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 				
 			default:
 				System.out.println("ERROR");
@@ -72,11 +73,15 @@ public class levelSelect extends characterControl {
 	
 	public void selectStory(ActionEvent event) throws Exception {
 		levelTwo lvlTwo = new levelTwo();
+		levelThree lvlThree = new levelThree();
 		level lvl = new level();
 		System.out.print("current level: " + lvl.getLevel());
 		switch(lvl.getLevel()) {
 		case 2:
 			lvlTwo.displayDialogue(event);
+			break;
+		case 3:
+			lvlThree.displayDialogue(event);
 			break;
 		default: System.out.println("ERROR"); break;
 		}

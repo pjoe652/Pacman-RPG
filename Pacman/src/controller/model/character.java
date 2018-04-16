@@ -16,6 +16,7 @@ public class character {
 	protected int speed;
 	protected double powerDuration;
 	protected int pointsAvailable;
+	public int Score;
 	
 	
 	//Gain through achievement
@@ -38,6 +39,7 @@ public class character {
 		scoreMultiplier = 1.0;
 		extraPowerPellets = 0;
 		model = "Black Knight";
+		Score = 0;
 	}
 	
 	//------------Name--------------------
@@ -197,6 +199,17 @@ public class character {
 			} else if (direction.equals("DOWN")) {
 				modelLocation =  "character/BeardedKnight/BeardedKnightDown.gif";
 			}
+		}
+		return modelLocation;
+	}
+	
+	public String getModelDeath() {
+		if (this.model.equals("Black Knight")) {
+			modelLocation = "character/BlackKnight/KnightDeath.gif";
+		} else if (this.model.equals("Female Knight")) {
+			modelLocation = "character/FemaleKnight/FemaleKnightDeath.gif";
+		} else if (this.model.equals("Bearded Knight")) {
+			modelLocation = "character/BeardedKnight/BeardedKnightDeath.gif";
 		}
 		return modelLocation;
 	}

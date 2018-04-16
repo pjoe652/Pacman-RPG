@@ -3,8 +3,8 @@ package controller.view;
 import java.io.IOException;
 import java.util.HashMap;
 
+import controller.model.Story;
 import controller.model.level;
-import controller.model.levelOneStory;
 import controller.view.levelSelect;
 import javafx.animation.AnimationTimer;
 import javafx.animation.FadeTransition;
@@ -65,7 +65,7 @@ private HashMap<KeyCode, Boolean> keys = new HashMap<KeyCode, Boolean>();
    
     //Skip to next message on key press
     private void update() {
-    	if (line == levelOneStory.ScriptData.length-1) {
+    	if (line == Story.ScriptData.length-1) {
         	FadeTransition fadeOut = new FadeTransition(Duration.seconds(1), appRoot);
         	fadeOut.setToValue(0.0);
         	
@@ -87,21 +87,21 @@ private HashMap<KeyCode, Boolean> keys = new HashMap<KeyCode, Boolean>();
         	fadeOut.play();
     	}
     	
-        if (isPressed(KeyCode.ENTER) && (keyPressed == false) && (line <= levelOneStory.ScriptData.length-1)) {
+        if (isPressed(KeyCode.ENTER) && (keyPressed == false) && (line <= Story.ScriptData.length-1)) {
         	
         	gameRoot.getChildren().clear();
-        	Text scriptWords = setText(levelOneStory.ScriptData[line]);
-        	Text characterWords = setCharacter(levelOneStory.ScriptData[line]);
+        	Text scriptWords = setText(Story.ScriptData[line]);
+        	Text characterWords = setCharacter(Story.ScriptData[line]);
         	gameRoot.getChildren().add(scriptWords);
         	gameRoot.getChildren().add(characterWords);
         	line++;
         	keyPressed = true;
         	
         }
-        if (isPressed(KeyCode.CONTROL) && (line <= levelOneStory.ScriptData.length-1)) {
+        if (isPressed(KeyCode.CONTROL) && (line <= Story.ScriptData.length-1)) {
         	gameRoot.getChildren().clear();
-        	Text scriptWords = setText(levelOneStory.ScriptData[line]);
-        	Text characterWords = setCharacter(levelOneStory.ScriptData[line]);
+        	Text scriptWords = setText(Story.ScriptData[line]);
+        	Text characterWords = setCharacter(Story.ScriptData[line]);
         	gameRoot.getChildren().add(scriptWords);
         	gameRoot.getChildren().add(characterWords);
         	line++;
