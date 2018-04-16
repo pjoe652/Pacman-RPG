@@ -3,8 +3,9 @@ package controller.view;
 import java.io.IOException;
 import java.util.HashMap;
 
+import controller.model.Story;
 import controller.model.level;
-import controller.model.levelOneStory;
+import controller.model.Story;
 import controller.view.levelSelect;
 import javafx.animation.AnimationTimer;
 import javafx.animation.FadeTransition;
@@ -43,11 +44,13 @@ private HashMap<KeyCode, Boolean> keys = new HashMap<KeyCode, Boolean>();
     //Initializes the gameplay area
     private void initContent() {
 //        Rectangle bg = new Rectangle(1020, 768);
+    	//appRoot size
+    	appRoot.setMinSize(1080, 800);
     	//Background set
         Image bg = new Image("https://drawingcollection.com/wp-content/uploads/2017/06/village-landscape-drawings-pastel-painting-how-to-draw-a-simple-landscape-episode-5-youtube.jpg");
         ImageView bgView = new ImageView(bg);
-        bgView.setFitWidth(1028);
-        bgView.setFitHeight(768);
+        bgView.setFitWidth(1080);
+        bgView.setFitHeight(800);
         //Speech box set
         Image Speech = new Image("lvlOneImg/SpeechBox.png");
         ImageView SpeechView = new ImageView(Speech);
@@ -63,7 +66,7 @@ private HashMap<KeyCode, Boolean> keys = new HashMap<KeyCode, Boolean>();
    
     //Skip to next message on key press
     private void update() {
-    	if (line == levelOneStory.ScriptData.length-1) {
+    	if (line == Story.ScriptData.length-1) {
         	FadeTransition fadeOut = new FadeTransition(Duration.seconds(1), appRoot);
         	fadeOut.setToValue(0.0);
         	
@@ -85,21 +88,21 @@ private HashMap<KeyCode, Boolean> keys = new HashMap<KeyCode, Boolean>();
         	fadeOut.play();
     	}
     	
-        if (isPressed(KeyCode.ENTER) && (keyPressed == false) && (line <= levelOneStory.ScriptData.length-1)) {
+        if (isPressed(KeyCode.ENTER) && (keyPressed == false) && (line <= Story.ScriptData.length-1)) {
         	
         	gameRoot.getChildren().clear();
-        	Text scriptWords = setText(levelOneStory.ScriptData[line]);
-        	Text characterWords = setCharacter(levelOneStory.ScriptData[line]);
+        	Text scriptWords = setText(Story.ScriptData[line]);
+        	Text characterWords = setCharacter(Story.ScriptData[line]);
         	gameRoot.getChildren().add(scriptWords);
         	gameRoot.getChildren().add(characterWords);
         	line++;
         	keyPressed = true;
         	
         }
-        if (isPressed(KeyCode.CONTROL) && (line <= levelOneStory.ScriptData.length-1)) {
+        if (isPressed(KeyCode.CONTROL) && (line <= Story.ScriptData.length-1)) {
         	gameRoot.getChildren().clear();
-        	Text scriptWords = setText(levelOneStory.ScriptData[line]);
-        	Text characterWords = setCharacter(levelOneStory.ScriptData[line]);
+        	Text scriptWords = setText(Story.ScriptData[line]);
+        	Text characterWords = setCharacter(Story.ScriptData[line]);
         	gameRoot.getChildren().add(scriptWords);
         	gameRoot.getChildren().add(characterWords);
         	line++;
@@ -123,7 +126,7 @@ private HashMap<KeyCode, Boolean> keys = new HashMap<KeyCode, Boolean>();
     	text.setText(script);
     	text.setFont(Font.font("Verdana", 20));
     	text.setTranslateX(50);
-    	text.setTranslateY(550);
+    	text.setTranslateY(575);
     	
     	return text;
     	
@@ -148,8 +151,8 @@ private HashMap<KeyCode, Boolean> keys = new HashMap<KeyCode, Boolean>();
     	
 		name.setText(characterName);
     	name.setFont(Font.font("Verdana", FontWeight.BOLD, 20));
-    	name.setTranslateX(90);
-    	name.setTranslateY(475);
+    	name.setTranslateX(95);
+    	name.setTranslateY(493);
     	
     	return name;
     	

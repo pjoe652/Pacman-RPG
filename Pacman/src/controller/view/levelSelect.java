@@ -28,9 +28,10 @@ public class levelSelect extends characterControl {
 	private String Score;
 	
 	public void selectLevel(Stage stage) throws Exception {
-		
+		System.out.println("IN");
 		currentStage = stage;
 		LevelOneStage lvlStage = new LevelOneStage();
+		LevelTwoStage lvl2Stage = new LevelTwoStage();
 		level lvl = new level();
 		//System.out.print("current level: " + lvl.getLevel());
 //		Parent parent = FXMLLoader.load(getClass().getResource("loading.fxml"));
@@ -54,11 +55,12 @@ public class levelSelect extends characterControl {
 				}
 				break;
 			case 2:
-//				try {
-//					lvlStage.mapGeneration(currentStage);
-//				} catch (Exception e) {
-//					e.printStackTrace();
-//				}
+				try {
+					System.out.println("LEVEL2");
+					lvl2Stage.mapGeneration(currentStage);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 				
 			default:
 				System.out.println("ERROR");

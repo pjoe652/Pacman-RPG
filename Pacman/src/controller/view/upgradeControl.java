@@ -21,6 +21,8 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.control.Alert.AlertType;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -28,6 +30,9 @@ import javafx.stage.Stage;
 public class upgradeControl extends characterControl {
 
 	private Stage stage;
+	
+	//Character
+	@FXML private ImageView characterView = new ImageView();
 	
 	//Lives
 	private int currentHp;
@@ -49,27 +54,33 @@ public class upgradeControl extends characterControl {
 	@FXML private Label points;
 	private String pt;
 	
-	//Achievement
-	@FXML private Label achievement;
-	private int unlockedAchievement;
-	private String Achieve;
+//	//Achievement
+//	@FXML private Label achievement;
+//	private int unlockedAchievement;
+//	private String Achieve;
 	
-	//ScoreMultiplier
-	@FXML private Label scoreMultiplier;
-	private double multiplier;
-	private String Multiplier;
+//	//ScoreMultiplier
+//	@FXML private Label scoreMultiplier;
+//	private double multiplier;
+//	private String Multiplier;
 	
-	//PowerPellet
-	@FXML private Label extraPowerPellet;
-	private int power;
-	private String pellet;
+//	//PowerPellet
+//	@FXML private Label extraPowerPellet;
+//	private int power;
+//	private String pellet;
+	
+	//Retract Points
+	private int spendHP = 0;
+	private int spendSp = 0;
+	private int spendPower = 0;
 	
 	
 	//-------------------Attributes---------------------------
 	@FXML
-	public void handleHpButton(ActionEvent event) {
+	public void handlePlusHpButton(ActionEvent event) {
 		if (player.getPoints() >= 3) {
 			player.addHp();
+			spendHP += 3;
 			displayHp();
 			
 			player.deductPoints();
@@ -80,9 +91,22 @@ public class upgradeControl extends characterControl {
 	}
 	
 	@FXML
-	public void handleSpButton(ActionEvent event) {
+	public void handleMinusHpButton(ActionEvent event) {
+		if (spendHP >= 3) {
+			player.minusHp();
+			spendHP -= 3;
+			displayHp();
+			
+			player.returnPoints(3);
+			displayPoints();
+		}
+	}
+	
+	@FXML
+	public void handlePlusSpButton(ActionEvent event) {
 		if (player.getPoints() > 0) { 
 			player.addSpeed();
+			spendSp += 1;
 			displaySpeed();	
 			
 			player.deductPoints();
@@ -91,12 +115,37 @@ public class upgradeControl extends characterControl {
 	}
 	
 	@FXML
-	public void handlePowerButton(ActionEvent event) {
+	public void handleMinusSpButton(ActionEvent event) {
+		if (spendSp > 0) { 
+			player.minusSpeed();
+			spendSp -= 1;
+			displaySpeed();	
+			
+			player.returnPoints(1);
+			displayPoints();
+		}				
+	}
+	
+	@FXML
+	public void handlePlusPowerButton(ActionEvent event) {
 		if (player.getPoints() > 0) { 
 			player.addPowerDuration();
+			spendPower += 1;
 			displayPowerDuration();	
 			
 			player.deductPoints();
+			displayPoints();
+		}				
+	}
+	
+	@FXML
+	public void handleMinusPowerButton(ActionEvent event) {
+		if (spendPower > 0) { 
+			player.minusPowerDuration();
+			spendPower -= 1;
+			displayPowerDuration();	
+			
+			player.returnPoints(1);
 			displayPoints();
 		}				
 	}
@@ -105,7 +154,9 @@ public class upgradeControl extends characterControl {
 	
 	@FXML
 	public void handleContinueButton(ActionEvent event) throws Exception {
-		
+		spendHP = 0;
+		spendSp = 0;
+		spendPower = 0;
 		level lvl = new level();
 		lvl.setLevel();
 		levelSelect select = new levelSelect();
@@ -121,6 +172,11 @@ public class upgradeControl extends characterControl {
 	@FXML
 	public void initialize() throws Exception {
 		
+		
+		/*
+		 * This initilizes the character display
+		 */
+		displayCharacter();
 		/*
 		 * This initializes the amount of lives
 		 * */		 
@@ -137,18 +193,7 @@ public class upgradeControl extends characterControl {
 		 * This initializes the points available for upgrade
 		 */
 		displayPoints();
-		/*
-		 * This initializes the number of achievements unlocked
-		 */
-		displayNumberOfAchievement();
-		/*
-		 * This initializes the number of score multiplier
-		 */
-		displayScoreMultiplier();
-		/*
-		 * This initializes the number of extra power pellets
-		 */
-		displayExtraPowerPellet();
+		
 	}	
 	//-------------------------------------------------------------------------------------------
 	
@@ -177,26 +222,35 @@ public class upgradeControl extends characterControl {
 		powerDuration.setText(duration + "s");
 	}
 	
+	public void displayCharacter() {
+		Image character = new Image(player.getModelDirection("DOWN"));
+		characterView.setImage(character);
+		characterView.setFitHeight(200);
+		characterView.setFitWidth(200);
+		
+	}
+	
 	//-------------------------------------------------------------
 	
 	//--------------------------Perks--------------------------------
-	public void displayNumberOfAchievement() {
-		unlockedAchievement = player.getNumberOfAchievements();
-		Achieve = Integer.toString(unlockedAchievement);
-		achievement.setText(Achieve);		
-	}
-	
-	public void displayScoreMultiplier() {
-		multiplier = player.getScoreMultiplier();
-		Multiplier = Double.toString(multiplier);
-		scoreMultiplier.setText(Multiplier);		
-	}
-	
-	public void displayExtraPowerPellet() {
-		power = player.getExtraPowerPellet();
-		pellet = Integer.toString(power);
-		extraPowerPellet.setText(pellet);		
-	}
+	//------------------------SCRAPED------------------------------
+//	public void displayNumberOfAchievement() {
+//		unlockedAchievement = player.getNumberOfAchievements();
+//		Achieve = Integer.toString(unlockedAchievement);
+//		achievement.setText(Achieve);		
+//	}
+//	
+//	public void displayScoreMultiplier() {
+//		multiplier = player.getScoreMultiplier();
+//		Multiplier = Double.toString(multiplier);
+//		scoreMultiplier.setText(Multiplier);		
+//	}
+//	
+//	public void displayExtraPowerPellet() {
+//		power = player.getExtraPowerPellet();
+//		pellet = Integer.toString(power);
+//		extraPowerPellet.setText(pellet);		
+//	}
 	//--------------------------------------------------------------------
 	
 	

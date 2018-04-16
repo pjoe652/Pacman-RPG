@@ -37,7 +37,7 @@ public class main extends Application {
 		Scene scene = new Scene(root);
 		primaryStage.setScene(scene);
 		primaryStage.setResizable(false);
-		primaryStage.sizeToScene();
+		//primaryStage.sizeToScene();
 		primaryStage.show();
 		
 		MusicPlayer musicplayer = new MusicPlayer();

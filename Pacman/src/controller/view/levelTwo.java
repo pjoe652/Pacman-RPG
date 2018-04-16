@@ -6,8 +6,7 @@ import java.io.IOException;
 import java.util.HashMap;
 
 import controller.model.level;
-import controller.model.levelOneStory;
-import controller.model.levelTwoStory;
+import controller.model.Story;
 import controller.view.levelSelect;
 import javafx.animation.AnimationTimer;
 import javafx.animation.FadeTransition;
@@ -63,10 +62,10 @@ private HashMap<KeyCode, Boolean> keys = new HashMap<KeyCode, Boolean>();
     	//Background set
         Image bg = new Image("img/Cave.jpg");
         ImageView bgView = new ImageView(bg);
-        bgView.setFitWidth(1038);
-        bgView.setFitHeight(778);
+        bgView.setFitWidth(1120);
+        bgView.setFitHeight(840);
         //Gamebox Set
-        appRoot.setPrefSize(1028, 768);
+        appRoot.setPrefSize(1080, 800);
         //Speech box set
         Image Speech = new Image("lvlOneImg/SpeechBox.png");
         ImageView SpeechView = new ImageView(Speech);
@@ -82,8 +81,32 @@ private HashMap<KeyCode, Boolean> keys = new HashMap<KeyCode, Boolean>();
    
     //Skip to next message on key press
     private void update() {
-    	if (line == levelOneStory.ScriptData.length-1) {
-        	FadeTransition fadeOut = new FadeTransition(Duration.seconds(1), appRoot);
+//    	if (line == Story.ScriptChoice1.length-1 && section.equals("ScriptChoice1")) {
+//        	FadeTransition fadeOut = new FadeTransition(Duration.seconds(1), appRoot);
+//        	fadeOut.setToValue(0.0);
+//        	
+//        	fadeOut.setOnFinished((ActionEvent event)->{
+//        		
+//        		levelSelect select = new levelSelect();
+//        		try {
+//        			
+//					select.selectLevel(storyStage);
+//					
+//				} catch (Exception e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				}
+//        		
+//        	});
+//        	
+//        	
+//        	fadeOut.play();
+//    	}
+    	
+    	if ((line == 2) && (section.equals("ScriptChoice1"))) {
+    	    stopShake();
+    	    
+    	    FadeTransition fadeOut = new FadeTransition(Duration.seconds(1), appRoot);
         	fadeOut.setToValue(0.0);
         	
         	fadeOut.setOnFinished((ActionEvent event)->{
@@ -104,10 +127,6 @@ private HashMap<KeyCode, Boolean> keys = new HashMap<KeyCode, Boolean>();
         	fadeOut.play();
     	}
     	
-    	if ((line == 2) && (section.equals("ScriptChoice1"))) {
-    	    stopShake();
-    	}
-    	
         if (isPressed(KeyCode.ENTER) && (keyPressed == false) && (line <= maxLength(section)-1)) {
         	
         	setText(section);
@@ -122,7 +141,7 @@ private HashMap<KeyCode, Boolean> keys = new HashMap<KeyCode, Boolean>();
         if (!isPressed(KeyCode.ENTER) && (keyPressed == true)) {
         	keyPressed = false;
         }
-        if (isPressed(KeyCode.ENTER) && (line == (levelTwoStory.ScriptQuestion).length)) {
+        if (isPressed(KeyCode.ENTER) && (line == (Story.ScriptQuestion).length)) {
         	if (choicesCreated == false) {
         		createChoices("Open Chest", "Leave Chest");
         		choicesCreated = true;
@@ -139,11 +158,11 @@ private HashMap<KeyCode, Boolean> keys = new HashMap<KeyCode, Boolean>();
     	int maxScript = 0;
     	
     	if (section.equals("ScriptQuestion")) {
-    		maxScript = levelTwoStory.ScriptQuestion.length;
+    		maxScript = Story.ScriptQuestion.length;
     	} else if (section.equals("ScriptChoice1")) {
-    		maxScript = levelTwoStory.ScriptChoice1.length;
+    		maxScript = Story.ScriptChoice1.length;
     	} else if (section.equals("ScriptChoice2")) {
-    		maxScript = levelTwoStory.ScriptChoice2.length;
+    		maxScript = Story.ScriptChoice2.length;
     	}
     	
     	return maxScript;
@@ -158,14 +177,14 @@ private HashMap<KeyCode, Boolean> keys = new HashMap<KeyCode, Boolean>();
     	gameRoot.getChildren().clear();
     	
     	if (section.equals("ScriptQuestion")) {
-        	scriptWords = setDialogue(levelTwoStory.ScriptQuestion[line]);
-        	characterWords = setCharacter(levelTwoStory.ScriptQuestion[line]);
+        	scriptWords = setDialogue(Story.ScriptQuestion[line]);
+        	characterWords = setCharacter(Story.ScriptQuestion[line]);
     	} else if (section.equals("ScriptChoice1")) {
-        	scriptWords = setDialogue(levelTwoStory.ScriptChoice1[line]);
-        	characterWords = setCharacter(levelTwoStory.ScriptChoice1[line]);
+        	scriptWords = setDialogue(Story.ScriptChoice1[line]);
+        	characterWords = setCharacter(Story.ScriptChoice1[line]);
     	} else if (section.equals("ScriptChoice2")) {
-        	scriptWords = setDialogue(levelTwoStory.ScriptChoice2[line]);
-        	characterWords = setCharacter(levelTwoStory.ScriptChoice2[line]);
+        	scriptWords = setDialogue(Story.ScriptChoice2[line]);
+        	characterWords = setCharacter(Story.ScriptChoice2[line]);
     	}
     	
     	gameRoot.getChildren().add(scriptWords);
@@ -183,7 +202,7 @@ private HashMap<KeyCode, Boolean> keys = new HashMap<KeyCode, Boolean>();
     	text.setText(script);
     	text.setFont(Font.font("Verdana", 20));
     	text.setTranslateX(50);
-    	text.setTranslateY(550);
+    	text.setTranslateY(575);
     	
     	return text;
     	
@@ -209,7 +228,7 @@ private HashMap<KeyCode, Boolean> keys = new HashMap<KeyCode, Boolean>();
 		name.setText(characterName);
     	name.setFont(Font.font("Verdana", FontWeight.BOLD, 20));
     	name.setTranslateX(90);
-    	name.setTranslateY(475);
+    	name.setTranslateY(493);
     	
     	return name;
     	
@@ -247,7 +266,7 @@ private HashMap<KeyCode, Boolean> keys = new HashMap<KeyCode, Boolean>();
     	//choice1Button.setPrefSize(883, 90);
     	choice1Button.setMinWidth(883);
     	choice1Button.setMinHeight(90);
-    	choice1Button.setOpacity(0.2);
+    	choice1Button.setOpacity(0);
 
     	//Choice 2
     	
@@ -258,7 +277,7 @@ private HashMap<KeyCode, Boolean> keys = new HashMap<KeyCode, Boolean>();
     	choice2Button.setTranslateX(72);
     	choice2Button.setTranslateY(300);
     	choice2Button.setPrefSize(883, 90);
-    	choice2Button.setOpacity(0.2);
+    	choice2Button.setOpacity(0);
 
     	
     	uiRoot.getChildren().addAll(choice1Box, choice1Button, choice2Box, choice2Button);
