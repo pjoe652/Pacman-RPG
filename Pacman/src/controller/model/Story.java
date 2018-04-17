@@ -33,7 +33,7 @@ public class Story {
 	public static final String[] ScriptChoice1 = new String[] {
 
 			"0CHOMP", "0It was a mimic!", "0You swipe at it but it quickly jumps away",
-			"0You lose $2000 along with one total HP" };
+			"0You lose $2000 along with one total HP", "0   " };
 
 	public static final String[] ScriptChoice2 = new String[] {
 
