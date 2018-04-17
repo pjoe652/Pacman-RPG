@@ -45,6 +45,7 @@ private HashMap<KeyCode, Boolean> keys = new HashMap<KeyCode, Boolean>();
     private Pane gameRoot = new Pane();
     private Pane uiRoot = new Pane();
     private Pane speechRoot = new Pane();
+    private Pane bgRoot = new Pane();
     
     Timeline timelineX = new Timeline();
     Timeline timelineY = new Timeline();
@@ -53,17 +54,16 @@ private HashMap<KeyCode, Boolean> keys = new HashMap<KeyCode, Boolean>();
     
     private boolean keyPressed = false;
     private boolean running = true;
-    private boolean choicesCreated = false;
-    private ImageView bgView = new ImageView();
     
     //Initializes the gameplay area
     private void initContent() {
 //        Rectangle bg = new Rectangle(1020, 768);
     	//Background set
-        Image bg = new Image("img/SlimeBoss1.png");
-        bgView = new ImageView(bg);
+        Image bg = new Image("character/SlimeBoss/SlimeBoss1.png");
+        ImageView bgView = new ImageView(bg);
         bgView.setFitWidth(1120);
         bgView.setFitHeight(840);
+        bgRoot.getChildren().add(bgView);
         //Gamebox Set
         appRoot.setPrefSize(1080, 800);
         //Speech box set
@@ -74,7 +74,7 @@ private HashMap<KeyCode, Boolean> keys = new HashMap<KeyCode, Boolean>();
         gameRoot.getChildren().add(text);
         
 
-        appRoot.getChildren().addAll(bgView, SpeechView, gameRoot, uiRoot, speechRoot);
+        appRoot.getChildren().addAll(bgRoot, SpeechView, gameRoot, uiRoot, speechRoot);
         
     }
     
@@ -84,6 +84,8 @@ private HashMap<KeyCode, Boolean> keys = new HashMap<KeyCode, Boolean>();
     	
     	//Dialogue reading
     	if (line == Story.ScriptBoss.length-1) {
+    		line++;
+    		
         	FadeTransition fadeOut = new FadeTransition(Duration.seconds(1), appRoot);
         	fadeOut.setToValue(0.0);
         	
@@ -105,7 +107,7 @@ private HashMap<KeyCode, Boolean> keys = new HashMap<KeyCode, Boolean>();
         	fadeOut.play();
     	}
     	
-        if (isPressed(KeyCode.ENTER) && (keyPressed == false) && (line <= Story.ScriptBoss.length-1)) {
+        if (isPressed(KeyCode.ENTER) && (keyPressed == false) && (line < Story.ScriptBoss.length-1)) {
         	
         	speechRoot.getChildren().clear();
         	Text scriptWords = setText(Story.ScriptBoss[line]);
@@ -116,7 +118,7 @@ private HashMap<KeyCode, Boolean> keys = new HashMap<KeyCode, Boolean>();
         	keyPressed = true;
 
         }
-        if (isPressed(KeyCode.CONTROL) && (line <= Story.ScriptBoss.length-1)) {
+        if (isPressed(KeyCode.CONTROL) && (line < Story.ScriptBoss.length-1)) {
 
         	speechRoot.getChildren().clear();
         	Text scriptWords = setText(Story.ScriptData[line]);
@@ -131,35 +133,51 @@ private HashMap<KeyCode, Boolean> keys = new HashMap<KeyCode, Boolean>();
         }
         
         //Events
-    	if (line == 4) {
-    		Image slimeBossBlur2 = new Image("character/SlimeBoss/SlimeBossBlur2.png");
-    		bgView = new ImageView(slimeBossBlur2);
-    	    shakeStage();
-    	}
     	if (line == 5) {
-    		stopShake();
+    		shakeStage();
+    		bgRoot.getChildren().clear();
+    		Image slimeBossBlur2 = new Image("character/SlimeBoss/SlimeBossBlur2.png");
+    		ImageView bgView = new ImageView(slimeBossBlur2);
+            bgView.setFitWidth(1080);
+            bgView.setFitHeight(800);
+    		bgRoot.getChildren().add(bgView);
+    	    
+    		
     	}
     	if (line == 6) {
-    		Image slimeBossBlur1 = new Image("character/SlimeBoss/SlimeBossBlur1.png");
-    		bgView = new ImageView(slimeBossBlur1);
+//    		stopShake();
+    		bgRoot.getChildren().clear();
+    		Image slimeBossBlur1 = new Image("character/SlimeBoss/SlimeBossBlur.png");
+    		ImageView bgView = new ImageView(slimeBossBlur1);
+            bgView.setFitWidth(1080);
+            bgView.setFitHeight(800);
+    		bgRoot.getChildren().add(bgView);
     	}
     	if (line == 7 ) {
     		shakeStage();
     	}
     	if (line == 8) {
+    		bgRoot.getChildren().clear();
     		Image slimeBoss2 = new Image("character/SlimeBoss/SlimeBoss2.png");
-    		bgView = new ImageView(slimeBoss2);
+    		ImageView bgView = new ImageView(slimeBoss2);
+            bgView.setFitWidth(1080);
+            bgView.setFitHeight(800);
+    		bgRoot.getChildren().add(bgView);
     	}
     	if (line == 9 ) {
     		stopShake();
     	}
     	if (line == 11) {
-    		shakeStage();
+//    		shakeStage();
     	}
     	if (line == 12) {
+//    		stopShake();
+    		bgRoot.getChildren().clear();
     		Image slimeBoss3 = new Image("character/SlimeBoss/SlimeBoss3.png");
-    		bgView = new ImageView(slimeBoss3);
-    		stopShake();
+    		ImageView bgView = new ImageView(slimeBoss3);
+            bgView.setFitWidth(1080);
+            bgView.setFitHeight(800);
+    		bgRoot.getChildren().add(bgView);
     	}
     	
 
@@ -223,10 +241,10 @@ private HashMap<KeyCode, Boolean> keys = new HashMap<KeyCode, Boolean>();
             @Override
             public void handle(ActionEvent t) {
                 if (x == 0) {
-                    appRoot.setTranslateX(appRoot.getTranslateX() + 10);
+                    bgRoot.setTranslateX(bgRoot.getTranslateX() + 10);
                     x = 1;
                 } else {
-                	appRoot.setTranslateX(appRoot.getTranslateX() - 10);
+                	bgRoot.setTranslateX(bgRoot.getTranslateX() - 10);
                     x = 0;
                 }
             }
@@ -242,10 +260,10 @@ private HashMap<KeyCode, Boolean> keys = new HashMap<KeyCode, Boolean>();
             @Override
             public void handle(ActionEvent t) {
                 if (y == 0) {
-                	appRoot.setTranslateY(appRoot.getTranslateY() + 10);
+                	bgRoot.setTranslateY(bgRoot.getTranslateY() + 10);
                     y = 1;
                 } else {
-                	appRoot.setTranslateY(appRoot.getTranslateY() - 10);
+                	bgRoot.setTranslateY(bgRoot.getTranslateY() - 10);
                     y = 0;
                 }
             }

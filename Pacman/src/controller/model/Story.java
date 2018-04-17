@@ -21,8 +21,8 @@ public class Story {
 			"1I'll show them, I'll return the debt, I will not be shaken!"
 
 	};
-	
-	//Level 2 Story
+
+	// Level 2 Story
 	public static final String[] ScriptQuestion = new String[] {
 
 			"0During your descent into the dungeon you see a suspicious chest", "1Hmm? Why's there a chest here?",
@@ -33,16 +33,22 @@ public class Story {
 	public static final String[] ScriptChoice1 = new String[] {
 
 			"0CHOMP", "0It was a mimic!", "0You swipe at it but it quickly jumps away",
-			"0You lose $100 along with one life" };
+			"0You lose $2000 along with one total HP" };
 
 	public static final String[] ScriptChoice2 = new String[] {
 
 			"1Can't risk it", "0You leave the chest alone" };
+
+	public static final String[] ScriptBoss = new String[] { "1Hm? A spotlight?",
+			"0When you look up you see no sign of light", "0Suddenly you hear shuffling across the room",
+			"1Who's there?!", "0You feel the air start to shake, obscuring your vision",
+			"0You cautiously look around and find that it's prescences is coming there this direction",
+			"0Peering into the distance, you start to make out it's shape", "1!!!", "0     ", "1A massive slime!",
+			"0After it's discovery, the slime releases a roar", "2     ", "1Wha-",
+			"0The big slime started splitting up into many smaller slimes!" };
 	
-	public static final String[] ScriptBoss = new String[] {
-			"1Hm? A spotlight?" , "0When you look up you see no sign of light", "0Suddenly you hear shuffling across the room", "1Who's there?!", 
-			"0You feel the air start to shake, obscuring your vision", "0You cautiously look around and find that it's prescences is coming there this direction",
-			"0Peering into the distance, you start to make out it's shape", "1!!!", "0     ", "1A massive slime!", 
-			"0After it's discovery, the slime releases a roar", "2     ", "1Wha-", "0The big slime started splitting up into many smaller slimes!"
-	};
+	public static final String[] FinalScript = new String[] {
+			"0After defeating the Slime King you return to the surface", "0The village welcomed you home as a hero",
+			"0They praised his heroism despite not knowing his purpose", "0The thugs faces' turned white upon seeing your return",
+			"0With the money left over you decided to live the good life"};
 }

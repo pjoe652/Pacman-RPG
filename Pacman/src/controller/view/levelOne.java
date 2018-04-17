@@ -9,10 +9,12 @@ import controller.view.levelSelect;
 import javafx.animation.AnimationTimer;
 import javafx.animation.FadeTransition;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
@@ -58,14 +60,50 @@ private HashMap<KeyCode, Boolean> keys = new HashMap<KeyCode, Boolean>();
         gameRoot.getChildren().add(text);
         
 
-        appRoot.getChildren().addAll(bgView, uiRoot, SpeechView, gameRoot);
+        appRoot.getChildren().addAll(bgView, SpeechView, gameRoot, uiRoot);
         
     }
     
    
     //Skip to next message on key press
     private void update() {
-    	if (line == Story.ScriptData.length-1) {
+    	if (line == Story.ScriptData.length) {
+    		line++;
+    		
+    		Button continueChoice = new Button("Continue?");
+    		continueChoice.setMinWidth(200);
+    		continueChoice.setMinHeight(50);
+    		continueChoice.setTranslateX(440);
+    		continueChoice.setTranslateY(375);
+//    		continueChoice.setOpacity(0);
+    		
+//    		Image continueLook = new Image("img/Upgrade/continueBox.png");
+//    		ImageView continueLookView = new ImageView(continueLook);
+//    		continueLookView.setFitHeight(50);
+//    		continueLookView.setFitWidth(200);
+//    		continueLookView.setTranslateX(440);
+//    		continueLookView.setTranslateY(375);
+    		
+//    		uiRoot.getChildren().addAll(continueChoice);
+//    		
+//    		continueChoice.setOnAction(new EventHandler<ActionEvent>() {
+//        		@Override
+//        		public void handle(ActionEvent e) {
+//        			
+//            		levelSelect select = new levelSelect();
+//            		
+//    				try {
+//    					running = false;
+//						select.selectLevel(storyStage);
+//					} catch (Exception e1) {
+//						// TODO Auto-generated catch block
+//						e1.printStackTrace();
+//					}
+//
+//        		}
+//        	});
+        	
+    		
         	FadeTransition fadeOut = new FadeTransition(Duration.seconds(1), appRoot);
         	fadeOut.setToValue(0.0);
         	
@@ -73,6 +111,7 @@ private HashMap<KeyCode, Boolean> keys = new HashMap<KeyCode, Boolean>();
         		
         		levelSelect select = new levelSelect();
         		try {
+        			running = false;
         			
 					select.selectLevel(storyStage);
 					

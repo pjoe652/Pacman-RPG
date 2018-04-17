@@ -104,11 +104,12 @@ public class upgradeControl extends characterControl {
 	
 	@FXML
 	public void handlePlusSpButton(ActionEvent event) {
-		if (player.getPoints() > 0) { 
+		if (player.getPoints() >= 2) { 
 			player.addSpeed();
-			spendSp += 1;
+			spendSp += 2;
 			displaySpeed();	
 			
+			player.deductPoints();
 			player.deductPoints();
 			displayPoints();
 		}				
@@ -116,12 +117,12 @@ public class upgradeControl extends characterControl {
 	
 	@FXML
 	public void handleMinusSpButton(ActionEvent event) {
-		if (spendSp > 0) { 
+		if (spendSp >= 2) { 
 			player.minusSpeed();
-			spendSp -= 1;
+			spendSp -= 2;
 			displaySpeed();	
 			
-			player.returnPoints(1);
+			player.returnPoints(2);
 			displayPoints();
 		}				
 	}
@@ -157,8 +158,7 @@ public class upgradeControl extends characterControl {
 		spendHP = 0;
 		spendSp = 0;
 		spendPower = 0;
-		level lvl = new level();
-		lvl.setLevel();
+		player.setLevel(player.getLevel()+1);
 		levelSelect select = new levelSelect();
 		//stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
 		select.selectStory(event);

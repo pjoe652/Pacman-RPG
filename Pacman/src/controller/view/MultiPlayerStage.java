@@ -57,8 +57,6 @@ public class MultiPlayerStage {
 	private Pane gameRoot = new Pane();
 	private Pane uiRoot = new Pane();
 	private Pane userRoot = new Pane();
-	private Pane user2Root = new Pane();
-	private Pane user3Root = new Pane();
 	private Pane enemyRoot = new Pane();
 	private Pane popupRoot = new Pane();
 
@@ -122,8 +120,8 @@ public class MultiPlayerStage {
 	private enemies userThree = multiplayerControl.characterThree;
 	
 	private Node user;
-	private Node user2;
-	private Node user3;
+	private Node user2 = userTwo.userEnemy();
+	private Node user3 = userThree.userEnemy();
 	enemies red = new enemies();
 	Node redEnemy = red.redEnemy();
 	enemies blue = new enemies();
@@ -134,6 +132,7 @@ public class MultiPlayerStage {
 	Node purpleEnemy = purple.purpleEnemy();
 	
 	private boolean initEnemies = false;
+	private int initUsers = 0;
 
 	// AI movement
 	private Point p;
@@ -241,13 +240,17 @@ public class MultiPlayerStage {
 		String user3Enemy = userThree.getEnemyDirection();
 
 		// Create characters in the game
+		//Initialise 
 		user = createKnight(522, 722, user1Character);
-//		user2 = createKnight2(520, 360, user2Enemy);
-		user2 = createEnemy(520, 360, userTwo.getEnemyDirection());
+		
+//		if (initUsers == 0) {
+//			user2 = createEnemy(520, 360, userTwo.getEnemyDirection());
+//			user3 = createEnemy(520, 360, userThree.getEnemyDirection());
+//			initUsers++;
+//		}
+		
 		user2.setTranslateX(520);
 		user2.setTranslateY(360);
-//		user3 = createKnight3(440, 360, user3Enemy);
-		user3 = createEnemy(520, 360, userThree.getEnemyDirection());
 		user3.setTranslateX(440);
 		user3.setTranslateY(360);
 		greenEnemy.setTranslateX(600);
@@ -259,7 +262,7 @@ public class MultiPlayerStage {
 //		enemyRoot.getChildren().addAll(user2, user3, greenEnemy, purpleEnemy);
 		
 		if (!initEnemies) {
-			enemyRoot.getChildren().addAll(greenEnemy, purpleEnemy);
+			enemyRoot.getChildren().addAll(user2, user3, greenEnemy, purpleEnemy);
 			initEnemies = true;
 		}
 		
@@ -297,9 +300,6 @@ public class MultiPlayerStage {
 		running = true;
 
 		userRoot.getChildren().clear();
-//		user2Root.getChildren().clear();
-//		user3Root.getChildren().clear();
-//		enemyRoot.getChildren().clear();
 		uiRoot.getChildren().clear();
 		appRoot.getChildren().clear();
 //		gameRoot.getChildren().removeAll(user, user2, user3, greenEnemy, purpleEnemy);
@@ -368,6 +368,7 @@ public class MultiPlayerStage {
 
 			// Start sword use time
 			if (swordGet == 1) {
+				swordGetSFX();
 				swordGet = 0;
 				swordHeld = true;
 				setSwordTime();
@@ -418,7 +419,7 @@ public class MultiPlayerStage {
 			// }
 
 			// Fades away when all coins collected
-			if (CoinsCollected == 150) {
+			if (CoinsCollected == 234) {
 				coinBagSFX();
 				stopGameTime();
 				levelSelect select = new levelSelect();
@@ -600,19 +601,15 @@ public class MultiPlayerStage {
 	private void swordUse() {
 		if (user.getBoundsInParent().intersects(user2.getBoundsInParent())) {
 			
-//			user2Root.getChildren().remove(user2);
-//			user2.setTranslateX(520);
-//			user2.setTranslateY(360);
-//			user2Root.getChildren().add(user2);
-			
 			enemyKilledScore();
 			running = false;
 			setEnemyDeath(user2);
-			user2 = createEnemy(520, 360, userTwo.getEnemyDirection());
-//			redEnemy = red.swordGet();
-//			redEnemy.setTranslateX(520);
-//			redEnemy.setTranslateY(360);
-//			enemyRoot.getChildren().add(redEnemy);
+			enemyRoot.getChildren().remove(user2);
+//			user2 = createEnemy(520, 360, userTwo.getEnemyDirection());
+			user2.setTranslateX(600);
+			user2.setTranslateY(360);
+			enemyRoot.getChildren().add(user2);
+
 			count = 0;
 		}
 		if (user.getBoundsInParent().intersects((user3.getBoundsInParent()))){
@@ -620,11 +617,12 @@ public class MultiPlayerStage {
 			enemyKilledScore();
 			running = false;
 			setEnemyDeath(user3);
-			user3 = createEnemy(520, 360, userThree.getEnemyDirection());
-//			user3Root.getChildren().remove(user3);
-//			user3.setTranslateX(440);
-//			user3.setTranslateY(360);
-//			user3Root.getChildren().add(user3);
+			enemyRoot.getChildren().remove(user3);
+//			user3 = createEnemy(520, 360, userThree.getEnemyDirection());
+			user3.setTranslateX(600);
+			user3.setTranslateY(360);
+			enemyRoot.getChildren().add(user3);
+			
 			count = 0;
 		}
 		if (user.getBoundsInParent().intersects(greenEnemy.getBoundsInParent())) {
@@ -661,6 +659,27 @@ public class MultiPlayerStage {
 	// coinSFX.play();
 	//
 	// }
+	
+	private void swordGetSFX() {
+		URL path;
+		AudioClip coinSFX;
+
+		path = getClass().getResource("/sfx/swordGet.flac");
+		coinSFX = new AudioClip(path.toString());
+		coinSFX.setVolume(1);
+		coinSFX.play();
+
+	}
+	
+	private void swordBreakSFX() {
+		URL path;
+		AudioClip coinSFX;
+
+		path = getClass().getResource("/sfx/swordBreak.wav");
+		coinSFX = new AudioClip(path.toString());
+		coinSFX.play();
+
+	}
 
 	private void coinBagSFX() {
 		URL path;
@@ -668,10 +687,11 @@ public class MultiPlayerStage {
 
 		path = getClass().getResource("/sfx/coinBag.wav");
 		coinSFX = new AudioClip(path.toString());
-		coinSFX.setVolume(0.2);
 		coinSFX.play();
 
 	}
+	
+	
 
 	public void mapGeneration(Stage map) throws Exception {
 		menuStage.setTitle("PAUSE");
@@ -919,6 +939,7 @@ public class MultiPlayerStage {
 					swordTime.stop();
 					setUnkillable();
 					swordHeld = false;
+					swordBreakSFX();
 					System.out.println("Sword has broken");
 					swordCount = 60;
 				}
@@ -976,13 +997,13 @@ public class MultiPlayerStage {
 		enemyRoot.getChildren().clear();
 		
 		//User 2  
-		user2 = red.swordGet();
+		user2 = red.swordGetUser();
 		user2.setTranslateX(enemyUser2X);
 		user2.setTranslateY(enemyUser2Y);
 		enemyRoot.getChildren().add(user2);
 		
 		//User 3
-		user3 = red.swordGet();
+		user3 = red.swordGetUser();
 		user3.setTranslateX(enemyUser3X);
 		user3.setTranslateY(enemyUser3Y);
 		enemyRoot.getChildren().add(user3);
@@ -1020,22 +1041,32 @@ public class MultiPlayerStage {
 		enemyGreenY = greenEnemy.getTranslateY();
 		enemyPurpleX = purpleEnemy.getTranslateX();
 		enemyPurpleY = purpleEnemy.getTranslateY();
+		
 		enemyRoot.getChildren().clear();
 		
 		//User 2  
-		user2 = createEnemy(enemyUser2X, enemyUser2Y, userTwo.getEnemyDirection());
+//		user2 = createEnemy(enemyUser2X, enemyUser2Y, userTwo.getEnemyDirection());
+		user2 = userTwo.userEnemy();
+		user2.setTranslateX(enemyUser2X);
+		user2.setTranslateY(enemyUser2Y);
+		enemyRoot.getChildren().add(user2);
+		
 		
 		//User 3
-		user3 = createEnemy(enemyUser3X, enemyUser3Y, userThree.getEnemyDirection());
+//		user3 = createEnemy(enemyUser3X, enemyUser3Y, userThree.getEnemyDirection());
+		user3 = userThree.userEnemy();
+		user3.setTranslateX(enemyUser3X);
+		user3.setTranslateY(enemyUser3Y);
+		enemyRoot.getChildren().add(user3);
 		
 		//Green Enemy
-		greenEnemy = red.redEnemy();
+		greenEnemy = green.greenEnemy();
 		greenEnemy.setTranslateX(enemyGreenX);
 		greenEnemy.setTranslateY(enemyGreenY);
 		enemyRoot.getChildren().add(greenEnemy);
 		
 		//Purple Enemy
-		purpleEnemy = blue.blueEnemy();
+		purpleEnemy = purple.purpleEnemy();
 		purpleEnemy.setTranslateX(enemyPurpleX);
 		purpleEnemy.setTranslateY(enemyPurpleY);
 		enemyRoot.getChildren().add(purpleEnemy);
@@ -1794,8 +1825,16 @@ public class MultiPlayerStage {
 		retry.setOnAction((ActionEvent event) -> {
 			try {
 				menuStage.close();
-				MultiPlayer mp = new MultiPlayer();
-				mp.run(stage);
+//				MultiPlayer mp = new MultiPlayer();
+//				mp.run(stage);
+				MultiPlayerStage mpstage = new MultiPlayerStage();
+				Score = 0;
+				try {
+					mpstage.mapGeneration(stage);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				
 
 			} catch (Exception e) {
 				e.printStackTrace();

@@ -61,7 +61,7 @@ private HashMap<KeyCode, Boolean> keys = new HashMap<KeyCode, Boolean>();
     private void initContent() {
 //        Rectangle bg = new Rectangle(1020, 768);
     	//Background set
-        Image bg = new Image("img/Cave.png");
+        Image bg = new Image("img/cave.png");
         ImageView bgView = new ImageView(bg);
         bgView.setFitWidth(1120);
         bgView.setFitHeight(840);
@@ -84,17 +84,44 @@ private HashMap<KeyCode, Boolean> keys = new HashMap<KeyCode, Boolean>();
     private void update() {
     	
     	//Next Level
-    	if ((line == maxLength(section)-1) && (choiceMade)) {
+    	if ((line == maxLength("ScriptChoice1")-1) && (choiceMade) && section.equals("ScriptChoice1")) {
+    		line++;
+    		if (player.Score >= 2000) {
+    			player.Score -= 2000;
+    		} else {
+    			player.Score = 0;
+    		}
+    		
+    		if (player.getHp() >= 1) {
+    			player.minusHp();
+    		} 
         	FadeTransition fadeOut = new FadeTransition(Duration.seconds(1), appRoot);
         	fadeOut.setToValue(0.0);
-        	
         	fadeOut.setOnFinished((ActionEvent event)->{
-        		
         		levelSelect select = new levelSelect();
         		try {
-        			
+        			running = false;
 					select.selectLevel(storyStage);
-					
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+        		
+        	});
+        	
+        	
+        	fadeOut.play();
+    	}
+    	
+    	if ((line == maxLength("ScriptChoice2")-1) && (choiceMade) && section.equals("ScriptChoice2")) {
+    		line++;
+        	FadeTransition fadeOut = new FadeTransition(Duration.seconds(1), appRoot);
+        	fadeOut.setToValue(0.0);
+        	fadeOut.setOnFinished((ActionEvent event)->{
+        		levelSelect select = new levelSelect();
+        		try {
+        			running = false;
+					select.selectLevel(storyStage);
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();

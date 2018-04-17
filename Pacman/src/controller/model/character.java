@@ -17,6 +17,7 @@ public class character {
 	protected double powerDuration;
 	protected int pointsAvailable;
 	public int Score;
+	protected int level = 1;
 	
 	
 	//Gain through achievement
@@ -40,6 +41,14 @@ public class character {
 		extraPowerPellets = 0;
 		model = "Black Knight";
 		Score = 0;
+	}
+	//------------Level--------------------
+	public void setLevel(int level) {
+		this.level = level;
+	}
+	
+	public int getLevel() {
+		return this.level;
 	}
 	
 	//------------Name--------------------
