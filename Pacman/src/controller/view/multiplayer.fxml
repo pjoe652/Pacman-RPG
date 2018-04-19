@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane prefHeight="800.0" prefWidth="1080.0" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.view.multiplayerControl">
+   <children>
+      <ImageView fitHeight="810.0" fitWidth="1080.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../../img/caveIntro.gif" />
+         </image>
+      </ImageView>
+      <ImageView fitHeight="355.0" fitWidth="291.0" layoutX="104.0" layoutY="61.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../../img/Multiplayer/characterSelect.png" />
+         </image>
+      </ImageView>
+      <ImageView fitHeight="355.0" fitWidth="291.0" layoutX="411.0" layoutY="61.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../../img/Multiplayer/characterSelect.png" />
+         </image>
+      </ImageView>
+      <ImageView fitHeight="355.0" fitWidth="291.0" layoutX="714.0" layoutY="61.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../../img/Multiplayer/characterSelect.png" />
+         </image>
+      </ImageView>
+      <ImageView fx:id="playerOne" fitHeight="214.0" fitWidth="214.0" layoutX="140.0" layoutY="132.0" pickOnBounds="true" preserveRatio="true" />
+      <ImageView fx:id="playerTwo" fitHeight="214.0" fitWidth="214.0" layoutX="447.0" layoutY="132.0" pickOnBounds="true" preserveRatio="true" />
+      <ImageView fx:id="playerThree" fitHeight="214.0" fitWidth="214.0" layoutX="750.0" layoutY="132.0" pickOnBounds="true" preserveRatio="true" />
+      <ImageView fitHeight="69.0" fitWidth="69.0" layoutX="117.0" layoutY="428.0" onMouseClicked="#handleMinusButtonCharOne" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../../img/Multiplayer/leftBox.png" />
+         </image>
+      </ImageView>
+      <ImageView fitHeight="69.0" fitWidth="69.0" layoutX="285.0" layoutY="428.0" onMouseClicked="#handleNextButtonCharOne" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../../img/Multiplayer/rightBox.png" />
+         </image>
+      </ImageView>
+      <ImageView fitHeight="69.0" fitWidth="69.0" layoutX="436.0" layoutY="428.0" onMouseClicked="#handleMinusButtonCharTwo" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../../img/Multiplayer/leftBox.png" />
+         </image>
+      </ImageView>
+      <ImageView fitHeight="69.0" fitWidth="69.0" layoutX="604.0" layoutY="428.0" onMouseClicked="#handleNextButtonCharTwo" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../../img/Multiplayer/rightBox.png" />
+         </image>
+      </ImageView>
+      <ImageView fitHeight="69.0" fitWidth="69.0" layoutX="738.0" layoutY="428.0" onMouseClicked="#handleMinusButtonCharThree" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../../img/Multiplayer/leftBox.png" />
+         </image>
+      </ImageView>
+      <ImageView fitHeight="69.0" fitWidth="69.0" layoutX="906.0" layoutY="428.0" onMouseClicked="#handleNextButtonCharThree" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../../img/Multiplayer/rightBox.png" />
+         </image>
+      </ImageView>
+      <Button layoutX="118.0" layoutY="428.0" mnemonicParsing="false" onAction="#handleMinusButtonCharOne" opacity="0.0" prefHeight="69.0" prefWidth="69.0" text="CharOnePrev" />
+      <Button layoutX="285.0" layoutY="428.0" mnemonicParsing="false" onAction="#handleNextButtonCharOne" onMouseClicked="#handleNextButtonCharOne" opacity="0.0" prefHeight="69.0" prefWidth="69.0" text="CharOneNext" />
+      <Button layoutX="436.0" layoutY="428.0" mnemonicParsing="false" onAction="#handleMinusButtonCharTwo" opacity="0.0" prefHeight="69.0" prefWidth="69.0" text="CharTwoPrev" />
+      <Button layoutX="603.0" layoutY="428.0" mnemonicParsing="false" onAction="#handleNextButtonCharTwo" opacity="0.0" prefHeight="69.0" prefWidth="69.0" text="CharTwoNext" />
+      <Button layoutX="739.0" layoutY="428.0" mnemonicParsing="false" onAction="#handleMinusButtonCharThree" opacity="0.0" prefHeight="69.0" prefWidth="69.0" text="CharThreePrev" />
+      <Button layoutX="906.0" layoutY="428.0" mnemonicParsing="false" onAction="#handleNextButtonCharThree" opacity="0.0" prefHeight="69.0" prefWidth="69.0" text="CharThreeNext" />
+      <ImageView fitHeight="148.0" fitWidth="230.0" layoutX="126.0" layoutY="497.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../../img/Menu/keyboardLayout.png" />
+         </image>
+      </ImageView>
+      <ImageView fitHeight="148.0" fitWidth="230.0" layoutX="445.0" layoutY="497.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../../img/Multiplayer/keyboardLayoutPlayer2.png" />
+         </image>
+      </ImageView>
+      <ImageView fitHeight="148.0" fitWidth="230.0" layoutX="745.0" layoutY="497.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../../img/Multiplayer/keyboardLayoutPlayer3.png" />
+         </image>
+      </ImageView>
+      <ImageView fitHeight="116.0" fitWidth="355.0" layoutX="653.0" layoutY="681.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../../img/Menu/startBox.png" />
+         </image>
+      </ImageView>
+      <Button layoutX="653.0" layoutY="681.0" mnemonicParsing="false" onAction="#handleNextButton" onKeyPressed="#handleNextKeyPressed" prefHeight="66.0" prefWidth="355.0" stylesheets="@ButtonEffects.css" text="Next" textFill="WHITE">
+         <font>
+            <Font size="25.0" />
+         </font></Button>
+      <ImageView fitHeight="116.0" fitWidth="355.0" layoutX="142.0" layoutY="681.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../../img/Menu/nameBox.png" />
+         </image>
+      </ImageView>
+      <Button layoutX="143.0" layoutY="678.0" mnemonicParsing="false" onAction="#handleReturnButton" onKeyPressed="#handleReturnKeyPressed" prefHeight="66.0" prefWidth="355.0" stylesheets="@ButtonEffects.css" text="Return" textFill="#f2f2f2">
+         <font>
+            <Font size="25.0" />
+         </font>
+      </Button>
+   </children>
+</AnchorPane>

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane prefHeight="800.0" prefWidth="1080.0" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.view.menuControl">
+   <children>
+      <ImageView fitHeight="825.0" fitWidth="1080.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../../img/caveIntro.gif" />
+         </image>
+      </ImageView>
+      <Button layoutX="393.0" layoutY="256.0" mnemonicParsing="false" onAction="#handleSinglePlayerButton" onKeyPressed="#handleSinglePlayerKeyPressed" prefHeight="55.0" prefWidth="294.0" stylesheets="@ButtonEffects.css" text="Single Player" textFill="WHITE">
+         <font>
+            <Font size="25.0" />
+         </font></Button>
+      <Button layoutX="393.0" layoutY="343.0" mnemonicParsing="false" onAction="#handleMultiPlayerButton" onKeyPressed="#handleMultiPlayerKeyPressed" prefHeight="55.0" prefWidth="294.0" stylesheets="@ButtonEffects.css" text="MultiPlayer" textFill="#eeeeee">
+         <font>
+            <Font size="25.0" />
+         </font></Button>
+      <Button layoutX="393.0" layoutY="431.0" mnemonicParsing="false" onAction="#handleOptionButton" onKeyPressed="#handleOptionKeyPressed" prefHeight="55.0" prefWidth="294.0" stylesheets="@ButtonEffects.css" text="Options" textFill="WHITE">
+         <font>
+            <Font size="25.0" />
+         </font></Button>
+      <Button layoutX="393.0" layoutY="518.0" mnemonicParsing="false" onAction="#handleReturnButton" onKeyPressed="#handleReturnKeyPressed" prefHeight="55.0" prefWidth="294.0" stylesheets="@ButtonEffects.css" text="Return" textFill="#fcfcfc">
+         <font>
+            <Font size="25.0" />
+         </font></Button>
+   </children>
+</AnchorPane>

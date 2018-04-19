@@ -1,0 +1,15 @@
+------------------------------------------------
+Compiling Project
+------------------------------------------------
+1) Import project into Eclipse
+2) Main class is found inside the controller package
+3) Once selected, run main.
+
+------------------------------------------------
+Extra Features/Controls
+------------------------------------------------
+1) Menus can be operated using both mouse and keyboard (if stuck with keyboard, press tab). Use arrow keys to choose a selection and use ENTER to lock in that selection.
+2) Narrative section is operated with with keyboard and mouse. ENTER continues to the next dialogue, whereas CTRL fast forwards through the scene. When presented with a choice, you need to click on the option.
+3) Volume of the BGMs are adjustable with "Options" during the mode select menu or "Music" in the pause menu in game.
+4) PgUP skips a level's gameplay portion, whereas PgDOWN instantly fails the player bringing up the GAMEOVER screen.
+5) Credits can be found at the end of the game. You can skip through the game with PgUp to see them or you can beat the game normally.

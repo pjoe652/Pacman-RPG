@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+
+
+<AnchorPane maxHeight="800.0" maxWidth="1080.0" minHeight="800.0" minWidth="1080.0" prefHeight="800.0" prefWidth="1080.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8.0.141" fx:controller="controller.view.CreditsControl">
+   <children>
+      <ImageView fitHeight="813.0" fitWidth="1080.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../../img/caveIntro.gif" />
+         </image>
+      </ImageView>
+      <ImageView fitHeight="800.0" fitWidth="1080.0" layoutY="-25.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../../img/credits.png" />
+         </image>
+      </ImageView>
+      <ImageView fitHeight="108.0" fitWidth="332.0" layoutX="676.0" layoutY="665.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../../img/Menu/nextBox.png" />
+         </image>
+      </ImageView>
+      <Button layoutX="676.0" layoutY="665.0" mnemonicParsing="false" onAction="#handleNextButton" onKeyPressed="#handleNextKeyPressed" opacity="0.0" prefHeight="62.0" prefWidth="332.0" text="Button" />
+   </children>
+</AnchorPane>

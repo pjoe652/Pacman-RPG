@@ -1,0 +1,21 @@
+.button{
+	-fx-background-color: #4169E1;
+	-fx-font: 25px Bold;
+	-fx-alignment: center;
+}
+
+.button:focused{
+	-fx-border-color: black;
+	-fx-border-width: 3px;
+}
+
+.button:hover{
+	-fx-border-color: red;
+	-fx-border-width: 3px;
+}
+
+.label{
+	-fx-background-color:  #FFB6C1;
+	-fx-alignment: center;
+	-fx-font: 40px Bold;
+}

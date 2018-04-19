@@ -1,0 +1,12 @@
+.blackknight{
+	-fx-background-color: transparent;
+}
+.blackknight:focused{
+	-fx-border-color: white;
+	-fx-border-width: 3px;
+	-fx-scale-x: 1.5px;
+	-fx-scale-y: 1.5px;
+	-fx-border-radius: 100px;
+}
+
+

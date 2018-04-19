@@ -1,0 +1,29 @@
+.button{
+	-fx-background-color: transparent;
+}
+
+.button:hover {
+	-fx-scale-x: 1.5;
+	-fx-scale-y: 1.5;
+	-fx-scale-z: 1.5;	
+	-fx-text-fill: #FF5733;
+	
+}
+
+.plusbutton{
+	
+}
+
+.plusbutton:focused{
+	-fx-border-color: #7FFF00;
+	-fx-border-width: 2.5px;
+}
+
+.minusbutton{
+	
+}
+
+.minusbutton:focused{
+	-fx-border-color: 	#FF6347;
+	-fx-border-width: 2.5px;
+}
